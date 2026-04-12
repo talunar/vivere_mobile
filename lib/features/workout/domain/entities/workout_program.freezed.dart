@@ -15,22 +15,12 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
-WorkoutProgram _$WorkoutProgramFromJson(Map<String, dynamic> json) {
-  return _WorkoutProgram.fromJson(json);
-}
-
 /// @nodoc
 mixin _$WorkoutProgram {
-  String get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  double get rating => throw _privateConstructorUsedError;
-  List<Exercise> get exercises => throw _privateConstructorUsedError;
-  String get trainerName => throw _privateConstructorUsedError;
-  String get imageUrl => throw _privateConstructorUsedError;
-  bool get isVisible => throw _privateConstructorUsedError;
-
-  /// Serializes this WorkoutProgram to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  int get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  List<int> get exerciseIds => throw _privateConstructorUsedError;
 
   /// Create a copy of WorkoutProgram
   /// with the given fields replaced by the non-null parameter values.
@@ -46,15 +36,7 @@ abstract class $WorkoutProgramCopyWith<$Res> {
     $Res Function(WorkoutProgram) then,
   ) = _$WorkoutProgramCopyWithImpl<$Res, WorkoutProgram>;
   @useResult
-  $Res call({
-    String id,
-    String title,
-    double rating,
-    List<Exercise> exercises,
-    String trainerName,
-    String imageUrl,
-    bool isVisible,
-  });
+  $Res call({int id, String name, String description, List<int> exerciseIds});
 }
 
 /// @nodoc
@@ -73,43 +55,28 @@ class _$WorkoutProgramCopyWithImpl<$Res, $Val extends WorkoutProgram>
   @override
   $Res call({
     Object? id = null,
-    Object? title = null,
-    Object? rating = null,
-    Object? exercises = null,
-    Object? trainerName = null,
-    Object? imageUrl = null,
-    Object? isVisible = null,
+    Object? name = null,
+    Object? description = null,
+    Object? exerciseIds = null,
   }) {
     return _then(
       _value.copyWith(
             id: null == id
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
+                      as int,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            title: null == title
-                ? _value.title
-                : title // ignore: cast_nullable_to_non_nullable
+            description: null == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
                       as String,
-            rating: null == rating
-                ? _value.rating
-                : rating // ignore: cast_nullable_to_non_nullable
-                      as double,
-            exercises: null == exercises
-                ? _value.exercises
-                : exercises // ignore: cast_nullable_to_non_nullable
-                      as List<Exercise>,
-            trainerName: null == trainerName
-                ? _value.trainerName
-                : trainerName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            imageUrl: null == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
-            isVisible: null == isVisible
-                ? _value.isVisible
-                : isVisible // ignore: cast_nullable_to_non_nullable
-                      as bool,
+            exerciseIds: null == exerciseIds
+                ? _value.exerciseIds
+                : exerciseIds // ignore: cast_nullable_to_non_nullable
+                      as List<int>,
           )
           as $Val,
     );
@@ -125,15 +92,7 @@ abstract class _$$WorkoutProgramImplCopyWith<$Res>
   ) = __$$WorkoutProgramImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    String title,
-    double rating,
-    List<Exercise> exercises,
-    String trainerName,
-    String imageUrl,
-    bool isVisible,
-  });
+  $Res call({int id, String name, String description, List<int> exerciseIds});
 }
 
 /// @nodoc
@@ -151,89 +110,60 @@ class __$$WorkoutProgramImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? title = null,
-    Object? rating = null,
-    Object? exercises = null,
-    Object? trainerName = null,
-    Object? imageUrl = null,
-    Object? isVisible = null,
+    Object? name = null,
+    Object? description = null,
+    Object? exerciseIds = null,
   }) {
     return _then(
       _$WorkoutProgramImpl(
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
+                  as int,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        title: null == title
-            ? _value.title
-            : title // ignore: cast_nullable_to_non_nullable
+        description: null == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
                   as String,
-        rating: null == rating
-            ? _value.rating
-            : rating // ignore: cast_nullable_to_non_nullable
-                  as double,
-        exercises: null == exercises
-            ? _value._exercises
-            : exercises // ignore: cast_nullable_to_non_nullable
-                  as List<Exercise>,
-        trainerName: null == trainerName
-            ? _value.trainerName
-            : trainerName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        imageUrl: null == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
-        isVisible: null == isVisible
-            ? _value.isVisible
-            : isVisible // ignore: cast_nullable_to_non_nullable
-                  as bool,
+        exerciseIds: null == exerciseIds
+            ? _value._exerciseIds
+            : exerciseIds // ignore: cast_nullable_to_non_nullable
+                  as List<int>,
       ),
     );
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$WorkoutProgramImpl implements _WorkoutProgram {
   const _$WorkoutProgramImpl({
     required this.id,
-    required this.title,
-    required this.rating,
-    required final List<Exercise> exercises,
-    required this.trainerName,
-    required this.imageUrl,
-    this.isVisible = true,
-  }) : _exercises = exercises;
-
-  factory _$WorkoutProgramImpl.fromJson(Map<String, dynamic> json) =>
-      _$$WorkoutProgramImplFromJson(json);
+    required this.name,
+    required this.description,
+    required final List<int> exerciseIds,
+  }) : _exerciseIds = exerciseIds;
 
   @override
-  final String id;
+  final int id;
   @override
-  final String title;
+  final String name;
   @override
-  final double rating;
-  final List<Exercise> _exercises;
+  final String description;
+  final List<int> _exerciseIds;
   @override
-  List<Exercise> get exercises {
-    if (_exercises is EqualUnmodifiableListView) return _exercises;
+  List<int> get exerciseIds {
+    if (_exerciseIds is EqualUnmodifiableListView) return _exerciseIds;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_exercises);
+    return EqualUnmodifiableListView(_exerciseIds);
   }
 
   @override
-  final String trainerName;
-  @override
-  final String imageUrl;
-  @override
-  @JsonKey()
-  final bool isVisible;
-
-  @override
   String toString() {
-    return 'WorkoutProgram(id: $id, title: $title, rating: $rating, exercises: $exercises, trainerName: $trainerName, imageUrl: $imageUrl, isVisible: $isVisible)';
+    return 'WorkoutProgram(id: $id, name: $name, description: $description, exerciseIds: $exerciseIds)';
   }
 
   @override
@@ -242,31 +172,22 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
         (other.runtimeType == runtimeType &&
             other is _$WorkoutProgramImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.title, title) || other.title == title) &&
-            (identical(other.rating, rating) || other.rating == rating) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
             const DeepCollectionEquality().equals(
-              other._exercises,
-              _exercises,
-            ) &&
-            (identical(other.trainerName, trainerName) ||
-                other.trainerName == trainerName) &&
-            (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl) &&
-            (identical(other.isVisible, isVisible) ||
-                other.isVisible == isVisible));
+              other._exerciseIds,
+              _exerciseIds,
+            ));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
     id,
-    title,
-    rating,
-    const DeepCollectionEquality().hash(_exercises),
-    trainerName,
-    imageUrl,
-    isVisible,
+    name,
+    description,
+    const DeepCollectionEquality().hash(_exerciseIds),
   );
 
   /// Create a copy of WorkoutProgram
@@ -279,41 +200,24 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
         this,
         _$identity,
       );
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$WorkoutProgramImplToJson(this);
-  }
 }
 
 abstract class _WorkoutProgram implements WorkoutProgram {
   const factory _WorkoutProgram({
-    required final String id,
-    required final String title,
-    required final double rating,
-    required final List<Exercise> exercises,
-    required final String trainerName,
-    required final String imageUrl,
-    final bool isVisible,
+    required final int id,
+    required final String name,
+    required final String description,
+    required final List<int> exerciseIds,
   }) = _$WorkoutProgramImpl;
 
-  factory _WorkoutProgram.fromJson(Map<String, dynamic> json) =
-      _$WorkoutProgramImpl.fromJson;
-
   @override
-  String get id;
+  int get id;
   @override
-  String get title;
+  String get name;
   @override
-  double get rating;
+  String get description;
   @override
-  List<Exercise> get exercises;
-  @override
-  String get trainerName;
-  @override
-  String get imageUrl;
-  @override
-  bool get isVisible;
+  List<int> get exerciseIds;
 
   /// Create a copy of WorkoutProgram
   /// with the given fields replaced by the non-null parameter values.

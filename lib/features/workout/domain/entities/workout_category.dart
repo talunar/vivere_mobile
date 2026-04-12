@@ -1,13 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'workout_program.freezed.dart';
+part 'workout_category.freezed.dart';
 
 @freezed
-class WorkoutProgram with _$WorkoutProgram {
-  const factory WorkoutProgram({
+class WorkoutCategory with _$WorkoutCategory {
+  const factory WorkoutCategory({
     required int id,
     required String name,
-    required String description,
+    required String image,
     required List<int> exerciseIds, // Ссылка на упражнения по ID
-  }) = _WorkoutProgram;
+  }) = _WorkoutCategory;
 }

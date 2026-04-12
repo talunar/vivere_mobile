@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'exercise.dart';
+part of 'workout_category.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -16,38 +16,40 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
-mixin _$Exercise {
+mixin _$WorkoutCategory {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
+  List<int> get exerciseIds => throw _privateConstructorUsedError;
 
-  /// Create a copy of Exercise
+  /// Create a copy of WorkoutCategory
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ExerciseCopyWith<Exercise> get copyWith =>
+  $WorkoutCategoryCopyWith<WorkoutCategory> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ExerciseCopyWith<$Res> {
-  factory $ExerciseCopyWith(Exercise value, $Res Function(Exercise) then) =
-      _$ExerciseCopyWithImpl<$Res, Exercise>;
+abstract class $WorkoutCategoryCopyWith<$Res> {
+  factory $WorkoutCategoryCopyWith(
+    WorkoutCategory value,
+    $Res Function(WorkoutCategory) then,
+  ) = _$WorkoutCategoryCopyWithImpl<$Res, WorkoutCategory>;
   @useResult
-  $Res call({int id, String name, String image, String description});
+  $Res call({int id, String name, String image, List<int> exerciseIds});
 }
 
 /// @nodoc
-class _$ExerciseCopyWithImpl<$Res, $Val extends Exercise>
-    implements $ExerciseCopyWith<$Res> {
-  _$ExerciseCopyWithImpl(this._value, this._then);
+class _$WorkoutCategoryCopyWithImpl<$Res, $Val extends WorkoutCategory>
+    implements $WorkoutCategoryCopyWith<$Res> {
+  _$WorkoutCategoryCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of Exercise
+  /// Create a copy of WorkoutCategory
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -55,7 +57,7 @@ class _$ExerciseCopyWithImpl<$Res, $Val extends Exercise>
     Object? id = null,
     Object? name = null,
     Object? image = null,
-    Object? description = null,
+    Object? exerciseIds = null,
   }) {
     return _then(
       _value.copyWith(
@@ -71,10 +73,10 @@ class _$ExerciseCopyWithImpl<$Res, $Val extends Exercise>
                 ? _value.image
                 : image // ignore: cast_nullable_to_non_nullable
                       as String,
-            description: null == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String,
+            exerciseIds: null == exerciseIds
+                ? _value.exerciseIds
+                : exerciseIds // ignore: cast_nullable_to_non_nullable
+                      as List<int>,
           )
           as $Val,
     );
@@ -82,27 +84,27 @@ class _$ExerciseCopyWithImpl<$Res, $Val extends Exercise>
 }
 
 /// @nodoc
-abstract class _$$ExerciseImplCopyWith<$Res>
-    implements $ExerciseCopyWith<$Res> {
-  factory _$$ExerciseImplCopyWith(
-    _$ExerciseImpl value,
-    $Res Function(_$ExerciseImpl) then,
-  ) = __$$ExerciseImplCopyWithImpl<$Res>;
+abstract class _$$WorkoutCategoryImplCopyWith<$Res>
+    implements $WorkoutCategoryCopyWith<$Res> {
+  factory _$$WorkoutCategoryImplCopyWith(
+    _$WorkoutCategoryImpl value,
+    $Res Function(_$WorkoutCategoryImpl) then,
+  ) = __$$WorkoutCategoryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, String image, String description});
+  $Res call({int id, String name, String image, List<int> exerciseIds});
 }
 
 /// @nodoc
-class __$$ExerciseImplCopyWithImpl<$Res>
-    extends _$ExerciseCopyWithImpl<$Res, _$ExerciseImpl>
-    implements _$$ExerciseImplCopyWith<$Res> {
-  __$$ExerciseImplCopyWithImpl(
-    _$ExerciseImpl _value,
-    $Res Function(_$ExerciseImpl) _then,
+class __$$WorkoutCategoryImplCopyWithImpl<$Res>
+    extends _$WorkoutCategoryCopyWithImpl<$Res, _$WorkoutCategoryImpl>
+    implements _$$WorkoutCategoryImplCopyWith<$Res> {
+  __$$WorkoutCategoryImplCopyWithImpl(
+    _$WorkoutCategoryImpl _value,
+    $Res Function(_$WorkoutCategoryImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of Exercise
+  /// Create a copy of WorkoutCategory
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -110,10 +112,10 @@ class __$$ExerciseImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? image = null,
-    Object? description = null,
+    Object? exerciseIds = null,
   }) {
     return _then(
-      _$ExerciseImpl(
+      _$WorkoutCategoryImpl(
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
@@ -126,10 +128,10 @@ class __$$ExerciseImplCopyWithImpl<$Res>
             ? _value.image
             : image // ignore: cast_nullable_to_non_nullable
                   as String,
-        description: null == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String,
+        exerciseIds: null == exerciseIds
+            ? _value._exerciseIds
+            : exerciseIds // ignore: cast_nullable_to_non_nullable
+                  as List<int>,
       ),
     );
   }
@@ -137,13 +139,13 @@ class __$$ExerciseImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ExerciseImpl implements _Exercise {
-  const _$ExerciseImpl({
+class _$WorkoutCategoryImpl implements _WorkoutCategory {
+  const _$WorkoutCategoryImpl({
     required this.id,
     required this.name,
     required this.image,
-    required this.description,
-  });
+    required final List<int> exerciseIds,
+  }) : _exerciseIds = exerciseIds;
 
   @override
   final int id;
@@ -151,45 +153,61 @@ class _$ExerciseImpl implements _Exercise {
   final String name;
   @override
   final String image;
+  final List<int> _exerciseIds;
   @override
-  final String description;
+  List<int> get exerciseIds {
+    if (_exerciseIds is EqualUnmodifiableListView) return _exerciseIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_exerciseIds);
+  }
 
   @override
   String toString() {
-    return 'Exercise(id: $id, name: $name, image: $image, description: $description)';
+    return 'WorkoutCategory(id: $id, name: $name, image: $image, exerciseIds: $exerciseIds)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ExerciseImpl &&
+            other is _$WorkoutCategoryImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.image, image) || other.image == image) &&
-            (identical(other.description, description) ||
-                other.description == description));
+            const DeepCollectionEquality().equals(
+              other._exerciseIds,
+              _exerciseIds,
+            ));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, image, description);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    name,
+    image,
+    const DeepCollectionEquality().hash(_exerciseIds),
+  );
 
-  /// Create a copy of Exercise
+  /// Create a copy of WorkoutCategory
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ExerciseImplCopyWith<_$ExerciseImpl> get copyWith =>
-      __$$ExerciseImplCopyWithImpl<_$ExerciseImpl>(this, _$identity);
+  _$$WorkoutCategoryImplCopyWith<_$WorkoutCategoryImpl> get copyWith =>
+      __$$WorkoutCategoryImplCopyWithImpl<_$WorkoutCategoryImpl>(
+        this,
+        _$identity,
+      );
 }
 
-abstract class _Exercise implements Exercise {
-  const factory _Exercise({
+abstract class _WorkoutCategory implements WorkoutCategory {
+  const factory _WorkoutCategory({
     required final int id,
     required final String name,
     required final String image,
-    required final String description,
-  }) = _$ExerciseImpl;
+    required final List<int> exerciseIds,
+  }) = _$WorkoutCategoryImpl;
 
   @override
   int get id;
@@ -198,12 +216,12 @@ abstract class _Exercise implements Exercise {
   @override
   String get image;
   @override
-  String get description;
+  List<int> get exerciseIds;
 
-  /// Create a copy of Exercise
+  /// Create a copy of WorkoutCategory
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ExerciseImplCopyWith<_$ExerciseImpl> get copyWith =>
+  _$$WorkoutCategoryImplCopyWith<_$WorkoutCategoryImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

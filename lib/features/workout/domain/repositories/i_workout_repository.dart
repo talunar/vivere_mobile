@@ -1,6 +1,12 @@
-import '../entities/workout_program.dart';
+import '../entities/workout_category.dart';
+import '../entities/exercise.dart';
 
-// Выводим список программ не смотря ни на что
 abstract class IWorkoutRepository {
-  Future<List<WorkoutProgram>> getTopPrograms();
+  // Получить одну категорию по ID
+  Future<WorkoutCategory> getCategory(int id);
+
+  // Получить список всех упражнений
+  Future<List<Exercise>> getExercises();
+
+// Можно добавить методы для программ и сессий
 }

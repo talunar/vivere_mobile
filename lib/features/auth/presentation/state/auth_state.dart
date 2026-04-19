@@ -1,31 +1,38 @@
-import '/core/domain/entities/auth_user.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../domain/entities/auth_user.dart';
 
-// sealed — значит никто не может создать подтип этого класса вне этого файла.
-// Это дает компилятору полный контроль над всеми состояниями.
-sealed class AuthState {
-  const AuthState();
-}
+part 'auth_state.freezed.dart';
 
-// 1. Начальное состояние (когда пользователь только открыл приложение)
-class AuthInitial extends AuthState {}
+/// Перечисление для выбора пола
+enum Gender { male, female, other}
 
-// 2. Состояние загрузки (нажали кнопку "Войти", ждем ответа от Go)
-class AuthLoading extends AuthState {}
+@freezed
+sealed class AuthState with _$AuthState {
+  const factory AuthState.initial() = AuthInitial;
+  const factory AuthState.loading() = AuthLoading;
+  const factory AuthState.unauthenticated() = Unauthenticated;
 
-// 3. Состояние ошибки (неверный пароль или сервер упал)
-class AuthError extends AuthState {
-  final String message;
-  AuthError(this.message);
-}
+  /// Если юзера нет и нужно ввести ФИО и Почту
+  const factory AuthState.registrationStepName({
+    required String nickName,
+    required String password,
+  }) = RegistrationStepName;
 
-// 4. Состояние "Старичок" (успешный вход, профиль уже есть)
-class Authenticated extends AuthState {
-  final AuthUser user;
-  Authenticated(this.user);
-}
+  /// После ФИО и почты мы переходим к росту/весу/полу
+  const factory AuthState.registrationStepPhysical({
+    required String nickName,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required String email,
+  }) = RegistrationStepPhysical;
 
-// 5. Состояние "Новичок" (регистрация прошла, но нужно заполнить ФИО/Вес/Рост)
-class ProfileSetupRequired extends AuthState {
-  final AuthUser user;
-  ProfileSetupRequired(this.user);
+  /// Состояние, если профиль существует, но данные в нем пустые (для старых юзеров)
+  const factory AuthState.profileSetupRequired(AuthUser user) = ProfileSetupRequired;
+
+  /// Финальное состояние — пользователь полностью вошел
+  const factory AuthState.authenticated(AuthUser user) = Authenticated;
+
+  /// Состояние ошибки (неверный пароль, проблемы с сетью)
+  const factory AuthState.error(String message, {Object? error}) = AuthError;
 }

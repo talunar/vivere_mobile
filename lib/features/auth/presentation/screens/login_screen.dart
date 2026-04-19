@@ -1,32 +1,35 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final loginController = TextEditingController();
+    final passController = TextEditingController();
+    // Слушаем состояние для отображения индикатора загрузки
+    final authState = ref.watch(authControllerProvider);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Вход в Vivere'),
-        centerTitle: true,
-      ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(Icons.fitness_center, size: 100, color: Colors.blue),
-            const SizedBox(height: 20),
-            const Text(
-              'Добро пожаловать!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+            const Text('Vivere', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w300, letterSpacing: 2)),
             const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                // Пока просто заглушка кнопки
-              },
-              child: const Text('Войти через Google'),
-            ),
+            TextField(controller: loginController, decoration: const InputDecoration(labelText: 'Логин')),
+            TextField(controller: passController, obscureText: true, decoration: const InputDecoration(labelText: 'Пароль')),
+            const SizedBox(height: 24),
+            if (authState is AuthLoading)
+              const Center(child: CircularProgressIndicator())
+            else
+              ElevatedButton(
+                onPressed: () => ref.read(authControllerProvider.notifier)
+                    .continueToNextStep(loginController.text, passController.text),
+                child: const Text('Продолжить'),
+              ),
           ],
         ),
       ),

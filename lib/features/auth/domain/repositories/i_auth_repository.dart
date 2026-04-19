@@ -1,4 +1,4 @@
-import '/core/domain/entities/auth_user.dart';
+import '../entities/auth_user.dart';
 
 abstract class IAuthRepository {
   // Вход

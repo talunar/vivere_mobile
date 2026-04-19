@@ -1,5 +1,5 @@
 // sign_in_use_case.dart
-import '/core/domain/entities/auth_user.dart';
+import '../entities/auth_user.dart';
 import '../repositories/i_auth_repository.dart';
 
 class SignInUseCase {

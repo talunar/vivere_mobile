@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import '../../domain/repositories/i_auth_repository.dart';
-import '../../../../core/domain/entities/auth_user.dart'; // проверь путь
+import '../../domain/entities/auth_user.dart'; 
 import '../models/auth_dto.dart';
 import '../mappers/auth_mapper.dart';
 

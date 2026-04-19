@@ -8,24 +8,20 @@ part of 'user_profile.dart';
 
 _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
     _$UserProfileImpl(
-      id: (json['id'] as num).toInt(),
-      nickName: json['nick_name'] as String,
-      email: json['email'] as String,
-      lastName: json['last_name'] as String,
+      id: const UserIdConverter().fromJson((json['id'] as num).toInt()),
       firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
       age: (json['age'] as num).toInt(),
-      weight: (json['weight'] as num).toInt(),
-      height: (json['height'] as num).toInt(),
+      weight: (json['weight'] as num).toDouble(),
+      height: (json['height'] as num).toDouble(),
       birthDate: json['birth_date'] as String,
     );
 
 Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'nick_name': instance.nickName,
-      'email': instance.email,
-      'last_name': instance.lastName,
+      'id': const UserIdConverter().toJson(instance.id),
       'first_name': instance.firstName,
+      'last_name': instance.lastName,
       'age': instance.age,
       'weight': instance.weight,
       'height': instance.height,

@@ -21,17 +21,15 @@ UserProfile _$UserProfileFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserProfile {
-  int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'nick_name')
-  String get nickName => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_name')
-  String get lastName => throw _privateConstructorUsedError;
+  @UserIdConverter()
+  UserId get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'first_name')
   String get firstName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_name')
+  String get lastName => throw _privateConstructorUsedError;
   int get age => throw _privateConstructorUsedError;
-  int get weight => throw _privateConstructorUsedError;
-  int get height => throw _privateConstructorUsedError;
+  double get weight => throw _privateConstructorUsedError;
+  double get height => throw _privateConstructorUsedError;
   @JsonKey(name: 'birth_date')
   String get birthDate => throw _privateConstructorUsedError;
 
@@ -53,14 +51,12 @@ abstract class $UserProfileCopyWith<$Res> {
   ) = _$UserProfileCopyWithImpl<$Res, UserProfile>;
   @useResult
   $Res call({
-    int id,
-    @JsonKey(name: 'nick_name') String nickName,
-    String email,
-    @JsonKey(name: 'last_name') String lastName,
+    @UserIdConverter() UserId id,
     @JsonKey(name: 'first_name') String firstName,
+    @JsonKey(name: 'last_name') String lastName,
     int age,
-    int weight,
-    int height,
+    double weight,
+    double height,
     @JsonKey(name: 'birth_date') String birthDate,
   });
 }
@@ -81,10 +77,8 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
   @override
   $Res call({
     Object? id = null,
-    Object? nickName = null,
-    Object? email = null,
-    Object? lastName = null,
     Object? firstName = null,
+    Object? lastName = null,
     Object? age = null,
     Object? weight = null,
     Object? height = null,
@@ -95,22 +89,14 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
             id: null == id
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
-                      as int,
-            nickName: null == nickName
-                ? _value.nickName
-                : nickName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            email: null == email
-                ? _value.email
-                : email // ignore: cast_nullable_to_non_nullable
+                      as UserId,
+            firstName: null == firstName
+                ? _value.firstName
+                : firstName // ignore: cast_nullable_to_non_nullable
                       as String,
             lastName: null == lastName
                 ? _value.lastName
                 : lastName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            firstName: null == firstName
-                ? _value.firstName
-                : firstName // ignore: cast_nullable_to_non_nullable
                       as String,
             age: null == age
                 ? _value.age
@@ -119,11 +105,11 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
             weight: null == weight
                 ? _value.weight
                 : weight // ignore: cast_nullable_to_non_nullable
-                      as int,
+                      as double,
             height: null == height
                 ? _value.height
                 : height // ignore: cast_nullable_to_non_nullable
-                      as int,
+                      as double,
             birthDate: null == birthDate
                 ? _value.birthDate
                 : birthDate // ignore: cast_nullable_to_non_nullable
@@ -144,14 +130,12 @@ abstract class _$$UserProfileImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int id,
-    @JsonKey(name: 'nick_name') String nickName,
-    String email,
-    @JsonKey(name: 'last_name') String lastName,
+    @UserIdConverter() UserId id,
     @JsonKey(name: 'first_name') String firstName,
+    @JsonKey(name: 'last_name') String lastName,
     int age,
-    int weight,
-    int height,
+    double weight,
+    double height,
     @JsonKey(name: 'birth_date') String birthDate,
   });
 }
@@ -171,10 +155,8 @@ class __$$UserProfileImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? nickName = null,
-    Object? email = null,
-    Object? lastName = null,
     Object? firstName = null,
+    Object? lastName = null,
     Object? age = null,
     Object? weight = null,
     Object? height = null,
@@ -185,22 +167,14 @@ class __$$UserProfileImplCopyWithImpl<$Res>
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
-                  as int,
-        nickName: null == nickName
-            ? _value.nickName
-            : nickName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        email: null == email
-            ? _value.email
-            : email // ignore: cast_nullable_to_non_nullable
+                  as UserId,
+        firstName: null == firstName
+            ? _value.firstName
+            : firstName // ignore: cast_nullable_to_non_nullable
                   as String,
         lastName: null == lastName
             ? _value.lastName
             : lastName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        firstName: null == firstName
-            ? _value.firstName
-            : firstName // ignore: cast_nullable_to_non_nullable
                   as String,
         age: null == age
             ? _value.age
@@ -209,11 +183,11 @@ class __$$UserProfileImplCopyWithImpl<$Res>
         weight: null == weight
             ? _value.weight
             : weight // ignore: cast_nullable_to_non_nullable
-                  as int,
+                  as double,
         height: null == height
             ? _value.height
             : height // ignore: cast_nullable_to_non_nullable
-                  as int,
+                  as double,
         birthDate: null == birthDate
             ? _value.birthDate
             : birthDate // ignore: cast_nullable_to_non_nullable
@@ -227,11 +201,9 @@ class __$$UserProfileImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserProfileImpl implements _UserProfile {
   const _$UserProfileImpl({
-    required this.id,
-    @JsonKey(name: 'nick_name') required this.nickName,
-    required this.email,
-    @JsonKey(name: 'last_name') required this.lastName,
+    @UserIdConverter() required this.id,
     @JsonKey(name: 'first_name') required this.firstName,
+    @JsonKey(name: 'last_name') required this.lastName,
     required this.age,
     required this.weight,
     required this.height,
@@ -242,31 +214,27 @@ class _$UserProfileImpl implements _UserProfile {
       _$$UserProfileImplFromJson(json);
 
   @override
-  final int id;
-  @override
-  @JsonKey(name: 'nick_name')
-  final String nickName;
-  @override
-  final String email;
-  @override
-  @JsonKey(name: 'last_name')
-  final String lastName;
+  @UserIdConverter()
+  final UserId id;
   @override
   @JsonKey(name: 'first_name')
   final String firstName;
   @override
+  @JsonKey(name: 'last_name')
+  final String lastName;
+  @override
   final int age;
   @override
-  final int weight;
+  final double weight;
   @override
-  final int height;
+  final double height;
   @override
   @JsonKey(name: 'birth_date')
   final String birthDate;
 
   @override
   String toString() {
-    return 'UserProfile(id: $id, nickName: $nickName, email: $email, lastName: $lastName, firstName: $firstName, age: $age, weight: $weight, height: $height, birthDate: $birthDate)';
+    return 'UserProfile(id: $id, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, birthDate: $birthDate)';
   }
 
   @override
@@ -275,13 +243,10 @@ class _$UserProfileImpl implements _UserProfile {
         (other.runtimeType == runtimeType &&
             other is _$UserProfileImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.nickName, nickName) ||
-                other.nickName == nickName) &&
-            (identical(other.email, email) || other.email == email) &&
-            (identical(other.lastName, lastName) ||
-                other.lastName == lastName) &&
             (identical(other.firstName, firstName) ||
                 other.firstName == firstName) &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName) &&
             (identical(other.age, age) || other.age == age) &&
             (identical(other.weight, weight) || other.weight == weight) &&
             (identical(other.height, height) || other.height == height) &&
@@ -294,10 +259,8 @@ class _$UserProfileImpl implements _UserProfile {
   int get hashCode => Object.hash(
     runtimeType,
     id,
-    nickName,
-    email,
-    lastName,
     firstName,
+    lastName,
     age,
     weight,
     height,
@@ -320,14 +283,12 @@ class _$UserProfileImpl implements _UserProfile {
 
 abstract class _UserProfile implements UserProfile {
   const factory _UserProfile({
-    required final int id,
-    @JsonKey(name: 'nick_name') required final String nickName,
-    required final String email,
-    @JsonKey(name: 'last_name') required final String lastName,
+    @UserIdConverter() required final UserId id,
     @JsonKey(name: 'first_name') required final String firstName,
+    @JsonKey(name: 'last_name') required final String lastName,
     required final int age,
-    required final int weight,
-    required final int height,
+    required final double weight,
+    required final double height,
     @JsonKey(name: 'birth_date') required final String birthDate,
   }) = _$UserProfileImpl;
 
@@ -335,24 +296,20 @@ abstract class _UserProfile implements UserProfile {
       _$UserProfileImpl.fromJson;
 
   @override
-  int get id;
-  @override
-  @JsonKey(name: 'nick_name')
-  String get nickName;
-  @override
-  String get email;
-  @override
-  @JsonKey(name: 'last_name')
-  String get lastName;
+  @UserIdConverter()
+  UserId get id;
   @override
   @JsonKey(name: 'first_name')
   String get firstName;
   @override
+  @JsonKey(name: 'last_name')
+  String get lastName;
+  @override
   int get age;
   @override
-  int get weight;
+  double get weight;
   @override
-  int get height;
+  double get height;
   @override
   @JsonKey(name: 'birth_date')
   String get birthDate;

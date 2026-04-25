@@ -4,42 +4,51 @@ part 'workout_dto.freezed.dart';
 part 'workout_dto.g.dart';
 
 @freezed
-class CategoryDto with _$CategoryDto {
-  const factory CategoryDto({
+class RepeatedDto with _$RepeatedDto { // В Go это Repeated
+  const factory RepeatedDto({
     required int id,
-    required String title,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    List<ProgramDto>? programs, // Вложенные программы
-  }) = _CategoryDto;
+    required int weight,
+  }) = _RepeatedDto;
 
-  factory CategoryDto.fromJson(Map<String, dynamic> json) => _$CategoryDtoFromJson(json);
+  factory RepeatedDto.fromJson(Map<String, dynamic> json) => _$RepeatedDtoFromJson(json);
 }
 
 @freezed
-class ProgramDto with _$ProgramDto {
+class ExerciserDto with _$ExerciserDto { // В Go это Exerciser
+  @JsonSerializable(explicitToJson: true)
+  const factory ExerciserDto({
+    required int id,
+    required String name,
+    required String description,
+    required String image,
+    List<RepeatedDto>? repeats, // Подходы
+  }) = _ExerciserDto;
+
+  factory ExerciserDto.fromJson(Map<String, dynamic> json) => _$ExerciserDtoFromJson(json);
+}
+
+@freezed
+class ProgramDto with _$ProgramDto { // В Go это Workout
+  @JsonSerializable(explicitToJson: true)
   const factory ProgramDto({
     required int id,
-    required String title,
-    String? description,
-    required String difficulty,
-    @JsonKey(name: 'image_url') String? imageUrl,    // Добавили
-    double? rating,                                  // Добавили
-    @JsonKey(name: 'trainer_name') String? trainerName, // Добавили
-    List<ExerciseDto>? exercises,
+    required String name,
+    required String description,
+    List<ExerciserDto>? exercises, // Список Exerciser
   }) = _ProgramDto;
 
   factory ProgramDto.fromJson(Map<String, dynamic> json) => _$ProgramDtoFromJson(json);
 }
 
 @freezed
-class ExerciseDto with _$ExerciseDto {
-  const factory ExerciseDto({
+class CategoryDto with _$CategoryDto {
+  @JsonSerializable(explicitToJson: true)
+  const factory CategoryDto({
     required int id,
-    required String title,
-    String? description,
-    @JsonKey(name: 'video_url') String? videoUrl,
-    @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
-  }) = _ExerciseDto;
+    required String name, // В Go это Name
+    required String image, // В Go это Image
+    List<ProgramDto>? programs, // В Go категория содержит Exercisers
+  }) = _CategoryDto;
 
-  factory ExerciseDto.fromJson(Map<String, dynamic> json) => _$ExerciseDtoFromJson(json);
+  factory CategoryDto.fromJson(Map<String, dynamic> json) => _$CategoryDtoFromJson(json);
 }

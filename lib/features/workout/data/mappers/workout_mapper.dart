@@ -1,41 +1,45 @@
-// 1. Импорты из Domain (Контракт и Чистые сущности)
-import '../../domain/repositories/i_workout_repository.dart';
 import '../../domain/entities/workout_category.dart';
-import '../../domain/entities/exercise.dart';
+import '../../domain/entities/workout_program.dart';
+import '../models/workout_dto.dart';
+import 'repeated_mapper.dart';
 
-// 2. Импорты из Data (DTO - матрешки и Мапперы - переводчики)
-import '/features/workout/models/workout_dto.dart';
-import '../mappers/workout_mapper.dart';
-
-// Представим, что мы используем Dio для сетевых запросов
-import 'package:dio/dio.dart';
-
-class WorkoutRepositoryImpl implements IWorkoutRepository {
-  final Dio _dio;
-
-  WorkoutRepositoryImpl(this._dio);
-
-  @override
-  Future<WorkoutCategory> getCategory(int id) async {
-    // 1. Делаем запрос к твоему Go-бэкенду
-    final response = await _dio.get('/categories/$id');
-
-    // 2. Парсим JSON в DTO (Модель, которая знает про структуру JSON в Go)
-    final dto = CategoryDto.fromJson(response.data);
-
-    // 3. Превращаем DTO в чистую сущность Domain (toDomain() берется из маппера)
-    // Это и есть то, что мы обсуждали: матрешка разбирается здесь.
-    return dto.toDomain();
+extension CategoryDtoX on CategoryDto {
+  /// Маппинг категории и 5 программ
+  WorkoutCategory toDomain() {
+    return WorkoutCategory(
+      id: id,
+      name: name,
+      image: image,
+      description: null,
+      programs: programs?.map((p) => p.toDomain()).toList() ?? [],
+    );
   }
+}
 
-  @override
-  Future<List<Exercise>> getExercises() async {
-    final response = await _dio.get('/exercises');
+extension ProgramDtoX on ProgramDto {
+  /// Маппинг экрана всех программ и программы тренировки
+  WorkoutProgram toDomain() {
+    return WorkoutProgram(
+      id: id,
+      title: name, // Мапим name из Go в title во Flutter
+      description: description,
+      rating: null,
+      trainerName: null,
+      exercises: exercises?.map((e) => e.toInProgramEntity()).toList() ?? [],
+    );
+  }
+}
 
-    // Если приходит список, мапим каждый элемент
-    final List<dynamic> data = response.data;
-    return data
-        .map((json) => ExerciseDto.fromJson(json).toDomain())
-        .toList();
+extension ExerciserDtoX on ExerciserDto {
+  /// Маппинг для экрана выполнения упражнения
+  ExerciserInProgram toInProgramEntity() {
+    return ExerciserInProgram(
+      id: id,
+      name: name,
+      description: description,
+      image: image,
+      // Мапим подходы через repeated_mapper
+      repeats: repeats?.map((r) => r.toDomain()).toList() ?? [],
+    );
   }
 }

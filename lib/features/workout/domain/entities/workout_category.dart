@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../domain/entities/workout_program.dart';
 
 part 'workout_category.freezed.dart';
 
@@ -8,6 +9,7 @@ class WorkoutCategory with _$WorkoutCategory {
     required int id,
     required String name,
     required String image,
-    required List<int> exerciseIds, // Ссылка на упражнения по ID
+    String? description,
+    required List<WorkoutProgram> programs, // Ссылка на упражнения по ID
   }) = _WorkoutCategory;
 }

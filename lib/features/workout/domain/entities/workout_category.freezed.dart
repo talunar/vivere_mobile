@@ -20,7 +20,8 @@ mixin _$WorkoutCategory {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
-  List<int> get exerciseIds => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  List<WorkoutProgram> get programs => throw _privateConstructorUsedError;
 
   /// Create a copy of WorkoutCategory
   /// with the given fields replaced by the non-null parameter values.
@@ -36,7 +37,13 @@ abstract class $WorkoutCategoryCopyWith<$Res> {
     $Res Function(WorkoutCategory) then,
   ) = _$WorkoutCategoryCopyWithImpl<$Res, WorkoutCategory>;
   @useResult
-  $Res call({int id, String name, String image, List<int> exerciseIds});
+  $Res call({
+    int id,
+    String name,
+    String image,
+    String? description,
+    List<WorkoutProgram> programs,
+  });
 }
 
 /// @nodoc
@@ -57,7 +64,8 @@ class _$WorkoutCategoryCopyWithImpl<$Res, $Val extends WorkoutCategory>
     Object? id = null,
     Object? name = null,
     Object? image = null,
-    Object? exerciseIds = null,
+    Object? description = freezed,
+    Object? programs = null,
   }) {
     return _then(
       _value.copyWith(
@@ -73,10 +81,14 @@ class _$WorkoutCategoryCopyWithImpl<$Res, $Val extends WorkoutCategory>
                 ? _value.image
                 : image // ignore: cast_nullable_to_non_nullable
                       as String,
-            exerciseIds: null == exerciseIds
-                ? _value.exerciseIds
-                : exerciseIds // ignore: cast_nullable_to_non_nullable
-                      as List<int>,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            programs: null == programs
+                ? _value.programs
+                : programs // ignore: cast_nullable_to_non_nullable
+                      as List<WorkoutProgram>,
           )
           as $Val,
     );
@@ -92,7 +104,13 @@ abstract class _$$WorkoutCategoryImplCopyWith<$Res>
   ) = __$$WorkoutCategoryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, String image, List<int> exerciseIds});
+  $Res call({
+    int id,
+    String name,
+    String image,
+    String? description,
+    List<WorkoutProgram> programs,
+  });
 }
 
 /// @nodoc
@@ -112,7 +130,8 @@ class __$$WorkoutCategoryImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? image = null,
-    Object? exerciseIds = null,
+    Object? description = freezed,
+    Object? programs = null,
   }) {
     return _then(
       _$WorkoutCategoryImpl(
@@ -128,10 +147,14 @@ class __$$WorkoutCategoryImplCopyWithImpl<$Res>
             ? _value.image
             : image // ignore: cast_nullable_to_non_nullable
                   as String,
-        exerciseIds: null == exerciseIds
-            ? _value._exerciseIds
-            : exerciseIds // ignore: cast_nullable_to_non_nullable
-                  as List<int>,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        programs: null == programs
+            ? _value._programs
+            : programs // ignore: cast_nullable_to_non_nullable
+                  as List<WorkoutProgram>,
       ),
     );
   }
@@ -144,8 +167,9 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
     required this.id,
     required this.name,
     required this.image,
-    required final List<int> exerciseIds,
-  }) : _exerciseIds = exerciseIds;
+    this.description,
+    required final List<WorkoutProgram> programs,
+  }) : _programs = programs;
 
   @override
   final int id;
@@ -153,17 +177,19 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
   final String name;
   @override
   final String image;
-  final List<int> _exerciseIds;
   @override
-  List<int> get exerciseIds {
-    if (_exerciseIds is EqualUnmodifiableListView) return _exerciseIds;
+  final String? description;
+  final List<WorkoutProgram> _programs;
+  @override
+  List<WorkoutProgram> get programs {
+    if (_programs is EqualUnmodifiableListView) return _programs;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_exerciseIds);
+    return EqualUnmodifiableListView(_programs);
   }
 
   @override
   String toString() {
-    return 'WorkoutCategory(id: $id, name: $name, image: $image, exerciseIds: $exerciseIds)';
+    return 'WorkoutCategory(id: $id, name: $name, image: $image, description: $description, programs: $programs)';
   }
 
   @override
@@ -174,10 +200,9 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.image, image) || other.image == image) &&
-            const DeepCollectionEquality().equals(
-              other._exerciseIds,
-              _exerciseIds,
-            ));
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(other._programs, _programs));
   }
 
   @override
@@ -186,7 +211,8 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
     id,
     name,
     image,
-    const DeepCollectionEquality().hash(_exerciseIds),
+    description,
+    const DeepCollectionEquality().hash(_programs),
   );
 
   /// Create a copy of WorkoutCategory
@@ -206,7 +232,8 @@ abstract class _WorkoutCategory implements WorkoutCategory {
     required final int id,
     required final String name,
     required final String image,
-    required final List<int> exerciseIds,
+    final String? description,
+    required final List<WorkoutProgram> programs,
   }) = _$WorkoutCategoryImpl;
 
   @override
@@ -216,7 +243,9 @@ abstract class _WorkoutCategory implements WorkoutCategory {
   @override
   String get image;
   @override
-  List<int> get exerciseIds;
+  String? get description;
+  @override
+  List<WorkoutProgram> get programs;
 
   /// Create a copy of WorkoutCategory
   /// with the given fields replaced by the non-null parameter values.

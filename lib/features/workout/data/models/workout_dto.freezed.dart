@@ -15,81 +15,60 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
-CategoryDto _$CategoryDtoFromJson(Map<String, dynamic> json) {
-  return _CategoryDto.fromJson(json);
+RepeatedDto _$RepeatedDtoFromJson(Map<String, dynamic> json) {
+  return _RepeatedDto.fromJson(json);
 }
 
 /// @nodoc
-mixin _$CategoryDto {
+mixin _$RepeatedDto {
   int get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  @JsonKey(name: 'image_url')
-  String? get imageUrl => throw _privateConstructorUsedError;
-  List<ProgramDto>? get programs => throw _privateConstructorUsedError;
+  int get weight => throw _privateConstructorUsedError;
 
-  /// Serializes this CategoryDto to a JSON map.
+  /// Serializes this RepeatedDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of CategoryDto
+  /// Create a copy of RepeatedDto
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $CategoryDtoCopyWith<CategoryDto> get copyWith =>
+  $RepeatedDtoCopyWith<RepeatedDto> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CategoryDtoCopyWith<$Res> {
-  factory $CategoryDtoCopyWith(
-    CategoryDto value,
-    $Res Function(CategoryDto) then,
-  ) = _$CategoryDtoCopyWithImpl<$Res, CategoryDto>;
+abstract class $RepeatedDtoCopyWith<$Res> {
+  factory $RepeatedDtoCopyWith(
+    RepeatedDto value,
+    $Res Function(RepeatedDto) then,
+  ) = _$RepeatedDtoCopyWithImpl<$Res, RepeatedDto>;
   @useResult
-  $Res call({
-    int id,
-    String title,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    List<ProgramDto>? programs,
-  });
+  $Res call({int id, int weight});
 }
 
 /// @nodoc
-class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
-    implements $CategoryDtoCopyWith<$Res> {
-  _$CategoryDtoCopyWithImpl(this._value, this._then);
+class _$RepeatedDtoCopyWithImpl<$Res, $Val extends RepeatedDto>
+    implements $RepeatedDtoCopyWith<$Res> {
+  _$RepeatedDtoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of CategoryDto
+  /// Create a copy of RepeatedDto
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? id = null,
-    Object? title = null,
-    Object? imageUrl = freezed,
-    Object? programs = freezed,
-  }) {
+  $Res call({Object? id = null, Object? weight = null}) {
     return _then(
       _value.copyWith(
             id: null == id
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as int,
-            title: null == title
-                ? _value.title
-                : title // ignore: cast_nullable_to_non_nullable
-                      as String,
-            imageUrl: freezed == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            programs: freezed == programs
-                ? _value.programs
-                : programs // ignore: cast_nullable_to_non_nullable
-                      as List<ProgramDto>?,
+            weight: null == weight
+                ? _value.weight
+                : weight // ignore: cast_nullable_to_non_nullable
+                      as int,
           )
           as $Val,
     );
@@ -97,59 +76,41 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
 }
 
 /// @nodoc
-abstract class _$$CategoryDtoImplCopyWith<$Res>
-    implements $CategoryDtoCopyWith<$Res> {
-  factory _$$CategoryDtoImplCopyWith(
-    _$CategoryDtoImpl value,
-    $Res Function(_$CategoryDtoImpl) then,
-  ) = __$$CategoryDtoImplCopyWithImpl<$Res>;
+abstract class _$$RepeatedDtoImplCopyWith<$Res>
+    implements $RepeatedDtoCopyWith<$Res> {
+  factory _$$RepeatedDtoImplCopyWith(
+    _$RepeatedDtoImpl value,
+    $Res Function(_$RepeatedDtoImpl) then,
+  ) = __$$RepeatedDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    int id,
-    String title,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    List<ProgramDto>? programs,
-  });
+  $Res call({int id, int weight});
 }
 
 /// @nodoc
-class __$$CategoryDtoImplCopyWithImpl<$Res>
-    extends _$CategoryDtoCopyWithImpl<$Res, _$CategoryDtoImpl>
-    implements _$$CategoryDtoImplCopyWith<$Res> {
-  __$$CategoryDtoImplCopyWithImpl(
-    _$CategoryDtoImpl _value,
-    $Res Function(_$CategoryDtoImpl) _then,
+class __$$RepeatedDtoImplCopyWithImpl<$Res>
+    extends _$RepeatedDtoCopyWithImpl<$Res, _$RepeatedDtoImpl>
+    implements _$$RepeatedDtoImplCopyWith<$Res> {
+  __$$RepeatedDtoImplCopyWithImpl(
+    _$RepeatedDtoImpl _value,
+    $Res Function(_$RepeatedDtoImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of CategoryDto
+  /// Create a copy of RepeatedDto
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? id = null,
-    Object? title = null,
-    Object? imageUrl = freezed,
-    Object? programs = freezed,
-  }) {
+  $Res call({Object? id = null, Object? weight = null}) {
     return _then(
-      _$CategoryDtoImpl(
+      _$RepeatedDtoImpl(
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as int,
-        title: null == title
-            ? _value.title
-            : title // ignore: cast_nullable_to_non_nullable
-                  as String,
-        imageUrl: freezed == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        programs: freezed == programs
-            ? _value._programs
-            : programs // ignore: cast_nullable_to_non_nullable
-                  as List<ProgramDto>?,
+        weight: null == weight
+            ? _value.weight
+            : weight // ignore: cast_nullable_to_non_nullable
+                  as int,
       ),
     );
   }
@@ -157,49 +118,272 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CategoryDtoImpl implements _CategoryDto {
-  const _$CategoryDtoImpl({
-    required this.id,
-    required this.title,
-    @JsonKey(name: 'image_url') this.imageUrl,
-    final List<ProgramDto>? programs,
-  }) : _programs = programs;
+class _$RepeatedDtoImpl implements _RepeatedDto {
+  const _$RepeatedDtoImpl({required this.id, required this.weight});
 
-  factory _$CategoryDtoImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CategoryDtoImplFromJson(json);
+  factory _$RepeatedDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RepeatedDtoImplFromJson(json);
 
   @override
   final int id;
   @override
-  final String title;
-  @override
-  @JsonKey(name: 'image_url')
-  final String? imageUrl;
-  final List<ProgramDto>? _programs;
-  @override
-  List<ProgramDto>? get programs {
-    final value = _programs;
-    if (value == null) return null;
-    if (_programs is EqualUnmodifiableListView) return _programs;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
+  final int weight;
 
   @override
   String toString() {
-    return 'CategoryDto(id: $id, title: $title, imageUrl: $imageUrl, programs: $programs)';
+    return 'RepeatedDto(id: $id, weight: $weight)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CategoryDtoImpl &&
+            other is _$RepeatedDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.title, title) || other.title == title) &&
-            (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl) &&
-            const DeepCollectionEquality().equals(other._programs, _programs));
+            (identical(other.weight, weight) || other.weight == weight));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, weight);
+
+  /// Create a copy of RepeatedDto
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RepeatedDtoImplCopyWith<_$RepeatedDtoImpl> get copyWith =>
+      __$$RepeatedDtoImplCopyWithImpl<_$RepeatedDtoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RepeatedDtoImplToJson(this);
+  }
+}
+
+abstract class _RepeatedDto implements RepeatedDto {
+  const factory _RepeatedDto({
+    required final int id,
+    required final int weight,
+  }) = _$RepeatedDtoImpl;
+
+  factory _RepeatedDto.fromJson(Map<String, dynamic> json) =
+      _$RepeatedDtoImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  int get weight;
+
+  /// Create a copy of RepeatedDto
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RepeatedDtoImplCopyWith<_$RepeatedDtoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ExerciserDto _$ExerciserDtoFromJson(Map<String, dynamic> json) {
+  return _ExerciserDto.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ExerciserDto {
+  int get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  String get image => throw _privateConstructorUsedError;
+  List<RepeatedDto>? get repeats => throw _privateConstructorUsedError;
+
+  /// Serializes this ExerciserDto to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ExerciserDto
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ExerciserDtoCopyWith<ExerciserDto> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ExerciserDtoCopyWith<$Res> {
+  factory $ExerciserDtoCopyWith(
+    ExerciserDto value,
+    $Res Function(ExerciserDto) then,
+  ) = _$ExerciserDtoCopyWithImpl<$Res, ExerciserDto>;
+  @useResult
+  $Res call({
+    int id,
+    String name,
+    String description,
+    String image,
+    List<RepeatedDto>? repeats,
+  });
+}
+
+/// @nodoc
+class _$ExerciserDtoCopyWithImpl<$Res, $Val extends ExerciserDto>
+    implements $ExerciserDtoCopyWith<$Res> {
+  _$ExerciserDtoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ExerciserDto
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? description = null,
+    Object? image = null,
+    Object? repeats = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as int,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: null == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String,
+            image: null == image
+                ? _value.image
+                : image // ignore: cast_nullable_to_non_nullable
+                      as String,
+            repeats: freezed == repeats
+                ? _value.repeats
+                : repeats // ignore: cast_nullable_to_non_nullable
+                      as List<RepeatedDto>?,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$ExerciserDtoImplCopyWith<$Res>
+    implements $ExerciserDtoCopyWith<$Res> {
+  factory _$$ExerciserDtoImplCopyWith(
+    _$ExerciserDtoImpl value,
+    $Res Function(_$ExerciserDtoImpl) then,
+  ) = __$$ExerciserDtoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    int id,
+    String name,
+    String description,
+    String image,
+    List<RepeatedDto>? repeats,
+  });
+}
+
+/// @nodoc
+class __$$ExerciserDtoImplCopyWithImpl<$Res>
+    extends _$ExerciserDtoCopyWithImpl<$Res, _$ExerciserDtoImpl>
+    implements _$$ExerciserDtoImplCopyWith<$Res> {
+  __$$ExerciserDtoImplCopyWithImpl(
+    _$ExerciserDtoImpl _value,
+    $Res Function(_$ExerciserDtoImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of ExerciserDto
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? description = null,
+    Object? image = null,
+    Object? repeats = freezed,
+  }) {
+    return _then(
+      _$ExerciserDtoImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as int,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: null == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String,
+        image: null == image
+            ? _value.image
+            : image // ignore: cast_nullable_to_non_nullable
+                  as String,
+        repeats: freezed == repeats
+            ? _value._repeats
+            : repeats // ignore: cast_nullable_to_non_nullable
+                  as List<RepeatedDto>?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true)
+class _$ExerciserDtoImpl implements _ExerciserDto {
+  const _$ExerciserDtoImpl({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.image,
+    final List<RepeatedDto>? repeats,
+  }) : _repeats = repeats;
+
+  factory _$ExerciserDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ExerciserDtoImplFromJson(json);
+
+  @override
+  final int id;
+  @override
+  final String name;
+  @override
+  final String description;
+  @override
+  final String image;
+  final List<RepeatedDto>? _repeats;
+  @override
+  List<RepeatedDto>? get repeats {
+    final value = _repeats;
+    if (value == null) return null;
+    if (_repeats is EqualUnmodifiableListView) return _repeats;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'ExerciserDto(id: $id, name: $name, description: $description, image: $image, repeats: $repeats)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ExerciserDtoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.image, image) || other.image == image) &&
+            const DeepCollectionEquality().equals(other._repeats, _repeats));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -207,51 +391,54 @@ class _$CategoryDtoImpl implements _CategoryDto {
   int get hashCode => Object.hash(
     runtimeType,
     id,
-    title,
-    imageUrl,
-    const DeepCollectionEquality().hash(_programs),
+    name,
+    description,
+    image,
+    const DeepCollectionEquality().hash(_repeats),
   );
 
-  /// Create a copy of CategoryDto
+  /// Create a copy of ExerciserDto
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$CategoryDtoImplCopyWith<_$CategoryDtoImpl> get copyWith =>
-      __$$CategoryDtoImplCopyWithImpl<_$CategoryDtoImpl>(this, _$identity);
+  _$$ExerciserDtoImplCopyWith<_$ExerciserDtoImpl> get copyWith =>
+      __$$ExerciserDtoImplCopyWithImpl<_$ExerciserDtoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CategoryDtoImplToJson(this);
+    return _$$ExerciserDtoImplToJson(this);
   }
 }
 
-abstract class _CategoryDto implements CategoryDto {
-  const factory _CategoryDto({
+abstract class _ExerciserDto implements ExerciserDto {
+  const factory _ExerciserDto({
     required final int id,
-    required final String title,
-    @JsonKey(name: 'image_url') final String? imageUrl,
-    final List<ProgramDto>? programs,
-  }) = _$CategoryDtoImpl;
+    required final String name,
+    required final String description,
+    required final String image,
+    final List<RepeatedDto>? repeats,
+  }) = _$ExerciserDtoImpl;
 
-  factory _CategoryDto.fromJson(Map<String, dynamic> json) =
-      _$CategoryDtoImpl.fromJson;
+  factory _ExerciserDto.fromJson(Map<String, dynamic> json) =
+      _$ExerciserDtoImpl.fromJson;
 
   @override
   int get id;
   @override
-  String get title;
+  String get name;
   @override
-  @JsonKey(name: 'image_url')
-  String? get imageUrl;
+  String get description;
   @override
-  List<ProgramDto>? get programs;
+  String get image;
+  @override
+  List<RepeatedDto>? get repeats;
 
-  /// Create a copy of CategoryDto
+  /// Create a copy of ExerciserDto
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CategoryDtoImplCopyWith<_$CategoryDtoImpl> get copyWith =>
+  _$$ExerciserDtoImplCopyWith<_$ExerciserDtoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -262,15 +449,9 @@ ProgramDto _$ProgramDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ProgramDto {
   int get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
-  String get difficulty => throw _privateConstructorUsedError;
-  @JsonKey(name: 'image_url')
-  String? get imageUrl => throw _privateConstructorUsedError; // Добавили
-  double? get rating => throw _privateConstructorUsedError; // Добавили
-  @JsonKey(name: 'trainer_name')
-  String? get trainerName => throw _privateConstructorUsedError; // Добавили
-  List<ExerciseDto>? get exercises => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  List<ExerciserDto>? get exercises => throw _privateConstructorUsedError;
 
   /// Serializes this ProgramDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -291,13 +472,9 @@ abstract class $ProgramDtoCopyWith<$Res> {
   @useResult
   $Res call({
     int id,
-    String title,
-    String? description,
-    String difficulty,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    double? rating,
-    @JsonKey(name: 'trainer_name') String? trainerName,
-    List<ExerciseDto>? exercises,
+    String name,
+    String description,
+    List<ExerciserDto>? exercises,
   });
 }
 
@@ -317,12 +494,8 @@ class _$ProgramDtoCopyWithImpl<$Res, $Val extends ProgramDto>
   @override
   $Res call({
     Object? id = null,
-    Object? title = null,
-    Object? description = freezed,
-    Object? difficulty = null,
-    Object? imageUrl = freezed,
-    Object? rating = freezed,
-    Object? trainerName = freezed,
+    Object? name = null,
+    Object? description = null,
     Object? exercises = freezed,
   }) {
     return _then(
@@ -331,34 +504,18 @@ class _$ProgramDtoCopyWithImpl<$Res, $Val extends ProgramDto>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as int,
-            title: null == title
-                ? _value.title
-                : title // ignore: cast_nullable_to_non_nullable
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            description: freezed == description
+            description: null == description
                 ? _value.description
                 : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            difficulty: null == difficulty
-                ? _value.difficulty
-                : difficulty // ignore: cast_nullable_to_non_nullable
                       as String,
-            imageUrl: freezed == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            rating: freezed == rating
-                ? _value.rating
-                : rating // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            trainerName: freezed == trainerName
-                ? _value.trainerName
-                : trainerName // ignore: cast_nullable_to_non_nullable
-                      as String?,
             exercises: freezed == exercises
                 ? _value.exercises
                 : exercises // ignore: cast_nullable_to_non_nullable
-                      as List<ExerciseDto>?,
+                      as List<ExerciserDto>?,
           )
           as $Val,
     );
@@ -376,13 +533,9 @@ abstract class _$$ProgramDtoImplCopyWith<$Res>
   @useResult
   $Res call({
     int id,
-    String title,
-    String? description,
-    String difficulty,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    double? rating,
-    @JsonKey(name: 'trainer_name') String? trainerName,
-    List<ExerciseDto>? exercises,
+    String name,
+    String description,
+    List<ExerciserDto>? exercises,
   });
 }
 
@@ -401,12 +554,8 @@ class __$$ProgramDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? title = null,
-    Object? description = freezed,
-    Object? difficulty = null,
-    Object? imageUrl = freezed,
-    Object? rating = freezed,
-    Object? trainerName = freezed,
+    Object? name = null,
+    Object? description = null,
     Object? exercises = freezed,
   }) {
     return _then(
@@ -415,51 +564,32 @@ class __$$ProgramDtoImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as int,
-        title: null == title
-            ? _value.title
-            : title // ignore: cast_nullable_to_non_nullable
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        description: freezed == description
+        description: null == description
             ? _value.description
             : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        difficulty: null == difficulty
-            ? _value.difficulty
-            : difficulty // ignore: cast_nullable_to_non_nullable
                   as String,
-        imageUrl: freezed == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        rating: freezed == rating
-            ? _value.rating
-            : rating // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        trainerName: freezed == trainerName
-            ? _value.trainerName
-            : trainerName // ignore: cast_nullable_to_non_nullable
-                  as String?,
         exercises: freezed == exercises
             ? _value._exercises
             : exercises // ignore: cast_nullable_to_non_nullable
-                  as List<ExerciseDto>?,
+                  as List<ExerciserDto>?,
       ),
     );
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true)
 class _$ProgramDtoImpl implements _ProgramDto {
   const _$ProgramDtoImpl({
     required this.id,
-    required this.title,
-    this.description,
-    required this.difficulty,
-    @JsonKey(name: 'image_url') this.imageUrl,
-    this.rating,
-    @JsonKey(name: 'trainer_name') this.trainerName,
-    final List<ExerciseDto>? exercises,
+    required this.name,
+    required this.description,
+    final List<ExerciserDto>? exercises,
   }) : _exercises = exercises;
 
   factory _$ProgramDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -468,26 +598,12 @@ class _$ProgramDtoImpl implements _ProgramDto {
   @override
   final int id;
   @override
-  final String title;
+  final String name;
   @override
-  final String? description;
+  final String description;
+  final List<ExerciserDto>? _exercises;
   @override
-  final String difficulty;
-  @override
-  @JsonKey(name: 'image_url')
-  final String? imageUrl;
-  // Добавили
-  @override
-  final double? rating;
-  // Добавили
-  @override
-  @JsonKey(name: 'trainer_name')
-  final String? trainerName;
-  // Добавили
-  final List<ExerciseDto>? _exercises;
-  // Добавили
-  @override
-  List<ExerciseDto>? get exercises {
+  List<ExerciserDto>? get exercises {
     final value = _exercises;
     if (value == null) return null;
     if (_exercises is EqualUnmodifiableListView) return _exercises;
@@ -497,7 +613,7 @@ class _$ProgramDtoImpl implements _ProgramDto {
 
   @override
   String toString() {
-    return 'ProgramDto(id: $id, title: $title, description: $description, difficulty: $difficulty, imageUrl: $imageUrl, rating: $rating, trainerName: $trainerName, exercises: $exercises)';
+    return 'ProgramDto(id: $id, name: $name, description: $description, exercises: $exercises)';
   }
 
   @override
@@ -506,16 +622,9 @@ class _$ProgramDtoImpl implements _ProgramDto {
         (other.runtimeType == runtimeType &&
             other is _$ProgramDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.title, title) || other.title == title) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.difficulty, difficulty) ||
-                other.difficulty == difficulty) &&
-            (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl) &&
-            (identical(other.rating, rating) || other.rating == rating) &&
-            (identical(other.trainerName, trainerName) ||
-                other.trainerName == trainerName) &&
             const DeepCollectionEquality().equals(
               other._exercises,
               _exercises,
@@ -527,12 +636,8 @@ class _$ProgramDtoImpl implements _ProgramDto {
   int get hashCode => Object.hash(
     runtimeType,
     id,
-    title,
+    name,
     description,
-    difficulty,
-    imageUrl,
-    rating,
-    trainerName,
     const DeepCollectionEquality().hash(_exercises),
   );
 
@@ -553,13 +658,9 @@ class _$ProgramDtoImpl implements _ProgramDto {
 abstract class _ProgramDto implements ProgramDto {
   const factory _ProgramDto({
     required final int id,
-    required final String title,
-    final String? description,
-    required final String difficulty,
-    @JsonKey(name: 'image_url') final String? imageUrl,
-    final double? rating,
-    @JsonKey(name: 'trainer_name') final String? trainerName,
-    final List<ExerciseDto>? exercises,
+    required final String name,
+    required final String description,
+    final List<ExerciserDto>? exercises,
   }) = _$ProgramDtoImpl;
 
   factory _ProgramDto.fromJson(Map<String, dynamic> json) =
@@ -568,21 +669,11 @@ abstract class _ProgramDto implements ProgramDto {
   @override
   int get id;
   @override
-  String get title;
+  String get name;
   @override
-  String? get description;
+  String get description;
   @override
-  String get difficulty;
-  @override
-  @JsonKey(name: 'image_url')
-  String? get imageUrl; // Добавили
-  @override
-  double? get rating; // Добавили
-  @override
-  @JsonKey(name: 'trainer_name')
-  String? get trainerName; // Добавили
-  @override
-  List<ExerciseDto>? get exercises;
+  List<ExerciserDto>? get exercises;
 
   /// Create a copy of ProgramDto
   /// with the given fields replaced by the non-null parameter values.
@@ -592,66 +683,56 @@ abstract class _ProgramDto implements ProgramDto {
       throw _privateConstructorUsedError;
 }
 
-ExerciseDto _$ExerciseDtoFromJson(Map<String, dynamic> json) {
-  return _ExerciseDto.fromJson(json);
+CategoryDto _$CategoryDtoFromJson(Map<String, dynamic> json) {
+  return _CategoryDto.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ExerciseDto {
+mixin _$CategoryDto {
   int get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
-  @JsonKey(name: 'video_url')
-  String? get videoUrl => throw _privateConstructorUsedError;
-  @JsonKey(name: 'thumbnail_url')
-  String? get thumbnailUrl => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError; // В Go это Name
+  String get image => throw _privateConstructorUsedError; // В Go это Image
+  List<ProgramDto>? get programs => throw _privateConstructorUsedError;
 
-  /// Serializes this ExerciseDto to a JSON map.
+  /// Serializes this CategoryDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of ExerciseDto
+  /// Create a copy of CategoryDto
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ExerciseDtoCopyWith<ExerciseDto> get copyWith =>
+  $CategoryDtoCopyWith<CategoryDto> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ExerciseDtoCopyWith<$Res> {
-  factory $ExerciseDtoCopyWith(
-    ExerciseDto value,
-    $Res Function(ExerciseDto) then,
-  ) = _$ExerciseDtoCopyWithImpl<$Res, ExerciseDto>;
+abstract class $CategoryDtoCopyWith<$Res> {
+  factory $CategoryDtoCopyWith(
+    CategoryDto value,
+    $Res Function(CategoryDto) then,
+  ) = _$CategoryDtoCopyWithImpl<$Res, CategoryDto>;
   @useResult
-  $Res call({
-    int id,
-    String title,
-    String? description,
-    @JsonKey(name: 'video_url') String? videoUrl,
-    @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
-  });
+  $Res call({int id, String name, String image, List<ProgramDto>? programs});
 }
 
 /// @nodoc
-class _$ExerciseDtoCopyWithImpl<$Res, $Val extends ExerciseDto>
-    implements $ExerciseDtoCopyWith<$Res> {
-  _$ExerciseDtoCopyWithImpl(this._value, this._then);
+class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
+    implements $CategoryDtoCopyWith<$Res> {
+  _$CategoryDtoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ExerciseDto
+  /// Create a copy of CategoryDto
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
-    Object? title = null,
-    Object? description = freezed,
-    Object? videoUrl = freezed,
-    Object? thumbnailUrl = freezed,
+    Object? name = null,
+    Object? image = null,
+    Object? programs = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -659,22 +740,18 @@ class _$ExerciseDtoCopyWithImpl<$Res, $Val extends ExerciseDto>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as int,
-            title: null == title
-                ? _value.title
-                : title // ignore: cast_nullable_to_non_nullable
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            videoUrl: freezed == videoUrl
-                ? _value.videoUrl
-                : videoUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            thumbnailUrl: freezed == thumbnailUrl
-                ? _value.thumbnailUrl
-                : thumbnailUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
+            image: null == image
+                ? _value.image
+                : image // ignore: cast_nullable_to_non_nullable
+                      as String,
+            programs: freezed == programs
+                ? _value.programs
+                : programs // ignore: cast_nullable_to_non_nullable
+                      as List<ProgramDto>?,
           )
           as $Val,
     );
@@ -682,165 +759,156 @@ class _$ExerciseDtoCopyWithImpl<$Res, $Val extends ExerciseDto>
 }
 
 /// @nodoc
-abstract class _$$ExerciseDtoImplCopyWith<$Res>
-    implements $ExerciseDtoCopyWith<$Res> {
-  factory _$$ExerciseDtoImplCopyWith(
-    _$ExerciseDtoImpl value,
-    $Res Function(_$ExerciseDtoImpl) then,
-  ) = __$$ExerciseDtoImplCopyWithImpl<$Res>;
+abstract class _$$CategoryDtoImplCopyWith<$Res>
+    implements $CategoryDtoCopyWith<$Res> {
+  factory _$$CategoryDtoImplCopyWith(
+    _$CategoryDtoImpl value,
+    $Res Function(_$CategoryDtoImpl) then,
+  ) = __$$CategoryDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    int id,
-    String title,
-    String? description,
-    @JsonKey(name: 'video_url') String? videoUrl,
-    @JsonKey(name: 'thumbnail_url') String? thumbnailUrl,
-  });
+  $Res call({int id, String name, String image, List<ProgramDto>? programs});
 }
 
 /// @nodoc
-class __$$ExerciseDtoImplCopyWithImpl<$Res>
-    extends _$ExerciseDtoCopyWithImpl<$Res, _$ExerciseDtoImpl>
-    implements _$$ExerciseDtoImplCopyWith<$Res> {
-  __$$ExerciseDtoImplCopyWithImpl(
-    _$ExerciseDtoImpl _value,
-    $Res Function(_$ExerciseDtoImpl) _then,
+class __$$CategoryDtoImplCopyWithImpl<$Res>
+    extends _$CategoryDtoCopyWithImpl<$Res, _$CategoryDtoImpl>
+    implements _$$CategoryDtoImplCopyWith<$Res> {
+  __$$CategoryDtoImplCopyWithImpl(
+    _$CategoryDtoImpl _value,
+    $Res Function(_$CategoryDtoImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of ExerciseDto
+  /// Create a copy of CategoryDto
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
-    Object? title = null,
-    Object? description = freezed,
-    Object? videoUrl = freezed,
-    Object? thumbnailUrl = freezed,
+    Object? name = null,
+    Object? image = null,
+    Object? programs = freezed,
   }) {
     return _then(
-      _$ExerciseDtoImpl(
+      _$CategoryDtoImpl(
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as int,
-        title: null == title
-            ? _value.title
-            : title // ignore: cast_nullable_to_non_nullable
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        videoUrl: freezed == videoUrl
-            ? _value.videoUrl
-            : videoUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        thumbnailUrl: freezed == thumbnailUrl
-            ? _value.thumbnailUrl
-            : thumbnailUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
+        image: null == image
+            ? _value.image
+            : image // ignore: cast_nullable_to_non_nullable
+                  as String,
+        programs: freezed == programs
+            ? _value._programs
+            : programs // ignore: cast_nullable_to_non_nullable
+                  as List<ProgramDto>?,
       ),
     );
   }
 }
 
 /// @nodoc
-@JsonSerializable()
-class _$ExerciseDtoImpl implements _ExerciseDto {
-  const _$ExerciseDtoImpl({
-    required this.id,
-    required this.title,
-    this.description,
-    @JsonKey(name: 'video_url') this.videoUrl,
-    @JsonKey(name: 'thumbnail_url') this.thumbnailUrl,
-  });
 
-  factory _$ExerciseDtoImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ExerciseDtoImplFromJson(json);
+@JsonSerializable(explicitToJson: true)
+class _$CategoryDtoImpl implements _CategoryDto {
+  const _$CategoryDtoImpl({
+    required this.id,
+    required this.name,
+    required this.image,
+    final List<ProgramDto>? programs,
+  }) : _programs = programs;
+
+  factory _$CategoryDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CategoryDtoImplFromJson(json);
 
   @override
   final int id;
   @override
-  final String title;
+  final String name;
+  // В Go это Name
   @override
-  final String? description;
+  final String image;
+  // В Go это Image
+  final List<ProgramDto>? _programs;
+  // В Go это Image
   @override
-  @JsonKey(name: 'video_url')
-  final String? videoUrl;
-  @override
-  @JsonKey(name: 'thumbnail_url')
-  final String? thumbnailUrl;
+  List<ProgramDto>? get programs {
+    final value = _programs;
+    if (value == null) return null;
+    if (_programs is EqualUnmodifiableListView) return _programs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'ExerciseDto(id: $id, title: $title, description: $description, videoUrl: $videoUrl, thumbnailUrl: $thumbnailUrl)';
+    return 'CategoryDto(id: $id, name: $name, image: $image, programs: $programs)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ExerciseDtoImpl &&
+            other is _$CategoryDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.title, title) || other.title == title) &&
-            (identical(other.description, description) ||
-                other.description == description) &&
-            (identical(other.videoUrl, videoUrl) ||
-                other.videoUrl == videoUrl) &&
-            (identical(other.thumbnailUrl, thumbnailUrl) ||
-                other.thumbnailUrl == thumbnailUrl));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.image, image) || other.image == image) &&
+            const DeepCollectionEquality().equals(other._programs, _programs));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, title, description, videoUrl, thumbnailUrl);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    name,
+    image,
+    const DeepCollectionEquality().hash(_programs),
+  );
 
-  /// Create a copy of ExerciseDto
+  /// Create a copy of CategoryDto
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ExerciseDtoImplCopyWith<_$ExerciseDtoImpl> get copyWith =>
-      __$$ExerciseDtoImplCopyWithImpl<_$ExerciseDtoImpl>(this, _$identity);
+  _$$CategoryDtoImplCopyWith<_$CategoryDtoImpl> get copyWith =>
+      __$$CategoryDtoImplCopyWithImpl<_$CategoryDtoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ExerciseDtoImplToJson(this);
+    return _$$CategoryDtoImplToJson(this);
   }
 }
 
-abstract class _ExerciseDto implements ExerciseDto {
-  const factory _ExerciseDto({
+abstract class _CategoryDto implements CategoryDto {
+  const factory _CategoryDto({
     required final int id,
-    required final String title,
-    final String? description,
-    @JsonKey(name: 'video_url') final String? videoUrl,
-    @JsonKey(name: 'thumbnail_url') final String? thumbnailUrl,
-  }) = _$ExerciseDtoImpl;
+    required final String name,
+    required final String image,
+    final List<ProgramDto>? programs,
+  }) = _$CategoryDtoImpl;
 
-  factory _ExerciseDto.fromJson(Map<String, dynamic> json) =
-      _$ExerciseDtoImpl.fromJson;
+  factory _CategoryDto.fromJson(Map<String, dynamic> json) =
+      _$CategoryDtoImpl.fromJson;
 
   @override
   int get id;
   @override
-  String get title;
+  String get name; // В Go это Name
   @override
-  String? get description;
+  String get image; // В Go это Image
   @override
-  @JsonKey(name: 'video_url')
-  String? get videoUrl;
-  @override
-  @JsonKey(name: 'thumbnail_url')
-  String? get thumbnailUrl;
+  List<ProgramDto>? get programs;
 
-  /// Create a copy of ExerciseDto
+  /// Create a copy of CategoryDto
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ExerciseDtoImplCopyWith<_$ExerciseDtoImpl> get copyWith =>
+  _$$CategoryDtoImplCopyWith<_$CategoryDtoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

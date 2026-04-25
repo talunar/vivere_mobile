@@ -8,8 +8,8 @@ part of 'auth_dto.dart';
 
 _$AuthDtoImpl _$$AuthDtoImplFromJson(Map<String, dynamic> json) =>
     _$AuthDtoImpl(
-      nickName: json['nick_name'] as String,
-      password: json['password'] as String,
+      nickName: json['nick_name'] as String?,
+      password: json['password'] as String?,
       confirmPassword: json['password2'] as String?,
     );
 

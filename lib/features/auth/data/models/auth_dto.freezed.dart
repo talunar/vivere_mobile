@@ -21,11 +21,10 @@ AuthDto _$AuthDtoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AuthDto {
-  // Мапим nick_name из Go в nickName в Dart
   @JsonKey(name: 'nick_name')
-  String get nickName => throw _privateConstructorUsedError;
-  String get password =>
-      throw _privateConstructorUsedError; // В Go это password2, во Flutter назовем confirmPassword
+  String? get nickName => throw _privateConstructorUsedError; // Необязательное поле
+  String? get password =>
+      throw _privateConstructorUsedError; // Необязательное поле
   @JsonKey(name: 'password2')
   String? get confirmPassword => throw _privateConstructorUsedError;
 
@@ -44,8 +43,8 @@ abstract class $AuthDtoCopyWith<$Res> {
       _$AuthDtoCopyWithImpl<$Res, AuthDto>;
   @useResult
   $Res call({
-    @JsonKey(name: 'nick_name') String nickName,
-    String password,
+    @JsonKey(name: 'nick_name') String? nickName,
+    String? password,
     @JsonKey(name: 'password2') String? confirmPassword,
   });
 }
@@ -65,20 +64,20 @@ class _$AuthDtoCopyWithImpl<$Res, $Val extends AuthDto>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? nickName = null,
-    Object? password = null,
+    Object? nickName = freezed,
+    Object? password = freezed,
     Object? confirmPassword = freezed,
   }) {
     return _then(
       _value.copyWith(
-            nickName: null == nickName
+            nickName: freezed == nickName
                 ? _value.nickName
                 : nickName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            password: null == password
+                      as String?,
+            password: freezed == password
                 ? _value.password
                 : password // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             confirmPassword: freezed == confirmPassword
                 ? _value.confirmPassword
                 : confirmPassword // ignore: cast_nullable_to_non_nullable
@@ -98,8 +97,8 @@ abstract class _$$AuthDtoImplCopyWith<$Res> implements $AuthDtoCopyWith<$Res> {
   @override
   @useResult
   $Res call({
-    @JsonKey(name: 'nick_name') String nickName,
-    String password,
+    @JsonKey(name: 'nick_name') String? nickName,
+    String? password,
     @JsonKey(name: 'password2') String? confirmPassword,
   });
 }
@@ -118,20 +117,20 @@ class __$$AuthDtoImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? nickName = null,
-    Object? password = null,
+    Object? nickName = freezed,
+    Object? password = freezed,
     Object? confirmPassword = freezed,
   }) {
     return _then(
       _$AuthDtoImpl(
-        nickName: null == nickName
+        nickName: freezed == nickName
             ? _value.nickName
             : nickName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        password: null == password
+                  as String?,
+        password: freezed == password
             ? _value.password
             : password // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         confirmPassword: freezed == confirmPassword
             ? _value.confirmPassword
             : confirmPassword // ignore: cast_nullable_to_non_nullable
@@ -145,21 +144,21 @@ class __$$AuthDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AuthDtoImpl implements _AuthDto {
   const _$AuthDtoImpl({
-    @JsonKey(name: 'nick_name') required this.nickName,
-    required this.password,
+    @JsonKey(name: 'nick_name') this.nickName,
+    this.password,
     @JsonKey(name: 'password2') this.confirmPassword,
   });
 
   factory _$AuthDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthDtoImplFromJson(json);
 
-  // Мапим nick_name из Go в nickName в Dart
   @override
   @JsonKey(name: 'nick_name')
-  final String nickName;
+  final String? nickName;
+  // Необязательное поле
   @override
-  final String password;
-  // В Go это password2, во Flutter назовем confirmPassword
+  final String? password;
+  // Необязательное поле
   @override
   @JsonKey(name: 'password2')
   final String? confirmPassword;
@@ -203,19 +202,18 @@ class _$AuthDtoImpl implements _AuthDto {
 
 abstract class _AuthDto implements AuthDto {
   const factory _AuthDto({
-    @JsonKey(name: 'nick_name') required final String nickName,
-    required final String password,
+    @JsonKey(name: 'nick_name') final String? nickName,
+    final String? password,
     @JsonKey(name: 'password2') final String? confirmPassword,
   }) = _$AuthDtoImpl;
 
   factory _AuthDto.fromJson(Map<String, dynamic> json) = _$AuthDtoImpl.fromJson;
 
-  // Мапим nick_name из Go в nickName в Dart
   @override
   @JsonKey(name: 'nick_name')
-  String get nickName;
+  String? get nickName; // Необязательное поле
   @override
-  String get password; // В Go это password2, во Flutter назовем confirmPassword
+  String? get password; // Необязательное поле
   @override
   @JsonKey(name: 'password2')
   String? get confirmPassword;

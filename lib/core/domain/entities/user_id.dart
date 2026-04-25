@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-extension type const UserId(int value) {}
+extension type const UserId(int value) {} // Указала ID как Int, если ID другого типа - переделать
 
 class UserIdConverter implements JsonConverter<UserId, int> {
   const UserIdConverter();

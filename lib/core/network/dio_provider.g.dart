@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'router.dart';
+part of 'dio_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'b9e1e033eb1f26a24cb0c1381663618c76a8cd7d';
+String _$dioHash() => r'04938e61979c12f0b883a8ba37ff90bf1e1cb26f';
 
-/// See also [router].
-@ProviderFor(router)
-final routerProvider = AutoDisposeProvider<GoRouter>.internal(
-  router,
-  name: r'routerProvider',
+/// See also [dio].
+@ProviderFor(dio)
+final dioProvider = AutoDisposeProvider<Dio>.internal(
+  dio,
+  name: r'dioProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$routerHash,
+      : _$dioHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef RouterRef = AutoDisposeProviderRef<GoRouter>;
+typedef DioRef = AutoDisposeProviderRef<Dio>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

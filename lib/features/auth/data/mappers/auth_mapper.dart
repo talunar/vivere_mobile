@@ -3,16 +3,16 @@ import '../../domain/entities/auth_user.dart';
 import '../models/auth_dto.dart';
 
 extension AuthDtoX on AuthDto {
+  /// TODO Создаем модель из того, что может ввести пользователь без учета бэка и JSON
   AuthUser toDomain({
-    required String id,
-    String? token,
+    required String nickName,
     required String email,
   }) {
     return AuthUser(
-      id: UserId(id),
+      id: const UserId(1), // Заглушка ID
       email: email,
       nickName: nickName,
-      token: token,
+      token: 'fake_token_from_cookie', // Пометка, что токен в куках
     );
   }
 }

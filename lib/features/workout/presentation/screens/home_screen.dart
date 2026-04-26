@@ -1,35 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/workout_providers.dart';
-import 'package:vivere_mobile/features/workout/domain/entities/workout_program.dart';
+import '../../domain/entities/workout_category.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Получаем данные
-    final topProgramsAsync = ref.watch(topProgramsProvider);
+    // Выводим список категорий
+    final categoriesAsync = ref.watch(workoutCategoriesProvider);
 
     return Scaffold(
-      // Цвет фона, appbar без тени
       backgroundColor: const Color(0xFFF0F0F0),
       appBar: AppBar(
-        title: const Text('Все программы'),
+        title: const Text('Категории тренировок'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
       ),
-      body: topProgramsAsync.when(
-        data: (programs) => ListView.separated(
-          // Отступы списка от краев
+      body: categoriesAsync.when(
+        data: (categories) => ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          itemCount: programs.length,
+          itemCount: categories.length,
           itemBuilder: (context, index) {
-            // Карточка
-            return _WorkoutProgramCard(program: programs[index]);
+            return _CategoryCard(category: categories[index]);
           },
-          // Отступ между карточками
           separatorBuilder: (context, index) => const SizedBox(height: 16),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -39,104 +35,102 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-// Дизайн карточки реализован в отдельном виджете
-class _WorkoutProgramCard extends StatelessWidget {
-  final WorkoutProgram program;
+// Дизайн карточки
+class _CategoryCard extends StatelessWidget {
+  final WorkoutCategory category;
 
-  const _WorkoutProgramCard({required this.program});
+  const _CategoryCard({required this.category});
 
   @override
   Widget build(BuildContext context) {
-    // Карточка с тенью и скруглением
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32), // Скругление как в дизайне Ани
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0), // Отступы внутри карточки
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Изображение для тренировки
+            // Изображение категории
             ClipRRect(
-              borderRadius: BorderRadius.circular(24), // Скругление картинки
-              child: Image.asset(
-                program.imageUrl,
-                width: 130, // Размеры как в дизайне
-                height: 130,
-                fit: BoxFit.cover, // Чтобы картинка не растягивалась
+              borderRadius: BorderRadius.circular(24),
+              child: category.image.startsWith('http')
+                  ? Image.network(
+                category.image,
+                width: 120,
+                height: 120,
+                fit: BoxFit.cover,
+              )
+                  : Container(
+                width: 120,
+                height: 120,
+                color: const Color(0xFFE0E0E0),
+                child: const Icon(Icons.fitness_center, size: 40),
               ),
             ),
-            const SizedBox(width: 20), // Расстояние от картинки до текста
+            const SizedBox(width: 20),
 
-            // Текстовый блок справа
+            // Контентная часть
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Заголовок программы
                   Text(
-                    program.title,
-                    maxLines: 2, // Ограничим в 2 строки
-                    overflow: TextOverflow.ellipsis,
+                    category.name,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5,
-                      // fontFamily: 'Golos Text', // <-- ВКЛЮЧИМ ПОЗЖЕ
                     ),
                   ),
-                  const SizedBox(height: 8), // Отступ
+                  const SizedBox(height: 8),
 
-                  // Блок с рейтингом
-                  Row(
+                  // TODO ЗАГЛУШКА: Блок с рейтингом (пока нет бэка)
+                  const Row(
                     children: [
-                      // Иконка звездочки (не вышло пока сделать, как у Ани)
-                      const Icon(Icons.star, color: Color(0xFFFFD153), size: 20),
-                      const SizedBox(width: 6),
+                      Icon(Icons.star, color: Color(0xFFFFD153), size: 20),
+                      SizedBox(width: 6),
                       Text(
-                        program.rating.toString(),
-                        style: const TextStyle(
+                        '4.9', // Статичная оценка, заменить на category.rating.toString()
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          // fontFamily: 'Golos Text',
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16), // Большой отступ
+                  const SizedBox(height: 16),
 
-                  // Блок тренера
+                  // TODO ЗАГЛУШКА: Блок тренера (пока нет бэка)
                   Row(
                     children: [
-                      // Аватар тренера
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 32,
+                        height: 32,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color(0xFFE0E0E0), // Фон аватара
+                          color: Color(0xFFF0F0F0),
                         ),
-                        child: const Icon(Icons.person, color: Colors.grey),
+                        child: const Icon(Icons.person, size: 20, color: Colors.grey),
                       ),
-                      const SizedBox(width: 12),
-                      // Имя тренера
-                      Expanded(
+                      const SizedBox(width: 8),
+                      const Expanded(
                         child: Text(
-                          program.trainerName,
+                          'Крош', // Статичное имя, заменить на category.trainerName
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            // fontFamily: 'Golos Text',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
                           ),
                         ),
                       ),

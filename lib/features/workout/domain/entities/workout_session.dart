@@ -6,10 +6,10 @@ part 'workout_session.freezed.dart';
 class WorkoutSession with _$WorkoutSession {
   const factory WorkoutSession({
     required String id,
-    required int programId, // К какой программе относится сессия
+    required int programId,
     required DateTime startTime,
     DateTime? endTime,
-    required List<ExerciseResult> results, // Результаты по каждому упражнению
+    required List<ExerciseResult> results, // То, что юзер реально сделал
   }) = _WorkoutSession;
 }
 
@@ -17,7 +17,7 @@ class WorkoutSession with _$WorkoutSession {
 class ExerciseResult with _$ExerciseResult {
   const factory ExerciseResult({
     required int exerciseId,
-    required List<SetRecord> sets,
+    required List<SetRecord> sets, // Фактические веса и повторения
   }) = _ExerciseResult;
 }
 

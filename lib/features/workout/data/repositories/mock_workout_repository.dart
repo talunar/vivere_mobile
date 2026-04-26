@@ -1,72 +1,52 @@
-import '../../domain/entities/exercise.dart';
+import '../../domain/entities/workout_category.dart';
 import '../../domain/entities/workout_program.dart';
 import '../../domain/repositories/i_workout_repository.dart';
 //import '/features/workout/domain/entities/workout_entities.dart';
 
 class MockWorkoutRepository implements IWorkoutRepository {
-  @override
-  Future<List<WorkoutProgram>> getTopPrograms() async {
-    // предложили имитировать реальную задержку сети в 1 сек
-    // чтобы увидеть индикатор загрузки (CircularProgressIndicator)
-    await Future.delayed(const Duration(seconds: 1));
+  // Общая картинка для программ (из твоего макета)
+  final String _mockImageUrl = 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1000&auto=format&fit=crop';
 
-    // 2. Возвращаем список тестовых данных
+  @override
+  Future<List<WorkoutCategory>> getCategories() async {
+    await Future.delayed(const Duration(milliseconds: 500));
     return [
-      const WorkoutProgram(
-        id: '1',
-        title: 'Силовая база: Ноги',
-        rating: 4.9,
-        trainerName: 'Крош',
-        imageUrl: 'assets/design/workout_1.png',
-        exercises: [
-          Exercise(
-            id: 'e1',
-            title: 'Приседания со штангой',
-            description: 'Держи спину ровно, опускайся до параллели с полом',
-            defaultReps: 12,
-            defaultWeight: 40.0,
-          ),
-          Exercise(
-            id: 'e2',
-            title: 'Выпады',
-            description: 'Шаг вперед, колено не выходит за носок',
-            defaultReps: 15,
-            defaultWeight: 10.0,
-          ),
-        ],
-      ),
-      const WorkoutProgram(
-        id: '2',
-        title: 'Кардио Шторм',
-        rating: 4.7,
-        trainerName: 'Совунья',
-        imageUrl: 'assets/design/workout_2.png',
-        exercises: [
-          Exercise(
-            id: 'e3',
-            title: 'Бёрпи',
-            description: 'Максимально интенсивно!',
-            defaultReps: 20,
-            defaultWeight: 0.0,
-          ),
-        ],
-      ),
-      const WorkoutProgram(
-        id: '3',
-        title: 'Йога для спины',
-        rating: 5.0,
-        trainerName: 'Ёжик',
-        imageUrl: 'assets/design/workout_1.png',
-        exercises: [
-          Exercise(
-            id: 'e3',
-            title: 'Наклоны',
-            description: 'Легко и чилово',
-            defaultReps: 20,
-            defaultWeight: 0.0,
-          ),
-        ],
-      ),
+      WorkoutCategory(id: 1, name: 'Силовые', image: '', programs: []),
+      WorkoutCategory(id: 2, name: 'Кардио', image: '', programs: []),
+      WorkoutCategory(id: 3, name: 'Йога', image: '', programs: []),
     ];
+  }
+
+  @override
+  Future<WorkoutCategory> getCategory(int id) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    final programs = await getProgramsByCategory(id);
+    return WorkoutCategory(id: id, name: 'Категория $id', image: '', programs: programs);
+  }
+
+  @override
+  Future<List<WorkoutProgram>> getProgramsByCategory(int categoryId) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    return List.generate(10, (index) => WorkoutProgram(
+      id: index, // Передаем int
+      title: 'Учимся кататься на лыжах #$index',
+      description: 'Гоняем на лыжах',
+      rating: 4.8,
+      trainerName: 'Совунья',
+      exercises: [],
+    ));
+  }
+
+  @override
+  Future<WorkoutProgram> getProgramDetails(int programId) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    return WorkoutProgram(
+      id: programId,
+      title: 'Прыг-скок',
+      description: 'Огненная крутая тренировка для ног',
+      rating: 4.9,
+      trainerName: 'Крош',
+      exercises: [],
+    );
   }
 }

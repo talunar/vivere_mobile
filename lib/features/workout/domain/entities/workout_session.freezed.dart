@@ -18,8 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$WorkoutSession {
   String get id => throw _privateConstructorUsedError;
-  int get programId =>
-      throw _privateConstructorUsedError; // К какой программе относится сессия
+  int get programId => throw _privateConstructorUsedError;
   DateTime get startTime => throw _privateConstructorUsedError;
   DateTime? get endTime => throw _privateConstructorUsedError;
   List<ExerciseResult> get results => throw _privateConstructorUsedError;
@@ -176,7 +175,6 @@ class _$WorkoutSessionImpl implements _WorkoutSession {
   final String id;
   @override
   final int programId;
-  // К какой программе относится сессия
   @override
   final DateTime startTime;
   @override
@@ -242,7 +240,7 @@ abstract class _WorkoutSession implements WorkoutSession {
   @override
   String get id;
   @override
-  int get programId; // К какой программе относится сессия
+  int get programId;
   @override
   DateTime get startTime;
   @override

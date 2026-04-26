@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'exercise.dart';
 import 'repeated.dart';
 
 part 'workout_program.freezed.dart';
@@ -8,11 +7,16 @@ part 'workout_program.freezed.dart';
 class WorkoutProgram with _$WorkoutProgram {
   const factory WorkoutProgram({
     required int id,
-    required String title, // В Go это Name
-    String? description, // Стало необязательным
-    double? rating,      // Для дизайна
-    String? trainerName, // Для дизайна
-    required List<ExerciserInProgram> exercises, // Список упражнений с планом
+    required String title,
+    String? description,
+    double? rating,
+    String? trainerName,
+    String? trainerImage,
+    String? image,
+    String? level,
+    String? equipment,
+    int? durationMinutes,
+    required List<ExerciserInProgram> exercises,
   }) = _WorkoutProgram;
 }
 
@@ -23,6 +27,6 @@ class ExerciserInProgram with _$ExerciserInProgram {
     required String name,
     required String description,
     required String image,
-    required List<Repeated> repeats, // Сколько подходов и с каким весом
+    required List<Repeated> repeats,
   }) = _ExerciserInProgram;
 }

@@ -31,11 +31,11 @@ GoRouter router(RouterRef ref) {
         // Если не авторизован — только на логин
         unauthenticated: () => isLoggingIn ? null : '/login',
 
-        // ШАГ 2: Ввод ФИО и Почты
+        // Ввод ФИО и Почты
         registrationStepName: (login, password) =>
         isRegDetails ? null : '/registration_details',
 
-        // ШАГ 3: Ввод физических параметров (рост/вес/пол)
+        // Ввод физических параметров (рост/вес/пол)
         registrationStepPhysical: (nick, pass, first, last, email) =>
         isProfileSetup ? null : '/profile_setup',
 

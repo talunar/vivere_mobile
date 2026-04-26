@@ -6,7 +6,7 @@ import '../../features/auth/presentation/state/auth_state.dart';
 // Импорты экранов
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/registration_details_screen.dart';
-//import '../../features/auth/presentation/screens/profile_setup_screen.dart';
+import '../../features/profile//presentation/screens/profile_setup_screen.dart';
 import '../../features/workout/presentation/screens/home_screen.dart';
 
 part 'router.g.dart';
@@ -31,11 +31,11 @@ GoRouter router(RouterRef ref) {
         // Если не авторизован — только на логин
         unauthenticated: () => isLoggingIn ? null : '/login',
 
-        // ШАГ 2: Ввод ФИО и Почты
+        // Ввод ФИО и Почты
         registrationStepName: (login, password) =>
         isRegDetails ? null : '/registration_details',
 
-        // ШАГ 3: Ввод физических параметров (рост/вес/пол)
+        // Ввод физических параметров (рост/вес/пол)
         registrationStepPhysical: (nick, pass, first, last, email) =>
         isProfileSetup ? null : '/profile_setup',
 
@@ -63,10 +63,10 @@ GoRouter router(RouterRef ref) {
         path: '/registration_details',
         builder: (context, state) => const RegistrationDetailsScreen(),
       ),
-      GoRoute(
-        path: '/profile_setup',
-        builder: (context, state) => const ProfileSetupScreen(),
-      ),
+      //GoRoute(
+        //path: '/profile_setup',
+       // builder: (context, state) => const ProfileSetupScreen(),
+      //),
       GoRoute(
         path: '/home',
         builder: (context, state) => const HomeScreen(),

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'user_profile.dart';
+part of 'profile_dto.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,56 +15,67 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
+ProfileDto _$ProfileDtoFromJson(Map<String, dynamic> json) {
+  return _ProfileDto.fromJson(json);
+}
+
 /// @nodoc
-mixin _$UserProfile {
-  UserId get id => throw _privateConstructorUsedError;
+mixin _$ProfileDto {
+  int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'nick_name')
   String get nickName => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
+  @JsonKey(name: 'first_name')
   String get firstName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_name')
   String get lastName => throw _privateConstructorUsedError;
   int get age => throw _privateConstructorUsedError;
-  Weight get weight => throw _privateConstructorUsedError;
-  Height get height => throw _privateConstructorUsedError;
+  double get weight => throw _privateConstructorUsedError;
+  double get height => throw _privateConstructorUsedError;
+  @JsonKey(name: 'birth_date')
   String get birthDate => throw _privateConstructorUsedError;
 
-  /// Create a copy of UserProfile
+  /// Serializes this ProfileDto to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ProfileDto
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $UserProfileCopyWith<UserProfile> get copyWith =>
+  $ProfileDtoCopyWith<ProfileDto> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $UserProfileCopyWith<$Res> {
-  factory $UserProfileCopyWith(
-    UserProfile value,
-    $Res Function(UserProfile) then,
-  ) = _$UserProfileCopyWithImpl<$Res, UserProfile>;
+abstract class $ProfileDtoCopyWith<$Res> {
+  factory $ProfileDtoCopyWith(
+    ProfileDto value,
+    $Res Function(ProfileDto) then,
+  ) = _$ProfileDtoCopyWithImpl<$Res, ProfileDto>;
   @useResult
   $Res call({
-    UserId id,
-    String nickName,
+    int id,
+    @JsonKey(name: 'nick_name') String nickName,
     String email,
-    String firstName,
-    String lastName,
+    @JsonKey(name: 'first_name') String firstName,
+    @JsonKey(name: 'last_name') String lastName,
     int age,
-    Weight weight,
-    Height height,
-    String birthDate,
+    double weight,
+    double height,
+    @JsonKey(name: 'birth_date') String birthDate,
   });
 }
 
 /// @nodoc
-class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
-    implements $UserProfileCopyWith<$Res> {
-  _$UserProfileCopyWithImpl(this._value, this._then);
+class _$ProfileDtoCopyWithImpl<$Res, $Val extends ProfileDto>
+    implements $ProfileDtoCopyWith<$Res> {
+  _$ProfileDtoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of UserProfile
+  /// Create a copy of ProfileDto
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -84,7 +95,7 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
             id: null == id
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
-                      as UserId,
+                      as int,
             nickName: null == nickName
                 ? _value.nickName
                 : nickName // ignore: cast_nullable_to_non_nullable
@@ -108,11 +119,11 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
             weight: null == weight
                 ? _value.weight
                 : weight // ignore: cast_nullable_to_non_nullable
-                      as Weight,
+                      as double,
             height: null == height
                 ? _value.height
                 : height // ignore: cast_nullable_to_non_nullable
-                      as Height,
+                      as double,
             birthDate: null == birthDate
                 ? _value.birthDate
                 : birthDate // ignore: cast_nullable_to_non_nullable
@@ -124,37 +135,37 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
 }
 
 /// @nodoc
-abstract class _$$UserProfileImplCopyWith<$Res>
-    implements $UserProfileCopyWith<$Res> {
-  factory _$$UserProfileImplCopyWith(
-    _$UserProfileImpl value,
-    $Res Function(_$UserProfileImpl) then,
-  ) = __$$UserProfileImplCopyWithImpl<$Res>;
+abstract class _$$ProfileDtoImplCopyWith<$Res>
+    implements $ProfileDtoCopyWith<$Res> {
+  factory _$$ProfileDtoImplCopyWith(
+    _$ProfileDtoImpl value,
+    $Res Function(_$ProfileDtoImpl) then,
+  ) = __$$ProfileDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({
-    UserId id,
-    String nickName,
+    int id,
+    @JsonKey(name: 'nick_name') String nickName,
     String email,
-    String firstName,
-    String lastName,
+    @JsonKey(name: 'first_name') String firstName,
+    @JsonKey(name: 'last_name') String lastName,
     int age,
-    Weight weight,
-    Height height,
-    String birthDate,
+    double weight,
+    double height,
+    @JsonKey(name: 'birth_date') String birthDate,
   });
 }
 
 /// @nodoc
-class __$$UserProfileImplCopyWithImpl<$Res>
-    extends _$UserProfileCopyWithImpl<$Res, _$UserProfileImpl>
-    implements _$$UserProfileImplCopyWith<$Res> {
-  __$$UserProfileImplCopyWithImpl(
-    _$UserProfileImpl _value,
-    $Res Function(_$UserProfileImpl) _then,
+class __$$ProfileDtoImplCopyWithImpl<$Res>
+    extends _$ProfileDtoCopyWithImpl<$Res, _$ProfileDtoImpl>
+    implements _$$ProfileDtoImplCopyWith<$Res> {
+  __$$ProfileDtoImplCopyWithImpl(
+    _$ProfileDtoImpl _value,
+    $Res Function(_$ProfileDtoImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of UserProfile
+  /// Create a copy of ProfileDto
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -170,11 +181,11 @@ class __$$UserProfileImplCopyWithImpl<$Res>
     Object? birthDate = null,
   }) {
     return _then(
-      _$UserProfileImpl(
+      _$ProfileDtoImpl(
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
-                  as UserId,
+                  as int,
         nickName: null == nickName
             ? _value.nickName
             : nickName // ignore: cast_nullable_to_non_nullable
@@ -198,11 +209,11 @@ class __$$UserProfileImplCopyWithImpl<$Res>
         weight: null == weight
             ? _value.weight
             : weight // ignore: cast_nullable_to_non_nullable
-                  as Weight,
+                  as double,
         height: null == height
             ? _value.height
             : height // ignore: cast_nullable_to_non_nullable
-                  as Height,
+                  as double,
         birthDate: null == birthDate
             ? _value.birthDate
             : birthDate // ignore: cast_nullable_to_non_nullable
@@ -213,49 +224,56 @@ class __$$UserProfileImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-class _$UserProfileImpl implements _UserProfile {
-  const _$UserProfileImpl({
+@JsonSerializable()
+class _$ProfileDtoImpl extends _ProfileDto {
+  const _$ProfileDtoImpl({
     required this.id,
-    required this.nickName,
+    @JsonKey(name: 'nick_name') required this.nickName,
     required this.email,
-    required this.firstName,
-    required this.lastName,
+    @JsonKey(name: 'first_name') required this.firstName,
+    @JsonKey(name: 'last_name') required this.lastName,
     required this.age,
     required this.weight,
     required this.height,
-    required this.birthDate,
-  });
+    @JsonKey(name: 'birth_date') required this.birthDate,
+  }) : super._();
+
+  factory _$ProfileDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProfileDtoImplFromJson(json);
 
   @override
-  final UserId id;
+  final int id;
   @override
+  @JsonKey(name: 'nick_name')
   final String nickName;
   @override
   final String email;
   @override
+  @JsonKey(name: 'first_name')
   final String firstName;
   @override
+  @JsonKey(name: 'last_name')
   final String lastName;
   @override
   final int age;
   @override
-  final Weight weight;
+  final double weight;
   @override
-  final Height height;
+  final double height;
   @override
+  @JsonKey(name: 'birth_date')
   final String birthDate;
 
   @override
   String toString() {
-    return 'UserProfile(id: $id, nickName: $nickName, email: $email, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, birthDate: $birthDate)';
+    return 'ProfileDto(id: $id, nickName: $nickName, email: $email, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, birthDate: $birthDate)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UserProfileImpl &&
+            other is _$ProfileDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.nickName, nickName) ||
                 other.nickName == nickName) &&
@@ -271,6 +289,7 @@ class _$UserProfileImpl implements _UserProfile {
                 other.birthDate == birthDate));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
@@ -285,51 +304,64 @@ class _$UserProfileImpl implements _UserProfile {
     birthDate,
   );
 
-  /// Create a copy of UserProfile
+  /// Create a copy of ProfileDto
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$UserProfileImplCopyWith<_$UserProfileImpl> get copyWith =>
-      __$$UserProfileImplCopyWithImpl<_$UserProfileImpl>(this, _$identity);
+  _$$ProfileDtoImplCopyWith<_$ProfileDtoImpl> get copyWith =>
+      __$$ProfileDtoImplCopyWithImpl<_$ProfileDtoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ProfileDtoImplToJson(this);
+  }
 }
 
-abstract class _UserProfile implements UserProfile {
-  const factory _UserProfile({
-    required final UserId id,
-    required final String nickName,
+abstract class _ProfileDto extends ProfileDto {
+  const factory _ProfileDto({
+    required final int id,
+    @JsonKey(name: 'nick_name') required final String nickName,
     required final String email,
-    required final String firstName,
-    required final String lastName,
+    @JsonKey(name: 'first_name') required final String firstName,
+    @JsonKey(name: 'last_name') required final String lastName,
     required final int age,
-    required final Weight weight,
-    required final Height height,
-    required final String birthDate,
-  }) = _$UserProfileImpl;
+    required final double weight,
+    required final double height,
+    @JsonKey(name: 'birth_date') required final String birthDate,
+  }) = _$ProfileDtoImpl;
+  const _ProfileDto._() : super._();
+
+  factory _ProfileDto.fromJson(Map<String, dynamic> json) =
+      _$ProfileDtoImpl.fromJson;
 
   @override
-  UserId get id;
+  int get id;
   @override
+  @JsonKey(name: 'nick_name')
   String get nickName;
   @override
   String get email;
   @override
+  @JsonKey(name: 'first_name')
   String get firstName;
   @override
+  @JsonKey(name: 'last_name')
   String get lastName;
   @override
   int get age;
   @override
-  Weight get weight;
+  double get weight;
   @override
-  Height get height;
+  double get height;
   @override
+  @JsonKey(name: 'birth_date')
   String get birthDate;
 
-  /// Create a copy of UserProfile
+  /// Create a copy of ProfileDto
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserProfileImplCopyWith<_$UserProfileImpl> get copyWith =>
+  _$$ProfileDtoImplCopyWith<_$ProfileDtoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

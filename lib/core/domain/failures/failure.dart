@@ -1,0 +1,20 @@
+abstract class Failure {
+  final String message;
+  const Failure(this.message);
+}
+
+class ServerFailure extends Failure {
+  const ServerFailure([String message = 'Ошибка сервера']) : super(message);
+}
+
+class NetworkFailure extends Failure {
+  const NetworkFailure([String message = 'Ошибка сети']) : super(message);
+}
+
+class ValidationFailure extends Failure {
+  const ValidationFailure(String message) : super(message);
+}
+
+class ProfileFailure extends Failure {
+  const ProfileFailure(String message) : super(message);
+}

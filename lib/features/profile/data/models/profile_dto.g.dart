@@ -1,14 +1,16 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_profile.dart';
+part of 'profile_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
-    _$UserProfileImpl(
-      id: const UserIdConverter().fromJson((json['id'] as num).toInt()),
+_$ProfileDtoImpl _$$ProfileDtoImplFromJson(Map<String, dynamic> json) =>
+    _$ProfileDtoImpl(
+      id: (json['id'] as num).toInt(),
+      nickName: json['nick_name'] as String,
+      email: json['email'] as String,
       firstName: json['first_name'] as String,
       lastName: json['last_name'] as String,
       age: (json['age'] as num).toInt(),
@@ -17,9 +19,11 @@ _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
       birthDate: json['birth_date'] as String,
     );
 
-Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) =>
+Map<String, dynamic> _$$ProfileDtoImplToJson(_$ProfileDtoImpl instance) =>
     <String, dynamic>{
-      'id': const UserIdConverter().toJson(instance.id),
+      'id': instance.id,
+      'nick_name': instance.nickName,
+      'email': instance.email,
       'first_name': instance.firstName,
       'last_name': instance.lastName,
       'age': instance.age,

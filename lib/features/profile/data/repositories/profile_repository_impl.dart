@@ -14,7 +14,6 @@ class ProfileRepositoryImpl implements IProfileRepository {
   Future<UserProfile> getProfile(UserId id) async {
     try {
       final response = await _dio.get('/profile/${id.value}');
-      // Используем DTO для парсинга и маппим в Entity
       return ProfileDto.fromJson(response.data).toDomain();
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -27,7 +26,7 @@ class ProfileRepositoryImpl implements IProfileRepository {
   Future<UserId> createProfile(UserProfile profile) async {
     try {
       final dto = ProfileDto.fromDomain(profile);
-      // Используем чистый метод для создания без ID
+
       final response = await _dio.post('/profile', data: dto.toCreateJson());
       
       final idValue = response.data is Map ? response.data['id'] : response.data;

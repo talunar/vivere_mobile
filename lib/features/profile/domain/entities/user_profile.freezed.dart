@@ -25,7 +25,7 @@ mixin _$UserProfile {
   int get age => throw _privateConstructorUsedError;
   Weight get weight => throw _privateConstructorUsedError;
   Height get height => throw _privateConstructorUsedError;
-  String get birthDate => throw _privateConstructorUsedError;
+  DateTime get birthDate => throw _privateConstructorUsedError;
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.
@@ -50,7 +50,7 @@ abstract class $UserProfileCopyWith<$Res> {
     int age,
     Weight weight,
     Height height,
-    String birthDate,
+    DateTime birthDate,
   });
 }
 
@@ -116,7 +116,7 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
             birthDate: null == birthDate
                 ? _value.birthDate
                 : birthDate // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as DateTime,
           )
           as $Val,
     );
@@ -141,7 +141,7 @@ abstract class _$$UserProfileImplCopyWith<$Res>
     int age,
     Weight weight,
     Height height,
-    String birthDate,
+    DateTime birthDate,
   });
 }
 
@@ -206,7 +206,7 @@ class __$$UserProfileImplCopyWithImpl<$Res>
         birthDate: null == birthDate
             ? _value.birthDate
             : birthDate // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as DateTime,
       ),
     );
   }
@@ -244,7 +244,7 @@ class _$UserProfileImpl implements _UserProfile {
   @override
   final Height height;
   @override
-  final String birthDate;
+  final DateTime birthDate;
 
   @override
   String toString() {
@@ -304,7 +304,7 @@ abstract class _UserProfile implements UserProfile {
     required final int age,
     required final Weight weight,
     required final Height height,
-    required final String birthDate,
+    required final DateTime birthDate,
   }) = _$UserProfileImpl;
 
   @override
@@ -324,7 +324,7 @@ abstract class _UserProfile implements UserProfile {
   @override
   Height get height;
   @override
-  String get birthDate;
+  DateTime get birthDate;
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.

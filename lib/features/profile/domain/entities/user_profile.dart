@@ -15,6 +15,6 @@ class UserProfile with _$UserProfile {
     required int age,
     required Weight weight,
     required Height height,
-    required String birthDate,
+    required DateTime birthDate,
   }) = _UserProfile;
 }

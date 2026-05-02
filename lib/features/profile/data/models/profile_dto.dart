@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/domain/entities/user_id.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/value_objects/physical_parameters.dart';
@@ -8,7 +9,7 @@ part 'profile_dto.g.dart';
 
 @freezed
 class ProfileDto with _$ProfileDto {
-  // Добавляем этот конструктор, чтобы можно было писать свои методы
+  // Обязательный конструктор для использования кастомных методов в freezed
   const ProfileDto._();
 
   const factory ProfileDto({
@@ -34,13 +35,25 @@ class ProfileDto with _$ProfileDto {
         age: profile.age,
         weight: profile.weight.value,
         height: profile.height.value,
-        birthDate: profile.birthDate,
+        birthDate: DateFormat('yyyy-MM-dd').format(profile.birthDate),
       );
 
-  /// Метод для создания JSON без ID
+  /// Метод для создания JSON без ID и с приведением типов к int для Go (uint8)
   Map<String, dynamic> toCreateJson() {
     final map = toJson();
     map.remove('id');
+    map['weight'] = weight.toInt();
+    map['height'] = height.toInt();
+    map['age'] = age.clamp(0, 255);
+    return map;
+  }
+
+  /// Для обновления также приводим типы к целым числам
+  Map<String, dynamic> toUpdateJson() {
+    final map = toJson();
+    map['weight'] = weight.toInt();
+    map['height'] = height.toInt();
+    map['age'] = age.clamp(0, 255);
     return map;
   }
 }
@@ -49,7 +62,6 @@ extension ProfileDtoX on ProfileDto {
   UserProfile toDomain() {
     final w = Weight(weight);
     final h = Height(height);
-    // Валидация при маппинге
     w.validate();
     h.validate();
 
@@ -62,7 +74,7 @@ extension ProfileDtoX on ProfileDto {
       age: age,
       weight: w,
       height: h,
-      birthDate: birthDate,
+      birthDate: DateTime.parse(birthDate),
     );
   }
 }

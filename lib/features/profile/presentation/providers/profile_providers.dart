@@ -7,12 +7,15 @@ import '../../data/repositories/profile_repository_impl.dart';
 
 part 'profile_providers.g.dart';
 
+/// Провайдер репозитория. Следит за dioProvider.
 @riverpod
 IProfileRepository profileRepository(ProfileRepositoryRef ref) {
   final dio = ref.watch(dioProvider);
   return ProfileRepositoryImpl(dio);
 }
 
+/// Провайдер данных профиля.
+/// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
 @riverpod
 Future<UserProfile> userProfile(UserProfileRef ref, UserId id) {
   final repository = ref.watch(profileRepositoryProvider);

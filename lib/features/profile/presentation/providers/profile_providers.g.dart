@@ -8,7 +8,9 @@ part of 'profile_providers.dart';
 
 String _$profileRepositoryHash() => r'db482997b602bedf522f18ac8ddaabd049065b8b';
 
-/// See also [profileRepository].
+/// Провайдер репозитория. Следит за dioProvider.
+///
+/// Copied from [profileRepository].
 @ProviderFor(profileRepository)
 final profileRepositoryProvider =
     AutoDisposeProvider<IProfileRepository>.internal(
@@ -47,16 +49,28 @@ class _SystemHash {
   }
 }
 
-/// See also [userProfile].
+/// Провайдер данных профиля.
+/// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
+///
+/// Copied from [userProfile].
 @ProviderFor(userProfile)
 const userProfileProvider = UserProfileFamily();
 
-/// See also [userProfile].
+/// Провайдер данных профиля.
+/// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
+///
+/// Copied from [userProfile].
 class UserProfileFamily extends Family<AsyncValue<UserProfile>> {
-  /// See also [userProfile].
+  /// Провайдер данных профиля.
+  /// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
+  ///
+  /// Copied from [userProfile].
   const UserProfileFamily();
 
-  /// See also [userProfile].
+  /// Провайдер данных профиля.
+  /// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
+  ///
+  /// Copied from [userProfile].
   UserProfileProvider call(UserId id) {
     return UserProfileProvider(id);
   }
@@ -83,9 +97,15 @@ class UserProfileFamily extends Family<AsyncValue<UserProfile>> {
   String? get name => r'userProfileProvider';
 }
 
-/// See also [userProfile].
+/// Провайдер данных профиля.
+/// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
+///
+/// Copied from [userProfile].
 class UserProfileProvider extends AutoDisposeFutureProvider<UserProfile> {
-  /// See also [userProfile].
+  /// Провайдер данных профиля.
+  /// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
+  ///
+  /// Copied from [userProfile].
   UserProfileProvider(UserId id)
     : this._internal(
         (ref) => userProfile(ref as UserProfileRef, id),

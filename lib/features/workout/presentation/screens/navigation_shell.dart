@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../profile/presentation/screens/person_page.dart';
 import 'workout_catalog_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -44,7 +45,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
           const Center(child: Text('План')),
           const Center(child: Text('Тренировки')),
-          const Center(child: Text('Профиль')),
+          // Вкладка 4: Профиль
+          const PersonPage(),
         ],
       ),
       bottomNavigationBar: Container(
@@ -83,7 +85,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             items: [
               _buildMenuItem('assets/icons/category.svg', 'Главная', 0),
               _buildMenuItem('assets/icons/calendar.svg', 'План', 1),
-              _buildMenuItem('assets/icons/favorites.svg', 'Тренировки', 2),
+              _buildMenuItem('assets/icons/favorites.svg', 'Мои тренировки', 2),
               _buildMenuItem('assets/icons/profile.svg', 'Профиль', 3),
             ],
           ),
@@ -99,8 +101,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         padding: const EdgeInsets.only(top: 12, bottom: 8),
         child: SvgPicture.asset(
           assetPath,
-          width: 24,
-          height: 24,
+          width: 28,
+          height: 28,
           colorFilter: ColorFilter.mode(
             isActive ? const Color(0xFFFF5900) : const Color(0xFF9E9E9E),
             BlendMode.srcIn,

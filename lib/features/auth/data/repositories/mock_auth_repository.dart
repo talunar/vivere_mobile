@@ -1,34 +1,31 @@
+import 'package:dio/dio.dart';
+import 'auth_repository.dart';
 import '../../domain/entities/auth_user.dart';
-import '../../domain/repositories/i_auth_repository.dart';
 import '../../../../core/domain/entities/user_id.dart';
 
-class MockAuthRepository implements IAuthRepository {
+class MockAuthRepository extends AuthRepository {
+  MockAuthRepository() : super(Dio());
+
   @override
   Future<AuthUser> signIn(String nickName, String password) async {
-    // Имитируем задержку сети
-    await Future.delayed(const Duration(milliseconds: 500));
-    
     return const AuthUser(
       id: UserId(1),
       email: 'mock@vivere.app',
       nickName: 'Iron_User',
-      token: 'fake_token_123',
+      token: 'fake_token',
     );
   }
 
   @override
-  Future<AuthUser> signUp(String nickName, String password, String emailOrConfirm) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+  Future<AuthUser> signUp(String nickName, String password, String email) async {
     return AuthUser(
       id: const UserId(1),
-      email: 'new_user@vivere.app',
+      email: email,
       nickName: nickName,
-      token: 'fake_token_456',
+      token: 'fake_token',
     );
   }
 
   @override
-  Future<void> signOut() async {
-    await Future.delayed(const Duration(milliseconds: 200));
-  }
+  Future<void> signOut() async {}
 }

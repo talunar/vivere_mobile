@@ -11,14 +11,14 @@ class MockProfileRepository implements IProfileRepository {
     
     return UserProfile(
       id: id,
-      nickName: 'Iron_User',
-      email: 'mock@vivere.app',
-      firstName: 'Иван',
-      lastName: 'Иванов',
-      age: 28,
-      birthDate: DateTime(1996, 5, 20),
-      weight: const Weight(85.0),
-      height: const Height(180.0),
+      nickName: 'zero_latency',
+      email: 'berserk_mode@vivere.app',
+      firstName: 'Vita',
+      lastName: 'Polaris',
+      age: 30,
+      birthDate: DateTime(1996, 2, 29),
+      weight: const Weight(80.0),
+      height: const Height(165.0),
     );
   }
 

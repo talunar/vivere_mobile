@@ -1,51 +1,49 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../state/auth_state.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../../domain/entities/auth_user.dart';
+import '../../../../core/domain/entities/user_id.dart';
 import 'package:vivere_mobile/core/network/dio_provider.dart';
 
 part 'auth_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthController extends _$AuthController {
   @override
-  AuthState build() => const AuthState.initial();
+  AuthState build() {
+    // Для тестирования экранов авторизации возвращаем Unauthenticated.
+    return const AuthState.unauthenticated();
+  }
 
   /// Вход
   Future<void> continueToNextStep(String nick, String pass) async {
     state = const AuthState.loading();
 
-    try {
-      final repository = ref.read(authRepositoryProvider);
-      final user = await repository.signIn(nick, pass);
-
-      // Если email пустой (заглушка), отправляем на донастройку
-      if (user.email.isEmpty) {
-        state = AuthState.profileSetupRequired(user);
-      } else {
-        state = AuthState.authenticated(user);
-      }
-    } catch (e) {
-      final errorStr = e.toString().toLowerCase();
-      // Проверяем ошибку. Если пользователь не найден —> регистрация
-      if (errorStr.contains('404') || errorStr.contains('not found')) {
-        state = AuthState.registrationStepName(
-          nickName: nick,
-          password: pass,
-        );
-      } else {
-        state = AuthState.error(e.toString());
-      }
+    // Имитируем логику: если ввели "admin", то пускаем сразу, 
+    // иначе отправляем на регистрацию
+    await Future.delayed(const Duration(milliseconds: 800));
+    
+    if (nick == 'admin') {
+      state = AuthState.authenticated(AuthUser(
+        id: UserId(1),
+        email: 'admin@vivere.app',
+        nickName: nick,
+      ));
+    } else {
+      state = AuthState.registrationStepName(
+        nickName: nick,
+        password: pass,
+      );
     }
   }
 
-  /// Сохранение Имени и Почты после Входа
+  /// Сохранение Имени и Почты
   void submitNameAndEmail({
     required String firstName,
     required String lastName,
     required String email,
   }) {
-    // Добавила mapOrNull чтобы избежать ошибок рантайма
-    state.mapOrNull(
+    state.maybeMap(
       registrationStepName: (step) {
         state = AuthState.registrationStepPhysical(
           nickName: step.nickName,
@@ -55,44 +53,32 @@ class AuthController extends _$AuthController {
           email: email,
         );
       },
+      orElse: () {},
     );
   }
 
-  /// Регистрация
+  /// Регистрация (финализация)
   Future<void> completeRegistration({
+    required int age,
     required double weight,
     required double height,
-    required int age,
   }) async {
-    // Добавила mapOrNull чтобы избежать ошибок рантайма
-    final physicalStep = state.mapOrNull(registrationStepPhysical: (s) => s);
-
-    if (physicalStep != null) {
-      state = const AuthState.loading();
-      try {
-        final user = await ref.read(authRepositoryProvider).signUp(
-          physicalStep.nickName,
-          physicalStep.password,
-          physicalStep.email,
-        );
-        state = AuthState.authenticated(user);
-      } catch (e) {
-        state = AuthState.error(e.toString());
-      }
-    }
+    state = const AuthState.loading();
+    await Future.delayed(const Duration(milliseconds: 800));
+    
+    state = AuthState.authenticated(AuthUser(
+      id: UserId(1),
+      email: 'new_user@vivere.app',
+      nickName: 'NewUser',
+    ));
   }
 
   Future<void> logout() async {
-    state = const AuthState.loading();
-    try {
-      await ref.read(authRepositoryProvider).signOut();
-    } finally {
-      state = const AuthState.unauthenticated();
-    }
+    state = const AuthState.unauthenticated();
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 AuthRepository authRepository(AuthRepositoryRef ref) {
   final dio = ref.watch(dioProvider);
   return AuthRepository(dio);

@@ -16,6 +16,7 @@ dependencies:
   go_router: ^17.2.0
   dio: ^5.9.2
   flutter_svg: ^2.2.4
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -38,5 +39,5 @@ flutter:
           weight: 700
 
   assets:
-    - assets/design/  # На будущее, пока использую стоковую на всё
+    - assets/design/
     - assets/icons/

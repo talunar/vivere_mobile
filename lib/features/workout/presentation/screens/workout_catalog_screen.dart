@@ -27,6 +27,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
+            fontFamily: 'Golos Text',
           ),
         ),
         backgroundColor: Colors.transparent,
@@ -34,7 +35,8 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
       ),
       body: categoriesAsync.when(
         data: (categories) => ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          // Добавляем отступ снизу (100), чтобы нижнее меню не перекрывало контент
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final category = categories[index];
@@ -45,7 +47,6 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: [
-                  // 1. Заголовок категории (нижний слой)
                   _CategoryHeader(
                     title: category.name,
                     imageUrl: category.image,
@@ -56,7 +57,6 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
                       });
                     },
                   ),
-                  // 2. Список программ (верхний слой)
                   if (isExpanded)
                     Padding(
                       padding: const EdgeInsets.only(top: 50), 
@@ -96,7 +96,6 @@ class _CategoryHeader extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        // Высота подбирается под размер программ: 50 (отступ) + 215 (высота списка) = 265
         height: isExpanded ? 265 : 180, 
         width: double.infinity,
         decoration: BoxDecoration(
@@ -104,10 +103,11 @@ class _CategoryHeader extends StatelessWidget {
           color: isExpanded ? const Color(0xFF141414) : Colors.transparent,
           image: isExpanded 
             ? null 
-            : DecorationImage(
-                image: NetworkImage(imageUrl),
+            : const DecorationImage(
+                image: AssetImage("assets/design/workout_1.png"),
                 fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.darken),
+                alignment: Alignment.topCenter,
+                colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
               ),
         ),
         child: Padding(
@@ -122,7 +122,7 @@ class _CategoryHeader extends StatelessWidget {
                   style: TextStyle(
                     color: Color(0xFFF6F6F6),
                     fontSize: 14,
-                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Golos Text',
                   ),
                 ),
               Text(
@@ -131,6 +131,7 @@ class _CategoryHeader extends StatelessWidget {
                   color: const Color(0xFFF6F6F6), 
                   fontSize: isExpanded ? 20 : 28, 
                   fontWeight: isExpanded ? FontWeight.bold : FontWeight.normal,
+                  fontFamily: 'Golos Text',
                 ),
               ),
             ],
@@ -162,11 +163,11 @@ class _ProgramsExpandedList extends StatelessWidget {
         );
       },
       child: Container(
-        height: 215, // Увеличили для вмещения квадратных карточек
+        height: 215, 
         margin: EdgeInsets.zero, 
         decoration: BoxDecoration(
           color: const Color(0xFFE2E2E2),
-          borderRadius: BorderRadius.circular(24), // Синхронизировано с заголовком
+          borderRadius: BorderRadius.circular(24),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
@@ -201,18 +202,19 @@ class _ProgramMiniCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 150, // Ширина для квадратной картинки
+        width: 150,
         margin: const EdgeInsets.only(right: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                program.image ?? '', 
-                height: 150, // Квадратная картинка
-                width: 150, 
+              child: Image.asset(
+                "assets/design/workout_1.png",
+                height: 150,
+                width: 150,
                 fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
               ),
             ),
             const SizedBox(height: 6),
@@ -221,13 +223,14 @@ class _ProgramMiniCard extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
+                fontFamily: 'Golos Text',
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             Row(
               children: [
-                const Icon(Icons.star, color: Colors.amber, size: 12),
+                const Icon(Icons.star, color: Color(0xFFFFB800), size: 12),
                 Text(
                   ' ${program.rating}',
                   style: const TextStyle(

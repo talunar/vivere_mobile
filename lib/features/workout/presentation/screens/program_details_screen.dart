@@ -2,127 +2,120 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/workout_program.dart';
 import 'workout_execution_screen.dart';
 
-class ProgramDetailsScreen extends StatelessWidget {
+/// Экран деталей программы тренировок.
+/// Содержит описание, информацию о тренере и список упражнений.
+class ProgramDetailsScreen extends StatefulWidget {
   final WorkoutProgram program;
 
   const ProgramDetailsScreen({super.key, required this.program});
 
   @override
+  State<ProgramDetailsScreen> createState() => _ProgramDetailsScreenState();
+}
+
+class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
+  // Состояние: добавлена ли программа в избранное
+  bool isBookmarked = false;
+
+  @override
   Widget build(BuildContext context) {
+    // Получаем ширину экрана для адаптивного расчета высоты изображения
+    final double screenWidth = MediaQuery.of(context).size.width;
+    
     return Scaffold(
-      bottomNavigationBar: Container(
-        color: const Color(0xFFF5F5F5), // Фон под кнопкой
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 100, top: 12),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WorkoutExecutionScreen(exercises: program.exercises),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFF5900),
-            foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 56),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 0,
-          ),
-          child: const Text(
-            'Начать тренировку',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Golos Text',
-            ),
-          ),
-        ),
-      ),
+      backgroundColor: const Color(0xFFF6F6F6), // Светло-серый фон как в дизайне
       body: Stack(
         children: [
-          // Основной контент (скроллится)
+          // Основное содержимое экрана, которое можно скроллить
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Изображение сверху
-                Stack(
-                  children: [
-                    Image.network(
-                      program.image ?? '',
-                      width: double.infinity,
-                      height: 300,
-                      fit: BoxFit.cover,
-                    ),
-                    Positioned(
-                      top: 40,
-                      right: 16,
-                      child: _CircleButton(
-                        icon: Icons.bookmark_border,
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
+                // 1. ВЕРХНЕЕ ИЗОБРАЖЕНИЕ
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+                  child: Image.asset(
+                    "assets/design/workout_1.png", // Используем локальный ассет
+                    width: double.infinity,
+                    height: screenWidth * (240 / 402), 
+                    fit: BoxFit.cover,
+                  ),
                 ),
 
+                // Контент под изображением
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 2. Название и рейтинг
+                      // 2. ЗАГОЛОВОК И РЕЙТИНГ
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Text(
-                              program.title,
-                              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                              widget.program.title,
+                              style: const TextStyle(
+                                fontSize: 28, 
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF212121),
+                                fontFamily: 'Golos Text',
+                              ),
                             ),
                           ),
                           Row(
                             children: [
-                              const Icon(Icons.star, color: Colors.amber, size: 24),
-                              Text(' ${program.rating}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              const Icon(Icons.star, color: Color(0xFFFFB800), size: 24),
+                              const SizedBox(width: 4),
+                              Text(
+                                widget.program.rating.toString(), 
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
                             ],
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
 
-                      // 3. Описание
+                      // 3. ОПИСАНИЕ
                       Text(
-                        program.description ?? '',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14, height: 1.5),
+                        widget.program.description ?? '',
+                        style: const TextStyle(
+                          color: Color(0xFF757575), 
+                          fontSize: 15, 
+                          height: 1.5,
+                        ),
                       ),
                       const SizedBox(height: 24),
 
-                      // 4. Параметры (Уровень, Инвентарь, Время)
-                      _InfoRow(label: 'Уровень:', value: program.level ?? 'Средний'),
-                      _InfoRow(label: 'Инвентарь:', value: program.equipment ?? 'Нет'),
-                      _InfoRow(label: 'Время:', value: '${program.durationMinutes} минут'),
+                      // 4. ПАРАМЕТРЫ ПРОГРАММЫ (Уровень, Инвентарь, Время)
+                      _InfoRow(label: 'Уровень:', value: widget.program.level ?? 'Продвинутый'),
+                      _InfoRow(label: 'Инвентарь:', value: widget.program.equipment ?? 'Гантели, коврик'),
+                      _InfoRow(label: 'Время:', value: '${widget.program.durationMinutes} минут'),
 
                       const SizedBox(height: 24),
 
-                      // 5. Тренер
+                      // 5. КАРТОЧКА ТРЕНЕРА
                       Row(
                         children: [
-                          CircleAvatar(
+                          const CircleAvatar(
                             radius: 24,
-                            backgroundImage: NetworkImage(program.trainerImage ?? ''),
+                            backgroundImage: AssetImage("assets/design/workout_1.png"), 
+                            backgroundColor: Colors.grey,
                           ),
                           const SizedBox(width: 12),
-                          Column(
+                          const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(program.trainerName ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                              const Row(
+                              Text(
+                                'Super train 3000', 
+                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                              ),
+                              Row(
                                 children: [
-                                  Icon(Icons.star, color: Colors.amber, size: 16),
-                                  Text(' 4,1', style: TextStyle(fontSize: 14)),
+                                  Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
+                                  SizedBox(width: 4),
+                                  Text('4,1', style: TextStyle(fontSize: 12, color: Color(0xFF757575))),
                                 ],
                               ),
                             ],
@@ -131,16 +124,71 @@ class ProgramDetailsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 32),
 
-                      // 6. Список упражнений
-                      const Text('Упражнения', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 16),
-                      ...program.exercises.map((exercise) => _ExerciseTile(exercise: exercise)).toList(),
+                      // 6. СПИСОК УПРАЖНЕНИЙ
+                      ...widget.program.exercises.map((exercise) => _ExerciseTile(exercise: exercise)).toList(),
 
-                      const SizedBox(height: 100), // Отступ для кнопки внизу
+                      const SizedBox(height: 30),
+
+                      // 7. КНОПКА "НАЧАТЬ ТРЕНИРОВКУ"
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WorkoutExecutionScreen(exercises: widget.program.exercises),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5900), 
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(double.infinity, 60),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          'Начать тренировку',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'Golos Text',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),
               ],
+            ),
+          ),
+          
+          // 8. ВЕРХНИЕ КНОПКИ УПРАВЛЕНИЯ
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 10,
+            left: 16,
+            child: _CircleButton(
+              painter: BackIconPainter(color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 10,
+            right: 16,
+            child: _CircleButton(
+              painter: BookmarkIconPainter(
+                color: isBookmarked ? Colors.white : Colors.black,
+                isFilled: isBookmarked,
+              ),
+              isActive: isBookmarked,
+              onPressed: () {
+                setState(() {
+                  isBookmarked = !isBookmarked;
+                });
+              },
             ),
           ),
         ],
@@ -150,15 +198,32 @@ class ProgramDetailsScreen extends StatelessWidget {
 }
 
 class _CircleButton extends StatelessWidget {
-  final IconData icon;
+  final CustomPainter painter;
   final VoidCallback onPressed;
-  const _CircleButton({required this.icon, required this.onPressed});
+  final bool isActive;
+
+  const _CircleButton({
+    required this.painter, 
+    required this.onPressed,
+    this.isActive = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-      child: IconButton(icon: Icon(icon, color: Colors.black), onPressed: onPressed),
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF212121) : Colors.white.withOpacity(0.9),
+          shape: BoxShape.circle,
+        ),
+        padding: const EdgeInsets.all(12),
+        child: CustomPaint(
+          painter: painter,
+        ),
+      ),
     );
   }
 }
@@ -171,13 +236,13 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(color: Colors.black, fontSize: 16),
+          style: const TextStyle(color: Color(0xFF212121), fontSize: 16, fontFamily: 'Golos Text'),
           children: [
-            TextSpan(text: '$label ', style: const TextStyle(fontWeight: FontWeight.bold)),
-            TextSpan(text: value),
+            TextSpan(text: '$label ', style: const TextStyle(fontWeight: FontWeight.w700)),
+            TextSpan(text: value, style: const TextStyle(color: Color(0xFF757575))),
           ],
         ),
       ),
@@ -186,7 +251,7 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _ExerciseTile extends StatelessWidget {
-  final dynamic exercise; // ExerciserInProgram
+  final dynamic exercise;
   const _ExerciseTile({required this.exercise});
 
   @override
@@ -194,31 +259,49 @@ class _ExerciseTile extends StatelessWidget {
     final repeat = exercise.repeats.first;
     final String subtitle = repeat.seconds != null 
         ? '${repeat.seconds} секунд' 
-        : '${repeat.reps} приседаний'; // Мокаем для примера
+        : '${repeat.reps} повторений';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(exercise.image, width: 60, height: 60, fit: BoxFit.cover),
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              "assets/design/workout_1.png", 
+              width: 64, 
+              height: 64, 
+              fit: BoxFit.cover,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(
+                  exercise.name, 
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700, 
+                    fontSize: 16, 
+                    color: Color(0xFF212121),
+                    fontFamily: 'Golos Text',
+                  ),
+                ),
+                const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: const TextStyle(color: Color(0xFFFF5900)), // Твой цвет #FF5900
+                  style: const TextStyle(
+                    color: Color(0xFFFF5900), 
+                    fontSize: 14, 
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Golos Text',
+                  ),
                 ),
               ],
             ),
@@ -227,4 +310,58 @@ class _ExerciseTile extends StatelessWidget {
       ),
     );
   }
+}
+
+class BackIconPainter extends CustomPainter {
+  final Color color;
+  BackIconPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final path = Path()
+      ..moveTo(size.width * 0.65, size.height * 0.25)
+      ..lineTo(size.width * 0.35, size.height * 0.5)
+      ..lineTo(size.width * 0.65, size.height * 0.75);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class BookmarkIconPainter extends CustomPainter {
+  final Color color;
+  final bool isFilled;
+  BookmarkIconPainter({required this.color, this.isFilled = false});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = isFilled ? PaintingStyle.fill : PaintingStyle.stroke
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final path = Path()
+      ..moveTo(size.width * 0.25, size.height * 0.15)
+      ..lineTo(size.width * 0.75, size.height * 0.15)
+      ..lineTo(size.width * 0.75, size.height * 0.85)
+      ..lineTo(size.width * 0.5, size.height * 0.65)
+      ..lineTo(size.width * 0.25, size.height * 0.85)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

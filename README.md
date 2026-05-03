@@ -26,7 +26,7 @@ Clone the repository and run the following command in the root directory to fetc
 flutter pub get
 ```
 
-### Code Generation.
+### Code Generation
 This project heavily relies on build_runner to generate navigation logic (.g.dart), type-safe models (.freezed.dart), and providers. The project will not compile without this step.
 ```bash
 flutter pub run build_runner build --delete-conflicting-outputs

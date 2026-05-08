@@ -45,7 +45,6 @@ class ProgramsListScreen extends StatelessWidget {
           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
         child: ListView.separated(
-          // Добавляем отступ снизу (100), чтобы нижнее меню не перекрывало контент
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
           itemCount: programs.length,
           separatorBuilder: (context, index) => const SizedBox(height: 10),
@@ -74,7 +73,7 @@ class ProgramsListScreen extends StatelessWidget {
 
 class ProgramCard extends StatelessWidget {
   final WorkoutProgram? program;
-  final VoidCallback? onTap; // Добавляем колбэк для нажатия
+  final VoidCallback? onTap;
 
   const ProgramCard({
     super.key,
@@ -85,11 +84,10 @@ class ProgramCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap, // Теперь при нажатии будет срабатывать переход
+      onTap: onTap,
       child: Container(
         width: 352,
         height: 160,
-        // Убираем margin отсюда, чтобы управлять расстоянием в ListView или Column
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
@@ -168,7 +166,6 @@ class ProgramCard extends StatelessWidget {
   }
 }
 
-/// Кастомная иконка "Назад" (шеврон)
 class BackIconPainter extends CustomPainter {
   final Color color;
   BackIconPainter({required this.color});

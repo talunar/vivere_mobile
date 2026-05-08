@@ -35,7 +35,6 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
       ),
       body: categoriesAsync.when(
         data: (categories) => ListView.builder(
-          // Добавляем отступ снизу (100), чтобы нижнее меню не перекрывало контент
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
           itemCount: categories.length,
           itemBuilder: (context, index) {

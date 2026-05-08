@@ -5,10 +5,16 @@ import '../../domain/value_objects/physical_parameters.dart';
 
 class MockProfileRepository implements IProfileRepository {
   @override
+  Future<UserId> createProfile(UserProfile profile) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    // Имитируем создание записи в БД и возврат того же ID
+    return profile.id;
+  }
+
+  @override
   Future<UserProfile> getProfile(UserId id) async {
-    // Имитируем задержку сети
     await Future.delayed(const Duration(milliseconds: 800));
-    
+
     return UserProfile(
       id: id,
       nickName: 'zero_latency',
@@ -29,10 +35,8 @@ class MockProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<UserId> createProfile(UserProfile profile) async {
-    return profile.id;
+  Future<bool> deleteProfile(UserId id) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    return true;
   }
-
-  @override
-  Future<void> deleteProfile(UserId id) async {}
 }

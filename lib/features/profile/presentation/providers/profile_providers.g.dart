@@ -6,11 +6,9 @@ part of 'profile_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$profileRepositoryHash() => r'db482997b602bedf522f18ac8ddaabd049065b8b';
+String _$profileRepositoryHash() => r'4a5c9cda3a54de69970871bf64b7d494f2a09fa5';
 
-/// Провайдер репозитория. Следит за dioProvider.
-///
-/// Copied from [profileRepository].
+/// See also [profileRepository].
 @ProviderFor(profileRepository)
 final profileRepositoryProvider =
     AutoDisposeProvider<IProfileRepository>.internal(
@@ -49,28 +47,16 @@ class _SystemHash {
   }
 }
 
-/// Провайдер данных профиля.
-/// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
-///
-/// Copied from [userProfile].
+/// See also [userProfile].
 @ProviderFor(userProfile)
 const userProfileProvider = UserProfileFamily();
 
-/// Провайдер данных профиля.
-/// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
-///
-/// Copied from [userProfile].
+/// See also [userProfile].
 class UserProfileFamily extends Family<AsyncValue<UserProfile>> {
-  /// Провайдер данных профиля.
-  /// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
-  ///
-  /// Copied from [userProfile].
+  /// See also [userProfile].
   const UserProfileFamily();
 
-  /// Провайдер данных профиля.
-  /// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
-  ///
-  /// Copied from [userProfile].
+  /// See also [userProfile].
   UserProfileProvider call(UserId id) {
     return UserProfileProvider(id);
   }
@@ -97,15 +83,9 @@ class UserProfileFamily extends Family<AsyncValue<UserProfile>> {
   String? get name => r'userProfileProvider';
 }
 
-/// Провайдер данных профиля.
-/// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
-///
-/// Copied from [userProfile].
+/// See also [userProfile].
 class UserProfileProvider extends AutoDisposeFutureProvider<UserProfile> {
-  /// Провайдер данных профиля.
-  /// Позволяет UI просто вызвать ref.watch(userProfileProvider(id))
-  ///
-  /// Copied from [userProfile].
+  /// See also [userProfile].
   UserProfileProvider(UserId id)
     : this._internal(
         (ref) => userProfile(ref as UserProfileRef, id),

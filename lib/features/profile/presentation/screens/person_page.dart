@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../workout/domain/entities/workout_program.dart';
 import '../../../workout/presentation/screens/program_details_screen.dart';
+import '../../../workout/presentation/providers/workout_providers.dart';
 import '../providers/profile_notifier.dart';
 import '../../domain/entities/user_profile.dart';
 
@@ -35,21 +36,13 @@ class PersonPage extends ConsumerWidget {
   }
 }
 
-class _ProfileDashboard extends StatelessWidget {
+class _ProfileDashboard extends ConsumerWidget {
   final UserProfile profile;
   const _ProfileDashboard({required this.profile});
 
   @override
-  Widget build(BuildContext context) {
-    // Создаем заглушку программы для теста перехода, так как в профиле пока нет списка программ
-    final dummyProgram = WorkoutProgram(
-      id: 1,
-      title: 'Программа тренировки',
-      description: 'Описание тестовой программы из профиля',
-      exercises: [],
-      durationMinutes: 45,
-      rating: 4.8,
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final programsAsync = ref.watch(userProgramsProvider(profile.id.value));
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 120),
@@ -63,14 +56,14 @@ class _ProfileDashboard extends StatelessWidget {
               const _IconBtn(asset: 'assets/icons/chat.svg', fallback: Icons.chat_bubble_outline),
               const Spacer(),
               _IconBtn(
-                asset: 'assets/icons/settings.svg', 
+                asset: 'assets/icons/settings.svg',
                 fallback: Icons.settings_outlined,
                 onTap: () => context.push('/profile_settings'),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Avatar & Name
           const CircleAvatar(
             radius: 64,
@@ -103,8 +96,8 @@ class _ProfileDashboard extends StatelessWidget {
             title: "Цели на сегодня",
             showAdd: true,
             child: Wrap(
-              spacing: 16, 
-              runSpacing: 16, 
+              spacing: 16,
+              runSpacing: 16,
               children: [
                 _GoalItem(title: "3 км", subtitle: "Бег", isDone: false),
                 _GoalItem(title: "100", subtitle: "Отжимания", isDone: true),
@@ -113,7 +106,7 @@ class _ProfileDashboard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           _DashboardCard(
             title: "Калории на сегодня",
             showArrow: true,
@@ -156,32 +149,28 @@ class _ProfileDashboard extends StatelessWidget {
           _DashboardCard(
             title: "Текущие программы",
             showAdd: true,
-            child: Column(
-              children: [
-                _ProgramCard(
-                  program: dummyProgram,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProgramDetailsScreen(program: dummyProgram),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 10),
-                _ProgramCard(
-                  program: dummyProgram,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProgramDetailsScreen(program: dummyProgram),
-                      ),
-                    );
-                  },
-                ),
-              ],
+            child: programsAsync.when(
+              data: (programs) => Column(
+                children: programs.map((program) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _ProgramCard(
+                    program: program,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProgramDetailsScreen(program: program),
+                        ),
+                      );
+                    },
+                    onDelete: () {
+                      ref.read(userProgramsProvider(profile.id.value).notifier).deleteProgram(program.id);
+                    },
+                  ),
+                )).toList(),
+              ),
+              loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+              error: (err, _) => Text('Ошибка: $err'),
             ),
           ),
         ],
@@ -357,7 +346,7 @@ class _CalendarDay extends StatelessWidget {
           const Text("Пн", style: TextStyle(color: Colors.black54, fontSize: 14)),
           const SizedBox(height: 6),
           Text("$day", style: TextStyle(
-            fontSize: 20, 
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: isSelected ? const Color(0xFFFF5900) : Colors.black,
           )),
@@ -370,92 +359,113 @@ class _CalendarDay extends StatelessWidget {
 }
 
 class _ProgramCard extends StatelessWidget {
-  final WorkoutProgram? program;
+  final WorkoutProgram program;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
 
-  const _ProgramCard({this.program, this.onTap});
+  const _ProgramCard({required this.program, this.onTap, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 352,
-        height: 160,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 352,
+            height: 160,
+            decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset(
-                "assets/design/workout_1.png",
-                width: 160,
-                height: 160,
-                fit: BoxFit.cover,
-              ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15, top: 20, right: 12, bottom: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      program?.title ?? "Программа тренировки",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'Golos Text',
-                        color: Color(0xFF141414),
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.asset(
+                    "assets/design/workout_1.png",
+                    width: 160,
+                    height: 160,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, top: 20, right: 12, bottom: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
-                        const SizedBox(width: 5),
                         Text(
-                          program?.rating.toString() ?? "4,8",
+                          program.title,
                           style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'Golos Text',
                             color: Color(0xFF141414),
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
+                            const SizedBox(width: 5),
+                            Text(
+                              program.rating?.toString() ?? "4,8",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF141414),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 12,
+                              backgroundImage: AssetImage("assets/design/workout_1.png"),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                program.trainerName ?? "Super train 3000",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black.withOpacity(0.5),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        )
                       ],
                     ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 12,
-                          backgroundImage: AssetImage("assets/design/workout_1.png"),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "Super train 3000",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black.withOpacity(0.5),
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            )
-          ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
-      ),
+        // Кнопка удаления в углу карточки
+        Positioned(
+          top: 10,
+          right: 10,
+          child: GestureDetector(
+            onTap: onDelete,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.close, size: 20, color: Colors.black54),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

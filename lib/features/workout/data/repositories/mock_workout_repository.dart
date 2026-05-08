@@ -40,12 +40,37 @@ class MockWorkoutRepository implements IWorkoutRepository {
   Future<WorkoutProgram> getProgramDetails(int programId) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return WorkoutProgram(
+<<<<<<< Updated upstream
       id: programId,
       title: 'Прыг-скок',
       description: 'Огненная крутая тренировка для ног',
       rating: 4.9,
       trainerName: 'Крош',
       exercises: [],
+=======
+      id: id,
+      title: 'Программа тренировки',
+      rating: 4.8,
+      trainerName: 'Super train 3000',
+      trainerImage: _trainerImageUrl,
+      image: _mockImageUrl,
+      description: 'Таким образом, убеждённость некоторых оппонентов требует определения и уточнения как самодостаточных.',
+      level: 'Продвинутый',
+      equipment: 'Гантели, коврик, сила воли и хорошее настроение',
+      durationMinutes: 40,
+      exercises: List.generate(5, (i) => ExerciserInProgram(
+        id: i,
+        name: i % 2 == 0 ? 'Упражнение ${i + 1}' : 'Приседания',
+        description: 'Таким образом, убеждённость некоторых оппонентов требует определения и уточнения как самодостаточных.',
+        image: _mockImageUrl,
+        repeats: [
+          if (i % 2 == 0)
+            Repeated(id: 1, weight: 20, seconds: 15)
+          else
+            Repeated(id: 1, weight: 20, reps: 12),
+        ],
+      )),
+>>>>>>> Stashed changes
     );
   }
 }

@@ -11,16 +11,13 @@ part 'auth_provider.g.dart';
 class AuthController extends _$AuthController {
   @override
   AuthState build() {
-    // Для тестирования экранов авторизации возвращаем Unauthenticated.
+    // Для тестирования
     return const AuthState.unauthenticated();
   }
 
   /// Вход
   Future<void> continueToNextStep(String nick, String pass) async {
     state = const AuthState.loading();
-
-    // Имитируем логику: если ввели "admin", то пускаем сразу, 
-    // иначе отправляем на регистрацию
     await Future.delayed(const Duration(milliseconds: 800));
     
     if (nick == 'admin') {

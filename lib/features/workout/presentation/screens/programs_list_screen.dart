@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/workout_program.dart';
-import '../providers/workout_providers.dart';
 import 'program_details_screen.dart';
 
-class ProgramsListScreen extends ConsumerWidget {
+class ProgramsListScreen extends StatelessWidget {
   final String categoryName;
-  final int categoryId;
+  final List<WorkoutProgram> programs;
 
   const ProgramsListScreen({
     super.key,
     required this.categoryName,
-    required this.categoryId,
+    required this.programs,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final programsAsync = ref.watch(programsByCategoryProvider(categoryId));
-
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -44,36 +40,31 @@ class ProgramsListScreen extends ConsumerWidget {
       ),
       body: Container(
         margin: const EdgeInsets.only(top: 8),
-        width: double.infinity,
         decoration: const BoxDecoration(
           color: Color(0xFFE2E2E2),
           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
-        child: programsAsync.when(
-          data: (programs) => ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-            itemCount: programs.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 10),
-            itemBuilder: (context, index) {
-              final program = programs[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: ProgramCard(
-                  program: program,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProgramDetailsScreen(program: program),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
-          error: (err, _) => Center(child: Text('Ошибка: $err')),
+        child: ListView.separated(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+          itemCount: programs.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
+          itemBuilder: (context, index) {
+            final program = programs[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: ProgramCard(
+                program: program,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProgramDetailsScreen(program: program),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
         ),
       ),
     );
@@ -90,40 +81,12 @@ class ProgramCard extends StatelessWidget {
     this.onTap,
   });
 
-  Widget _buildImage(String? imagePath) {
-    const double size = 160;
-    if (imagePath != null && imagePath.startsWith('http')) {
-      return Image.network(
-        imagePath,
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(size),
-      );
-    }
-    return Image.asset(
-      imagePath ?? "assets/design/workout_1.png",
-      width: size,
-      height: size,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => _buildPlaceholder(size),
-    );
-  }
-
-  Widget _buildPlaceholder(double size) {
-    return Container(
-      width: size,
-      height: size,
-      color: Colors.grey[300],
-      child: const Icon(Icons.fitness_center, color: Colors.white, size: 40),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 352,
         height: 160,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -133,7 +96,12 @@ class ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: _buildImage(program?.image),
+              child: Image.asset(
+                "assets/design/workout_1.png",
+                width: 160,
+                height: 160,
+                fit: BoxFit.cover,
+              ),
             ),
             Expanded(
               child: Padding(

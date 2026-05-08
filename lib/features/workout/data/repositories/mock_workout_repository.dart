@@ -1,53 +1,47 @@
+import '../../domain/entities/repeated.dart';
 import '../../domain/entities/workout_category.dart';
 import '../../domain/entities/workout_program.dart';
 import '../../domain/repositories/i_workout_repository.dart';
 
 class MockWorkoutRepository implements IWorkoutRepository {
-  // Общая картинка для программ (из твоего макета)
   final String _mockImageUrl = 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1000&auto=format&fit=crop';
+  final String _trainerImageUrl = 'https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&w=200&auto=format&fit=crop';
 
   @override
   Future<List<WorkoutCategory>> getCategories() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 400));
     return [
-      WorkoutCategory(id: 1, name: 'Силовые', image: '', programs: []),
-      WorkoutCategory(id: 2, name: 'Кардио', image: '', programs: []),
-      WorkoutCategory(id: 3, name: 'Йога', image: '', programs: []),
+      WorkoutCategory(id: 1, name: 'Силовые', image: _mockImageUrl, programs: _generatePrograms(1)),
+      WorkoutCategory(id: 2, name: 'Кардио', image: _mockImageUrl, programs: _generatePrograms(2)),
+      WorkoutCategory(id: 3, name: 'Разминка', image: _mockImageUrl, programs: _generatePrograms(3)),
+      WorkoutCategory(id: 4, name: 'Похудение', image: _mockImageUrl, programs: _generatePrograms(4)),
     ];
   }
 
   @override
   Future<WorkoutCategory> getCategory(int id) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    final programs = await getProgramsByCategory(id);
-    return WorkoutCategory(id: id, name: 'Категория $id', image: '', programs: programs);
+    final categories = await getCategories();
+    return categories.firstWhere((c) => c.id == id);
   }
 
   @override
   Future<List<WorkoutProgram>> getProgramsByCategory(int categoryId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return List.generate(10, (index) => WorkoutProgram(
-      id: index, // Передаем int
-      title: 'Учимся кататься на лыжах #$index',
-      description: 'Гоняем на лыжах',
-      rating: 4.8,
-      trainerName: 'Совунья',
-      exercises: [],
-    ));
+    await Future.delayed(const Duration(milliseconds: 300));
+    return _generatePrograms(categoryId);
   }
 
   @override
   Future<WorkoutProgram> getProgramDetails(int programId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 300));
+    return _generateSingleProgram(programId);
+  }
+
+  List<WorkoutProgram> _generatePrograms(int catId) {
+    return List.generate(6, (index) => _generateSingleProgram(index + catId * 10));
+  }
+
+  WorkoutProgram _generateSingleProgram(int id) {
     return WorkoutProgram(
-<<<<<<< Updated upstream
-      id: programId,
-      title: 'Прыг-скок',
-      description: 'Огненная крутая тренировка для ног',
-      rating: 4.9,
-      trainerName: 'Крош',
-      exercises: [],
-=======
       id: id,
       title: 'Программа тренировки',
       rating: 4.8,
@@ -56,7 +50,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
       image: _mockImageUrl,
       description: 'Таким образом, убеждённость некоторых оппонентов требует определения и уточнения как самодостаточных.',
       level: 'Продвинутый',
-      equipment: 'Гантели, коврик, сила воли и хорошее настроение',
+      equipment: 'Гантели, коврик',
       durationMinutes: 40,
       exercises: List.generate(5, (i) => ExerciserInProgram(
         id: i,
@@ -70,7 +64,6 @@ class MockWorkoutRepository implements IWorkoutRepository {
             Repeated(id: 1, weight: 20, reps: 12),
         ],
       )),
->>>>>>> Stashed changes
     );
   }
 }

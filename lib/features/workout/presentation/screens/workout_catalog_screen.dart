@@ -35,7 +35,6 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
       ),
       body: categoriesAsync.when(
         data: (categories) => ListView.builder(
-          // Добавляем отступ снизу (100), чтобы нижнее меню не перекрывало контент
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
           itemCount: categories.length,
           itemBuilder: (context, index) {
@@ -63,7 +62,6 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
                       child: _ProgramsExpandedList(
                         programs: category.programs,
                         categoryName: category.name,
-                        categoryId: category.id,
                       ),
                     ),
                 ],
@@ -71,7 +69,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
             );
           },
         ),
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(child: Text('Ошибка: $err')),
       ),
     );
@@ -146,13 +144,8 @@ class _CategoryHeader extends StatelessWidget {
 class _ProgramsExpandedList extends StatelessWidget {
   final List<WorkoutProgram> programs;
   final String categoryName;
-  final int categoryId;
 
-  const _ProgramsExpandedList({
-    required this.programs, 
-    required this.categoryName,
-    required this.categoryId,
-  });
+  const _ProgramsExpandedList({required this.programs, required this.categoryName});
 
   @override
   Widget build(BuildContext context) {
@@ -183,10 +176,7 @@ class _ProgramsExpandedList extends StatelessWidget {
             itemCount: programs.length > 5 ? 6 : programs.length,
             itemBuilder: (context, index) {
               if (index == 5) {
-                return _SeeAllButton(
-                  categoryName: categoryName, 
-                  categoryId: categoryId,
-                );
+                return _SeeAllButton(categoryName: categoryName, programs: programs);
               }
               return _ProgramMiniCard(program: programs[index]);
             },
@@ -258,12 +248,8 @@ class _ProgramMiniCard extends StatelessWidget {
 
 class _SeeAllButton extends StatelessWidget {
   final String categoryName;
-  final int categoryId;
-
-  const _SeeAllButton({
-    required this.categoryName, 
-    required this.categoryId,
-  });
+  final List<WorkoutProgram> programs;
+  const _SeeAllButton({required this.categoryName, required this.programs});
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +265,7 @@ class _SeeAllButton extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => ProgramsListScreen(
                   categoryName: categoryName,
-                  categoryId: categoryId,
+                  programs: programs,
                 ),
               ),
             );

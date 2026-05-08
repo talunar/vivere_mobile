@@ -15,26 +15,17 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
-UserProfile _$UserProfileFromJson(Map<String, dynamic> json) {
-  return _UserProfile.fromJson(json);
-}
-
 /// @nodoc
 mixin _$UserProfile {
-  @UserIdConverter()
   UserId get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'first_name')
+  String get nickName => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
   String get firstName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_name')
   String get lastName => throw _privateConstructorUsedError;
   int get age => throw _privateConstructorUsedError;
-  double get weight => throw _privateConstructorUsedError;
-  double get height => throw _privateConstructorUsedError;
-  @JsonKey(name: 'birth_date')
-  String get birthDate => throw _privateConstructorUsedError;
-
-  /// Serializes this UserProfile to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Weight get weight => throw _privateConstructorUsedError;
+  Height get height => throw _privateConstructorUsedError;
+  DateTime get birthDate => throw _privateConstructorUsedError;
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.
@@ -51,13 +42,15 @@ abstract class $UserProfileCopyWith<$Res> {
   ) = _$UserProfileCopyWithImpl<$Res, UserProfile>;
   @useResult
   $Res call({
-    @UserIdConverter() UserId id,
-    @JsonKey(name: 'first_name') String firstName,
-    @JsonKey(name: 'last_name') String lastName,
+    UserId id,
+    String nickName,
+    String email,
+    String firstName,
+    String lastName,
     int age,
-    double weight,
-    double height,
-    @JsonKey(name: 'birth_date') String birthDate,
+    Weight weight,
+    Height height,
+    DateTime birthDate,
   });
 }
 
@@ -77,6 +70,8 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
   @override
   $Res call({
     Object? id = null,
+    Object? nickName = null,
+    Object? email = null,
     Object? firstName = null,
     Object? lastName = null,
     Object? age = null,
@@ -90,6 +85,14 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as UserId,
+            nickName: null == nickName
+                ? _value.nickName
+                : nickName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            email: null == email
+                ? _value.email
+                : email // ignore: cast_nullable_to_non_nullable
+                      as String,
             firstName: null == firstName
                 ? _value.firstName
                 : firstName // ignore: cast_nullable_to_non_nullable
@@ -105,15 +108,15 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
             weight: null == weight
                 ? _value.weight
                 : weight // ignore: cast_nullable_to_non_nullable
-                      as double,
+                      as Weight,
             height: null == height
                 ? _value.height
                 : height // ignore: cast_nullable_to_non_nullable
-                      as double,
+                      as Height,
             birthDate: null == birthDate
                 ? _value.birthDate
                 : birthDate // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as DateTime,
           )
           as $Val,
     );
@@ -130,13 +133,15 @@ abstract class _$$UserProfileImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @UserIdConverter() UserId id,
-    @JsonKey(name: 'first_name') String firstName,
-    @JsonKey(name: 'last_name') String lastName,
+    UserId id,
+    String nickName,
+    String email,
+    String firstName,
+    String lastName,
     int age,
-    double weight,
-    double height,
-    @JsonKey(name: 'birth_date') String birthDate,
+    Weight weight,
+    Height height,
+    DateTime birthDate,
   });
 }
 
@@ -155,6 +160,8 @@ class __$$UserProfileImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? nickName = null,
+    Object? email = null,
     Object? firstName = null,
     Object? lastName = null,
     Object? age = null,
@@ -168,6 +175,14 @@ class __$$UserProfileImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as UserId,
+        nickName: null == nickName
+            ? _value.nickName
+            : nickName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        email: null == email
+            ? _value.email
+            : email // ignore: cast_nullable_to_non_nullable
+                  as String,
         firstName: null == firstName
             ? _value.firstName
             : firstName // ignore: cast_nullable_to_non_nullable
@@ -183,58 +198,57 @@ class __$$UserProfileImplCopyWithImpl<$Res>
         weight: null == weight
             ? _value.weight
             : weight // ignore: cast_nullable_to_non_nullable
-                  as double,
+                  as Weight,
         height: null == height
             ? _value.height
             : height // ignore: cast_nullable_to_non_nullable
-                  as double,
+                  as Height,
         birthDate: null == birthDate
             ? _value.birthDate
             : birthDate // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as DateTime,
       ),
     );
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
 class _$UserProfileImpl implements _UserProfile {
   const _$UserProfileImpl({
-    @UserIdConverter() required this.id,
-    @JsonKey(name: 'first_name') required this.firstName,
-    @JsonKey(name: 'last_name') required this.lastName,
+    required this.id,
+    required this.nickName,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
     required this.age,
     required this.weight,
     required this.height,
-    @JsonKey(name: 'birth_date') required this.birthDate,
+    required this.birthDate,
   });
 
-  factory _$UserProfileImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UserProfileImplFromJson(json);
-
   @override
-  @UserIdConverter()
   final UserId id;
   @override
-  @JsonKey(name: 'first_name')
+  final String nickName;
+  @override
+  final String email;
+  @override
   final String firstName;
   @override
-  @JsonKey(name: 'last_name')
   final String lastName;
   @override
   final int age;
   @override
-  final double weight;
+  final Weight weight;
   @override
-  final double height;
+  final Height height;
   @override
-  @JsonKey(name: 'birth_date')
-  final String birthDate;
+  final DateTime birthDate;
 
   @override
   String toString() {
-    return 'UserProfile(id: $id, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, birthDate: $birthDate)';
+    return 'UserProfile(id: $id, nickName: $nickName, email: $email, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, birthDate: $birthDate)';
   }
 
   @override
@@ -243,6 +257,9 @@ class _$UserProfileImpl implements _UserProfile {
         (other.runtimeType == runtimeType &&
             other is _$UserProfileImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.nickName, nickName) ||
+                other.nickName == nickName) &&
+            (identical(other.email, email) || other.email == email) &&
             (identical(other.firstName, firstName) ||
                 other.firstName == firstName) &&
             (identical(other.lastName, lastName) ||
@@ -254,11 +271,12 @@ class _$UserProfileImpl implements _UserProfile {
                 other.birthDate == birthDate));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
     id,
+    nickName,
+    email,
     firstName,
     lastName,
     age,
@@ -274,45 +292,39 @@ class _$UserProfileImpl implements _UserProfile {
   @pragma('vm:prefer-inline')
   _$$UserProfileImplCopyWith<_$UserProfileImpl> get copyWith =>
       __$$UserProfileImplCopyWithImpl<_$UserProfileImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$UserProfileImplToJson(this);
-  }
 }
 
 abstract class _UserProfile implements UserProfile {
   const factory _UserProfile({
-    @UserIdConverter() required final UserId id,
-    @JsonKey(name: 'first_name') required final String firstName,
-    @JsonKey(name: 'last_name') required final String lastName,
+    required final UserId id,
+    required final String nickName,
+    required final String email,
+    required final String firstName,
+    required final String lastName,
     required final int age,
-    required final double weight,
-    required final double height,
-    @JsonKey(name: 'birth_date') required final String birthDate,
+    required final Weight weight,
+    required final Height height,
+    required final DateTime birthDate,
   }) = _$UserProfileImpl;
 
-  factory _UserProfile.fromJson(Map<String, dynamic> json) =
-      _$UserProfileImpl.fromJson;
-
   @override
-  @UserIdConverter()
   UserId get id;
   @override
-  @JsonKey(name: 'first_name')
+  String get nickName;
+  @override
+  String get email;
+  @override
   String get firstName;
   @override
-  @JsonKey(name: 'last_name')
   String get lastName;
   @override
   int get age;
   @override
-  double get weight;
+  Weight get weight;
   @override
-  double get height;
+  Height get height;
   @override
-  @JsonKey(name: 'birth_date')
-  String get birthDate;
+  DateTime get birthDate;
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.

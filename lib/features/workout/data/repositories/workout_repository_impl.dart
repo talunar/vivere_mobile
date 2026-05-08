@@ -37,7 +37,6 @@ class WorkoutRepositoryImpl implements IWorkoutRepository {
   @override
   Future<List<WorkoutProgram>> getProgramsByCategory(int categoryId) async {
     try {
-      // TODO проверить как подключается к api
       final response = await _dio.get('/categories/$categoryId/programs');
       final List<dynamic> data = response.data;
       return data

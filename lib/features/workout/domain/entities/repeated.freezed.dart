@@ -19,6 +19,9 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$Repeated {
   int get id => throw _privateConstructorUsedError;
   int get weight => throw _privateConstructorUsedError;
+  int? get reps =>
+      throw _privateConstructorUsedError; // Добавим reps для Шага 4
+  int? get seconds => throw _privateConstructorUsedError;
 
   /// Create a copy of Repeated
   /// with the given fields replaced by the non-null parameter values.
@@ -32,7 +35,7 @@ abstract class $RepeatedCopyWith<$Res> {
   factory $RepeatedCopyWith(Repeated value, $Res Function(Repeated) then) =
       _$RepeatedCopyWithImpl<$Res, Repeated>;
   @useResult
-  $Res call({int id, int weight});
+  $Res call({int id, int weight, int? reps, int? seconds});
 }
 
 /// @nodoc
@@ -49,7 +52,12 @@ class _$RepeatedCopyWithImpl<$Res, $Val extends Repeated>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? id = null, Object? weight = null}) {
+  $Res call({
+    Object? id = null,
+    Object? weight = null,
+    Object? reps = freezed,
+    Object? seconds = freezed,
+  }) {
     return _then(
       _value.copyWith(
             id: null == id
@@ -60,6 +68,14 @@ class _$RepeatedCopyWithImpl<$Res, $Val extends Repeated>
                 ? _value.weight
                 : weight // ignore: cast_nullable_to_non_nullable
                       as int,
+            reps: freezed == reps
+                ? _value.reps
+                : reps // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            seconds: freezed == seconds
+                ? _value.seconds
+                : seconds // ignore: cast_nullable_to_non_nullable
+                      as int?,
           )
           as $Val,
     );
@@ -75,7 +91,7 @@ abstract class _$$RepeatedImplCopyWith<$Res>
   ) = __$$RepeatedImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, int weight});
+  $Res call({int id, int weight, int? reps, int? seconds});
 }
 
 /// @nodoc
@@ -91,7 +107,12 @@ class __$$RepeatedImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? id = null, Object? weight = null}) {
+  $Res call({
+    Object? id = null,
+    Object? weight = null,
+    Object? reps = freezed,
+    Object? seconds = freezed,
+  }) {
     return _then(
       _$RepeatedImpl(
         id: null == id
@@ -102,6 +123,14 @@ class __$$RepeatedImplCopyWithImpl<$Res>
             ? _value.weight
             : weight // ignore: cast_nullable_to_non_nullable
                   as int,
+        reps: freezed == reps
+            ? _value.reps
+            : reps // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        seconds: freezed == seconds
+            ? _value.seconds
+            : seconds // ignore: cast_nullable_to_non_nullable
+                  as int?,
       ),
     );
   }
@@ -110,16 +139,26 @@ class __$$RepeatedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$RepeatedImpl implements _Repeated {
-  const _$RepeatedImpl({required this.id, required this.weight});
+  const _$RepeatedImpl({
+    required this.id,
+    required this.weight,
+    this.reps,
+    this.seconds,
+  });
 
   @override
   final int id;
   @override
   final int weight;
+  @override
+  final int? reps;
+  // Добавим reps для Шага 4
+  @override
+  final int? seconds;
 
   @override
   String toString() {
-    return 'Repeated(id: $id, weight: $weight)';
+    return 'Repeated(id: $id, weight: $weight, reps: $reps, seconds: $seconds)';
   }
 
   @override
@@ -128,11 +167,13 @@ class _$RepeatedImpl implements _Repeated {
         (other.runtimeType == runtimeType &&
             other is _$RepeatedImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.weight, weight) || other.weight == weight));
+            (identical(other.weight, weight) || other.weight == weight) &&
+            (identical(other.reps, reps) || other.reps == reps) &&
+            (identical(other.seconds, seconds) || other.seconds == seconds));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, weight);
+  int get hashCode => Object.hash(runtimeType, id, weight, reps, seconds);
 
   /// Create a copy of Repeated
   /// with the given fields replaced by the non-null parameter values.
@@ -144,13 +185,21 @@ class _$RepeatedImpl implements _Repeated {
 }
 
 abstract class _Repeated implements Repeated {
-  const factory _Repeated({required final int id, required final int weight}) =
-      _$RepeatedImpl;
+  const factory _Repeated({
+    required final int id,
+    required final int weight,
+    final int? reps,
+    final int? seconds,
+  }) = _$RepeatedImpl;
 
   @override
   int get id;
   @override
   int get weight;
+  @override
+  int? get reps; // Добавим reps для Шага 4
+  @override
+  int? get seconds;
 
   /// Create a copy of Repeated
   /// with the given fields replaced by the non-null parameter values.

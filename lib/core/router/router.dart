@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
@@ -6,70 +7,97 @@ import '../../features/auth/presentation/state/auth_state.dart';
 // Импорты экранов
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/registration_details_screen.dart';
-import '../../features/profile//presentation/screens/profile_setup_screen.dart';
-import '../../features/workout/presentation/screens/home_screen.dart';
-
+import '../../features/auth/presentation/screens/profile_setup_screen.dart';
+import '../../features/workout/presentation/screens/navigation_shell.dart';
+import '../../features/workout/presentation/screens/program_details_screen.dart';
+import '../../features/workout/domain/entities/workout_program.dart';
+import '../../features/profile/presentation/screens/profile_settings_screen.dart';
 part 'router.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 GoRouter router(RouterRef ref) {
-  final authState = ref.watch(authControllerProvider);
+  // 1. Создаем стабильный объект для уведомления роутера об изменениях.
+  // Мы используем ValueNotifier, экземпляр которого никогда не меняется.
+  final refreshListenable = ValueNotifier<bool>(false);
+  
+  // 2. Слушаем изменения состояния авторизации. 
+  // Когда состояние меняется, мы "пинаем" notifier, но НЕ перезапускаем этот провайдер (router).
+  ref.listen(authControllerProvider, (previous, next) {
+    if (next is! AuthLoading) {
+      refreshListenable.value = !refreshListenable.value;
+    }
+  });
+
+  // 3. Определяем начальную локацию ОДИН РАЗ при создании роутера (холодный старт).
+  final initialState = ref.read(authControllerProvider);
+  String initialLoc = '/login';
+  
+  initialState.maybeWhen(
+    authenticated: (_) => initialLoc = '/home',
+    registrationStepName: (_, __) => initialLoc = '/registration_details',
+    registrationStepPhysical: (_, __, ___, ____, _____) => initialLoc = '/profile_setup',
+    unauthenticated: () => initialLoc = '/login',
+    orElse: () {},
+  );
 
   return GoRouter(
-    initialLocation: '/login',
-
-    // Основная логика перенаправлений
+    initialLocation: initialLoc,
+    refreshListenable: refreshListenable,
+    debugLogDiagnostics: true,
+    
     redirect: (context, state) {
-      final isLoggingIn = state.matchedLocation == '/login';
-      final isRegDetails = state.matchedLocation == '/registration_details';
-      final isProfileSetup = state.matchedLocation == '/profile_setup';
+      // Используем ref.read для получения актуального состояния внутри колбэка
+      final authState = ref.read(authControllerProvider);
+      final location = state.matchedLocation;
 
-      return authState.when(
-        initial: () => null,
-        loading: () => null,
+      // Если идет загрузка, мы не делаем редирект, чтобы экран не дергался
+      if (authState is AuthLoading) return null;
 
-        // Если не авторизован — только на логин
-        unauthenticated: () => isLoggingIn ? null : '/login',
+      return authState.maybeWhen(
+        authenticated: (_) => 
+          ['/login', '/registration_details', '/profile_setup'].contains(location) 
+          ? '/home' : null,
+        
+        registrationStepName: (_, __) => 
+          location != '/registration_details' ? '/registration_details' : null,
+        
+        registrationStepPhysical: (_, __, ___, ____, _____) => 
+          location != '/profile_setup' ? '/profile_setup' : null,
 
-        // ШАГ 2: Ввод ФИО и Почты
-        registrationStepName: (login, password) =>
-        isRegDetails ? null : '/registration_details',
-
-        // ШАГ 3: Ввод физических параметров (рост/вес/пол)
-        registrationStepPhysical: (nick, pass, first, last, email) =>
-        isProfileSetup ? null : '/profile_setup',
-
-        // Если профиль почему-то не заполнен (для существующих юзеров)
-        profileSetupRequired: (_) =>
-        isProfileSetup ? null : '/profile_setup',
-
-        // Успешный вход — идем домой
-        authenticated: (_) {
-          if (isLoggingIn || isRegDetails || isProfileSetup) return '/home';
-          return null;
-        },
-
-        // При ошибке остаемся на логине
-        error: (message, _) => isLoggingIn ? null : '/login',
+        unauthenticated: () => location != '/login' ? '/login' : null,
+        error: (_, __) => location != '/login' ? '/login' : null,
+        
+        orElse: () => null,
       );
     },
 
     routes: [
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => const NoTransitionPage(child: LoginScreen()),
       ),
       GoRoute(
         path: '/registration_details',
-        builder: (context, state) => const RegistrationDetailsScreen(),
+        pageBuilder: (context, state) => const NoTransitionPage(child: RegistrationDetailsScreen()),
       ),
-      //GoRoute(
-        //path: '/profile_setup',
-       // builder: (context, state) => const ProfileSetupScreen(),
-      //),
+      GoRoute(
+        path: '/profile_setup',
+        pageBuilder: (context, state) => const NoTransitionPage(child: ProfileSetupScreen()),
+      ),
+      GoRoute(
+        path: '/profile_settings',
+        pageBuilder: (context, state) => const NoTransitionPage(child: ProfileSettingsScreen()),
+      ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const MainNavigationScreen(),
+      ),
+      GoRoute(
+        path: '/program_details',
+        builder: (context, state) {
+          final program = state.extra as WorkoutProgram;
+          return ProgramDetailsScreen(program: program);
+        },
       ),
     ],
   );

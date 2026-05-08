@@ -18,11 +18,15 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$WorkoutProgram {
   int get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError; // В Go это Name
-  String? get description =>
-      throw _privateConstructorUsedError; // Стало необязательным
-  double? get rating => throw _privateConstructorUsedError; // Для дизайна
-  String? get trainerName => throw _privateConstructorUsedError; // Для дизайна
+  String get title => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  double? get rating => throw _privateConstructorUsedError;
+  String? get trainerName => throw _privateConstructorUsedError;
+  String? get trainerImage => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError;
+  String? get level => throw _privateConstructorUsedError;
+  String? get equipment => throw _privateConstructorUsedError;
+  int? get durationMinutes => throw _privateConstructorUsedError;
   List<ExerciserInProgram> get exercises => throw _privateConstructorUsedError;
 
   /// Create a copy of WorkoutProgram
@@ -45,6 +49,11 @@ abstract class $WorkoutProgramCopyWith<$Res> {
     String? description,
     double? rating,
     String? trainerName,
+    String? trainerImage,
+    String? image,
+    String? level,
+    String? equipment,
+    int? durationMinutes,
     List<ExerciserInProgram> exercises,
   });
 }
@@ -69,6 +78,11 @@ class _$WorkoutProgramCopyWithImpl<$Res, $Val extends WorkoutProgram>
     Object? description = freezed,
     Object? rating = freezed,
     Object? trainerName = freezed,
+    Object? trainerImage = freezed,
+    Object? image = freezed,
+    Object? level = freezed,
+    Object? equipment = freezed,
+    Object? durationMinutes = freezed,
     Object? exercises = null,
   }) {
     return _then(
@@ -93,6 +107,26 @@ class _$WorkoutProgramCopyWithImpl<$Res, $Val extends WorkoutProgram>
                 ? _value.trainerName
                 : trainerName // ignore: cast_nullable_to_non_nullable
                       as String?,
+            trainerImage: freezed == trainerImage
+                ? _value.trainerImage
+                : trainerImage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            image: freezed == image
+                ? _value.image
+                : image // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            level: freezed == level
+                ? _value.level
+                : level // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            equipment: freezed == equipment
+                ? _value.equipment
+                : equipment // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            durationMinutes: freezed == durationMinutes
+                ? _value.durationMinutes
+                : durationMinutes // ignore: cast_nullable_to_non_nullable
+                      as int?,
             exercises: null == exercises
                 ? _value.exercises
                 : exercises // ignore: cast_nullable_to_non_nullable
@@ -118,6 +152,11 @@ abstract class _$$WorkoutProgramImplCopyWith<$Res>
     String? description,
     double? rating,
     String? trainerName,
+    String? trainerImage,
+    String? image,
+    String? level,
+    String? equipment,
+    int? durationMinutes,
     List<ExerciserInProgram> exercises,
   });
 }
@@ -141,6 +180,11 @@ class __$$WorkoutProgramImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? rating = freezed,
     Object? trainerName = freezed,
+    Object? trainerImage = freezed,
+    Object? image = freezed,
+    Object? level = freezed,
+    Object? equipment = freezed,
+    Object? durationMinutes = freezed,
     Object? exercises = null,
   }) {
     return _then(
@@ -165,6 +209,26 @@ class __$$WorkoutProgramImplCopyWithImpl<$Res>
             ? _value.trainerName
             : trainerName // ignore: cast_nullable_to_non_nullable
                   as String?,
+        trainerImage: freezed == trainerImage
+            ? _value.trainerImage
+            : trainerImage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        image: freezed == image
+            ? _value.image
+            : image // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        level: freezed == level
+            ? _value.level
+            : level // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        equipment: freezed == equipment
+            ? _value.equipment
+            : equipment // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        durationMinutes: freezed == durationMinutes
+            ? _value.durationMinutes
+            : durationMinutes // ignore: cast_nullable_to_non_nullable
+                  as int?,
         exercises: null == exercises
             ? _value._exercises
             : exercises // ignore: cast_nullable_to_non_nullable
@@ -183,6 +247,11 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
     this.description,
     this.rating,
     this.trainerName,
+    this.trainerImage,
+    this.image,
+    this.level,
+    this.equipment,
+    this.durationMinutes,
     required final List<ExerciserInProgram> exercises,
   }) : _exercises = exercises;
 
@@ -190,18 +259,23 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
   final int id;
   @override
   final String title;
-  // В Go это Name
   @override
   final String? description;
-  // Стало необязательным
   @override
   final double? rating;
-  // Для дизайна
   @override
   final String? trainerName;
-  // Для дизайна
+  @override
+  final String? trainerImage;
+  @override
+  final String? image;
+  @override
+  final String? level;
+  @override
+  final String? equipment;
+  @override
+  final int? durationMinutes;
   final List<ExerciserInProgram> _exercises;
-  // Для дизайна
   @override
   List<ExerciserInProgram> get exercises {
     if (_exercises is EqualUnmodifiableListView) return _exercises;
@@ -211,7 +285,7 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
 
   @override
   String toString() {
-    return 'WorkoutProgram(id: $id, title: $title, description: $description, rating: $rating, trainerName: $trainerName, exercises: $exercises)';
+    return 'WorkoutProgram(id: $id, title: $title, description: $description, rating: $rating, trainerName: $trainerName, trainerImage: $trainerImage, image: $image, level: $level, equipment: $equipment, durationMinutes: $durationMinutes, exercises: $exercises)';
   }
 
   @override
@@ -226,6 +300,14 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
             (identical(other.rating, rating) || other.rating == rating) &&
             (identical(other.trainerName, trainerName) ||
                 other.trainerName == trainerName) &&
+            (identical(other.trainerImage, trainerImage) ||
+                other.trainerImage == trainerImage) &&
+            (identical(other.image, image) || other.image == image) &&
+            (identical(other.level, level) || other.level == level) &&
+            (identical(other.equipment, equipment) ||
+                other.equipment == equipment) &&
+            (identical(other.durationMinutes, durationMinutes) ||
+                other.durationMinutes == durationMinutes) &&
             const DeepCollectionEquality().equals(
               other._exercises,
               _exercises,
@@ -240,6 +322,11 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
     description,
     rating,
     trainerName,
+    trainerImage,
+    image,
+    level,
+    equipment,
+    durationMinutes,
     const DeepCollectionEquality().hash(_exercises),
   );
 
@@ -262,19 +349,34 @@ abstract class _WorkoutProgram implements WorkoutProgram {
     final String? description,
     final double? rating,
     final String? trainerName,
+    final String? trainerImage,
+    final String? image,
+    final String? level,
+    final String? equipment,
+    final int? durationMinutes,
     required final List<ExerciserInProgram> exercises,
   }) = _$WorkoutProgramImpl;
 
   @override
   int get id;
   @override
-  String get title; // В Go это Name
+  String get title;
   @override
-  String? get description; // Стало необязательным
+  String? get description;
   @override
-  double? get rating; // Для дизайна
+  double? get rating;
   @override
-  String? get trainerName; // Для дизайна
+  String? get trainerName;
+  @override
+  String? get trainerImage;
+  @override
+  String? get image;
+  @override
+  String? get level;
+  @override
+  String? get equipment;
+  @override
+  int? get durationMinutes;
   @override
   List<ExerciserInProgram> get exercises;
 

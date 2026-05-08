@@ -10,7 +10,6 @@ class RegistrationDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsScreen> {
-  // Контроллеры
   late final TextEditingController fNameController;
   late final TextEditingController lNameController;
   late final TextEditingController emailController;
@@ -34,53 +33,113 @@ class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsS
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('О вас'),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          const Text(
-              'Давайте познакомимся',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
-          ),
-          const SizedBox(height: 20),
-          TextField(
-              controller: fNameController,
-              decoration: const InputDecoration(labelText: 'Имя')
-          ),
-          const SizedBox(height: 12),
-          TextField(
-              controller: lNameController,
-              decoration: const InputDecoration(labelText: 'Фамилия')
-          ),
-          const SizedBox(height: 12),
-          TextField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(labelText: 'Email')
-          ),
-          const SizedBox(height: 32),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+      backgroundColor: const Color(0xFFF6F6F6),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 60),
+                      const Text(
+                        'Почти\nу цели',
+                        style: TextStyle(
+                          fontSize: 64, // Увеличили текст
+                          fontWeight: FontWeight.w900,
+                          height: 1.0,
+                          fontFamily: 'Golos Text',
+                          color: Color(0xFF141414),
+                        ),
+                      ),
+                      const Spacer(flex: 2), // Центрируем
+                      _CustomTextField(
+                        controller: fNameController,
+                        hintText: 'Имя',
+                      ),
+                      const SizedBox(height: 16),
+                      _CustomTextField(
+                        controller: lNameController,
+                        hintText: 'Фамилия',
+                      ),
+                      const SizedBox(height: 16),
+                      _CustomTextField(
+                        controller: emailController,
+                        hintText: 'Почта',
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(height: 32),
+                      ElevatedButton(
+                        onPressed: () {
+                          ref.read(authControllerProvider.notifier).submitNameAndEmail(
+                            firstName: fNameController.text.trim(),
+                            lastName: lNameController.text.trim(),
+                            email: emailController.text.trim(),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF5900),
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(double.infinity, 64), // Увеличили кнопку
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: const Text(
+                          'Продолжить',
+                          style: TextStyle(
+                            fontSize: 20, // Увеличили текст
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Golos Text',
+                          ),
+                        ),
+                      ),
+                      const Spacer(flex: 3),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            onPressed: () {
-              ref.read(authControllerProvider.notifier).submitNameAndEmail(
-                firstName: fNameController.text,
-                lastName: lNameController.text,
-                email: emailController.text,
-              );
-            },
-            child: const Text('К параметрам тела'),
-          ),
-        ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _CustomTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final TextInputType? keyboardType;
+
+  const _CustomTextField({
+    required this.controller,
+    required this.hintText,
+    this.keyboardType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFE2E2E2),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        style: const TextStyle(fontSize: 18, fontFamily: 'Golos Text'), // Увеличили текст
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          border: InputBorder.none,
+        ),
       ),
     );
   }

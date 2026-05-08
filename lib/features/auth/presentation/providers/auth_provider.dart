@@ -1,51 +1,54 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../state/auth_state.dart';
-import '../../data/repositories/auth_repository.dart';
-import 'package:vivere_mobile/core/network/dio_provider.dart';
+import '../../domain/repositories/i_auth_repository.dart';
+import '../../data/repositories/auth_repository_impl.dart';
+import '../../data/sources/auth_mock_data_source.dart';
+import '../../domain/entities/auth_user.dart';
+import '../../../../core/domain/entities/user_id.dart';
+// Добавляем недостающие импорты
+import '../../../profile/presentation/providers/profile_providers.dart';
+import '../../../profile/domain/entities/user_profile.dart';
+import '../../../profile/domain/value_objects/physical_parameters.dart';
 
 part 'auth_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthController extends _$AuthController {
   @override
-  AuthState build() => const AuthState.initial();
+  AuthState build() {
+    return const AuthState.unauthenticated();
+  }
 
-  /// Вход
   Future<void> continueToNextStep(String nick, String pass) async {
     state = const AuthState.loading();
 
     try {
       final repository = ref.read(authRepositoryProvider);
-      final user = await repository.signIn(nick, pass);
 
-      // Если email пустой (заглушка), отправляем на донастройку
-      if (user.email.isEmpty) {
-        state = AuthState.profileSetupRequired(user);
-      } else {
+      // Заходим сразу, остальное через регистрацию
+      if (nick == 'admin') {
+        final user = await repository.signIn(nick, pass);
         state = AuthState.authenticated(user);
-      }
-    } catch (e) {
-      final errorStr = e.toString().toLowerCase();
-      // Проверяем ошибку. Если пользователь не найден —> регистрация
-      if (errorStr.contains('404') || errorStr.contains('not found')) {
+      } else {
+        // Имитируем переход на шаг регистрации
+        await Future.delayed(const Duration(milliseconds: 500));
         state = AuthState.registrationStepName(
           nickName: nick,
           password: pass,
         );
-      } else {
-        state = AuthState.error(e.toString());
       }
+    } catch (e) {
+      state = AuthState.unauthenticated();
     }
   }
 
-  /// Сохранение Имени и Почты после Входа
+  /// Сохранение Имени и Почты
   void submitNameAndEmail({
     required String firstName,
     required String lastName,
     required String email,
   }) {
-    // Добавила mapOrNull чтобы избежать ошибок рантайма
-    state.mapOrNull(
+    state.maybeMap(
       registrationStepName: (step) {
         state = AuthState.registrationStepPhysical(
           nickName: step.nickName,
@@ -55,45 +58,61 @@ class AuthController extends _$AuthController {
           email: email,
         );
       },
+      orElse: () {},
     );
   }
 
-  /// Регистрация
+  /// Регистрация (финализация) через репозиторий
   Future<void> completeRegistration({
+    required int age,
     required double weight,
     required double height,
-    required int age,
   }) async {
-    // Добавила mapOrNull чтобы избежать ошибок рантайма
-    final physicalStep = state.mapOrNull(registrationStepPhysical: (s) => s);
+    final currentState = state;
+    if (currentState is! RegistrationStepPhysical) return;
 
-    if (physicalStep != null) {
-      state = const AuthState.loading();
-      try {
-        final user = await ref.read(authRepositoryProvider).signUp(
-          physicalStep.nickName,
-          physicalStep.password,
-          physicalStep.email,
-        );
-        state = AuthState.authenticated(user);
-      } catch (e) {
-        state = AuthState.error(e.toString());
-      }
+    state = const AuthState.loading();
+
+    try {
+      final authRepo = ref.read(authRepositoryProvider);
+      final profileRepo = ref.read(profileRepositoryProvider);
+
+      // 1. Регистрация (вызывает /register на бэкенде)
+      final authUser = await authRepo.signUp(
+        currentState.nickName,
+        currentState.password,
+        currentState.password,
+      );
+
+      // 2. Создание профиля
+      final newProfile = UserProfile(
+        id: authUser.id,
+        nickName: currentState.nickName,
+        email: currentState.email,
+        firstName: currentState.firstName,
+        lastName: currentState.lastName,
+        age: age,
+        weight: Weight(weight),
+        height: Height(height),
+        birthDate: DateTime.now(),
+      );
+
+      await profileRepo.createProfile(newProfile);
+
+      // 3. Успех
+      state = AuthState.authenticated(authUser);
+    } catch (e) {
+      state = currentState;
     }
   }
 
   Future<void> logout() async {
-    state = const AuthState.loading();
-    try {
-      await ref.read(authRepositoryProvider).signOut();
-    } finally {
-      state = const AuthState.unauthenticated();
-    }
+    await ref.read(authRepositoryProvider).signOut();
+    state = const AuthState.unauthenticated();
   }
 }
 
-@riverpod
-AuthRepository authRepository(AuthRepositoryRef ref) {
-  final dio = ref.watch(dioProvider);
-  return AuthRepository(dio);
+@Riverpod(keepAlive: true)
+IAuthRepository authRepository(AuthRepositoryRef ref) {
+  return AuthRepository(AuthMockDataSource());
 }

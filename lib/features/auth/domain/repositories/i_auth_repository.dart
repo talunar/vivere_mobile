@@ -4,7 +4,7 @@ abstract class IAuthRepository {
   // Вход
   Future<AuthUser> signIn(String nickName, String password);
 
-  // Регистрация (добавляем confirmPassword, так как в auth.go он есть)
+  // Регистрация
   Future<AuthUser> signUp(String nickName, String password, String confirmPassword);
 
   // Выход

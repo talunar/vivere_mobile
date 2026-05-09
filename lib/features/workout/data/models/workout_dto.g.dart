@@ -10,10 +10,17 @@ _$RepeatedDtoImpl _$$RepeatedDtoImplFromJson(Map<String, dynamic> json) =>
     _$RepeatedDtoImpl(
       id: (json['id'] as num).toInt(),
       weight: (json['weight'] as num).toInt(),
+      reps: (json['reps'] as num?)?.toInt(),
+      seconds: (json['seconds'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$RepeatedDtoImplToJson(_$RepeatedDtoImpl instance) =>
-    <String, dynamic>{'id': instance.id, 'weight': instance.weight};
+    <String, dynamic>{
+      'id': instance.id,
+      'weight': instance.weight,
+      'reps': instance.reps,
+      'seconds': instance.seconds,
+    };
 
 _$ExerciserDtoImpl _$$ExerciserDtoImplFromJson(Map<String, dynamic> json) =>
     _$ExerciserDtoImpl(

@@ -1,20 +1,23 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/repositories/workout_repository_impl.dart';
+import '../../data/repositories/user_exercises_repository_impl.dart';
+import '../../data/repositories/mock_workout_repository.dart';
+import '../../data/sources/user_exercises_mock_data_source.dart';
 import '../../domain/entities/workout_category.dart';
 import '../../domain/entities/workout_program.dart';
 import '../../domain/repositories/i_workout_repository.dart';
-import 'package:vivere_mobile/core/network/dio_provider.dart';
-import '../../data/repositories/mock_workout_repository.dart'; // Импортируем мок
+import '../../domain/repositories/i_user_exercises_repository.dart';
 
 part 'workout_providers.g.dart';
 
-/// Провайдер репозитория (внутренний)
-/// TODO Возвращаю мок вместо реальных данных - реализовать, после подключения к бэку
 @riverpod
 IWorkoutRepository workoutRepository(WorkoutRepositoryRef ref) {
-  // final dio = ref.watch(dioProvider);
-  // return WorkoutRepositoryImpl(dio);
   return MockWorkoutRepository();
+}
+
+@riverpod
+IUserExercisesRepository userExercisesRepository(UserExercisesRepositoryRef ref) {
+  return UserExercisesRepositoryImpl(UserExercisesMockDataSource());
 }
 
 /// Список всех категорий
@@ -39,4 +42,48 @@ Future<List<WorkoutProgram>> programsByCategory(ProgramsByCategoryRef ref, int c
 @riverpod
 Future<WorkoutProgram> workoutProgramDetails(WorkoutProgramDetailsRef ref, int id) {
   return ref.watch(workoutRepositoryProvider).getProgramDetails(id);
+}
+
+/// Управление программами
+@riverpod
+class UserPrograms extends _$UserPrograms {
+  @override
+  Future<List<WorkoutProgram>> build(int userId) async {
+    final repository = ref.watch(userExercisesRepositoryProvider);
+    final exercises = await repository.getUserExercises(userId);
+
+    return exercises.map((e) => WorkoutProgram(
+      id: e.id,
+      title: e.name,
+      description: e.description,
+      exercises: [e],
+      durationMinutes: 15,
+      rating: 5.0,
+    )).toList();
+  }
+
+  Future<void> addProgram(WorkoutProgram program) async {
+    final currentState = state.value ?? [];
+    if (currentState.any((p) => p.id == program.id)) return;
+
+    state = const AsyncLoading();
+    try {
+      final repository = ref.read(userExercisesRepositoryProvider);
+      await repository.addExercise(userId, program.exercises.first);
+      ref.invalidateSelf();
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
+  }
+
+  Future<void> deleteProgram(int programId) async {
+    state = const AsyncLoading();
+    try {
+      final repository = ref.read(userExercisesRepositoryProvider);
+      await repository.deleteExercise(programId);
+      ref.invalidateSelf();
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
+  }
 }

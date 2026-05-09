@@ -7,7 +7,6 @@ class MockProfileRepository implements IProfileRepository {
   @override
   Future<UserId> createProfile(UserProfile profile) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    // Имитируем создание записи в БД и возврат того же ID
     return profile.id;
   }
 

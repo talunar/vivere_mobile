@@ -38,7 +38,6 @@ extension ExerciserDtoX on ExerciserDto {
       name: name,
       description: description,
       image: image,
-      // Мапим подходы через repeated_mapper
       repeats: repeats?.map((r) => r.toDomain()).toList() ?? [],
     );
   }

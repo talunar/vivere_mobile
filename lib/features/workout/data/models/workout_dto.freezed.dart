@@ -23,6 +23,8 @@ RepeatedDto _$RepeatedDtoFromJson(Map<String, dynamic> json) {
 mixin _$RepeatedDto {
   int get id => throw _privateConstructorUsedError;
   int get weight => throw _privateConstructorUsedError;
+  int? get reps => throw _privateConstructorUsedError;
+  int? get seconds => throw _privateConstructorUsedError;
 
   /// Serializes this RepeatedDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +43,7 @@ abstract class $RepeatedDtoCopyWith<$Res> {
     $Res Function(RepeatedDto) then,
   ) = _$RepeatedDtoCopyWithImpl<$Res, RepeatedDto>;
   @useResult
-  $Res call({int id, int weight});
+  $Res call({int id, int weight, int? reps, int? seconds});
 }
 
 /// @nodoc
@@ -58,7 +60,12 @@ class _$RepeatedDtoCopyWithImpl<$Res, $Val extends RepeatedDto>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? id = null, Object? weight = null}) {
+  $Res call({
+    Object? id = null,
+    Object? weight = null,
+    Object? reps = freezed,
+    Object? seconds = freezed,
+  }) {
     return _then(
       _value.copyWith(
             id: null == id
@@ -69,6 +76,14 @@ class _$RepeatedDtoCopyWithImpl<$Res, $Val extends RepeatedDto>
                 ? _value.weight
                 : weight // ignore: cast_nullable_to_non_nullable
                       as int,
+            reps: freezed == reps
+                ? _value.reps
+                : reps // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            seconds: freezed == seconds
+                ? _value.seconds
+                : seconds // ignore: cast_nullable_to_non_nullable
+                      as int?,
           )
           as $Val,
     );
@@ -84,7 +99,7 @@ abstract class _$$RepeatedDtoImplCopyWith<$Res>
   ) = __$$RepeatedDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, int weight});
+  $Res call({int id, int weight, int? reps, int? seconds});
 }
 
 /// @nodoc
@@ -100,7 +115,12 @@ class __$$RepeatedDtoImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? id = null, Object? weight = null}) {
+  $Res call({
+    Object? id = null,
+    Object? weight = null,
+    Object? reps = freezed,
+    Object? seconds = freezed,
+  }) {
     return _then(
       _$RepeatedDtoImpl(
         id: null == id
@@ -111,6 +131,14 @@ class __$$RepeatedDtoImplCopyWithImpl<$Res>
             ? _value.weight
             : weight // ignore: cast_nullable_to_non_nullable
                   as int,
+        reps: freezed == reps
+            ? _value.reps
+            : reps // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        seconds: freezed == seconds
+            ? _value.seconds
+            : seconds // ignore: cast_nullable_to_non_nullable
+                  as int?,
       ),
     );
   }
@@ -119,7 +147,12 @@ class __$$RepeatedDtoImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$RepeatedDtoImpl implements _RepeatedDto {
-  const _$RepeatedDtoImpl({required this.id, required this.weight});
+  const _$RepeatedDtoImpl({
+    required this.id,
+    required this.weight,
+    this.reps,
+    this.seconds,
+  });
 
   factory _$RepeatedDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$RepeatedDtoImplFromJson(json);
@@ -128,10 +161,14 @@ class _$RepeatedDtoImpl implements _RepeatedDto {
   final int id;
   @override
   final int weight;
+  @override
+  final int? reps;
+  @override
+  final int? seconds;
 
   @override
   String toString() {
-    return 'RepeatedDto(id: $id, weight: $weight)';
+    return 'RepeatedDto(id: $id, weight: $weight, reps: $reps, seconds: $seconds)';
   }
 
   @override
@@ -140,12 +177,14 @@ class _$RepeatedDtoImpl implements _RepeatedDto {
         (other.runtimeType == runtimeType &&
             other is _$RepeatedDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.weight, weight) || other.weight == weight));
+            (identical(other.weight, weight) || other.weight == weight) &&
+            (identical(other.reps, reps) || other.reps == reps) &&
+            (identical(other.seconds, seconds) || other.seconds == seconds));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, weight);
+  int get hashCode => Object.hash(runtimeType, id, weight, reps, seconds);
 
   /// Create a copy of RepeatedDto
   /// with the given fields replaced by the non-null parameter values.
@@ -165,6 +204,8 @@ abstract class _RepeatedDto implements RepeatedDto {
   const factory _RepeatedDto({
     required final int id,
     required final int weight,
+    final int? reps,
+    final int? seconds,
   }) = _$RepeatedDtoImpl;
 
   factory _RepeatedDto.fromJson(Map<String, dynamic> json) =
@@ -174,6 +215,10 @@ abstract class _RepeatedDto implements RepeatedDto {
   int get id;
   @override
   int get weight;
+  @override
+  int? get reps;
+  @override
+  int? get seconds;
 
   /// Create a copy of RepeatedDto
   /// with the given fields replaced by the non-null parameter values.
@@ -690,8 +735,8 @@ CategoryDto _$CategoryDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$CategoryDto {
   int get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError; // В Go это Name
-  String get image => throw _privateConstructorUsedError; // В Go это Image
+  String get name => throw _privateConstructorUsedError;
+  String get image => throw _privateConstructorUsedError;
   List<ProgramDto>? get programs => throw _privateConstructorUsedError;
 
   /// Serializes this CategoryDto to a JSON map.
@@ -830,12 +875,9 @@ class _$CategoryDtoImpl implements _CategoryDto {
   final int id;
   @override
   final String name;
-  // В Go это Name
   @override
   final String image;
-  // В Go это Image
   final List<ProgramDto>? _programs;
-  // В Go это Image
   @override
   List<ProgramDto>? get programs {
     final value = _programs;
@@ -899,9 +941,9 @@ abstract class _CategoryDto implements CategoryDto {
   @override
   int get id;
   @override
-  String get name; // В Go это Name
+  String get name;
   @override
-  String get image; // В Go это Image
+  String get image;
   @override
   List<ProgramDto>? get programs;
 

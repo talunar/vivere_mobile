@@ -15,7 +15,7 @@ class _WorkoutExecutionScreenState extends State<WorkoutExecutionScreen> {
   int currentIndex = 0;
   Timer? _timer;
   int _remainingSeconds = 0;
-  bool _isPaused = true; // Теперь по умолчанию ПАУЗА
+  bool _isPaused = true;
 
   @override
   void initState() {
@@ -30,13 +30,12 @@ class _WorkoutExecutionScreenState extends State<WorkoutExecutionScreen> {
     
     if (repeat.seconds != null) {
       _remainingSeconds = repeat.seconds!;
-      _isPaused = true; // При переходе на новое упражнение - тоже пауза
+      _isPaused = true;
       _startTimer();
     }
   }
 
   void _startTimer() {
-    // Таймер создаем сразу, но он будет уменьшать время только если !_isPaused
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!_isPaused) {
         setState(() {

@@ -6,6 +6,19 @@ extension RepeatedDtoX on RepeatedDto {
     return Repeated(
       id: id,
       weight: weight,
+      reps: reps,
+      seconds: seconds,
+    );
+  }
+}
+
+extension RepeatedX on Repeated {
+  RepeatedDto toDto() {
+    return RepeatedDto(
+      id: id,
+      weight: weight,
+      reps: reps,
+      seconds: seconds,
     );
   }
 }

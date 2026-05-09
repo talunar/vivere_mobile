@@ -8,10 +8,7 @@ part of 'workout_providers.dart';
 
 String _$workoutRepositoryHash() => r'e8bfded22ff919abf26aedc1a40b02febabf7cd8';
 
-/// Провайдер репозитория (внутренний)
-/// TODO Возвращаю мок вместо реальных данных - реализовать, после подключения к бэку
-///
-/// Copied from [workoutRepository].
+/// See also [workoutRepository].
 @ProviderFor(workoutRepository)
 final workoutRepositoryProvider =
     AutoDisposeProvider<IWorkoutRepository>.internal(
@@ -27,6 +24,26 @@ final workoutRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef WorkoutRepositoryRef = AutoDisposeProviderRef<IWorkoutRepository>;
+String _$userExercisesRepositoryHash() =>
+    r'8452265dce628fe8e941fff2ea145194800a1f02';
+
+/// See also [userExercisesRepository].
+@ProviderFor(userExercisesRepository)
+final userExercisesRepositoryProvider =
+    AutoDisposeProvider<IUserExercisesRepository>.internal(
+      userExercisesRepository,
+      name: r'userExercisesRepositoryProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$userExercisesRepositoryHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UserExercisesRepositoryRef =
+    AutoDisposeProviderRef<IUserExercisesRepository>;
 String _$workoutCategoriesHash() => r'a9662683814608eed2b71e15d9e32b50214e8292';
 
 /// Список всех категорий
@@ -472,6 +489,161 @@ class _WorkoutProgramDetailsProviderElement
 
   @override
   int get id => (origin as WorkoutProgramDetailsProvider).id;
+}
+
+String _$userProgramsHash() => r'f3d6de718cc1d40c8ca8ce1138766c4f47c00ff5';
+
+abstract class _$UserPrograms
+    extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {
+  late final int userId;
+
+  FutureOr<List<WorkoutProgram>> build(int userId);
+}
+
+/// Управление программами
+///
+/// Copied from [UserPrograms].
+@ProviderFor(UserPrograms)
+const userProgramsProvider = UserProgramsFamily();
+
+/// Управление программами
+///
+/// Copied from [UserPrograms].
+class UserProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
+  /// Управление программами
+  ///
+  /// Copied from [UserPrograms].
+  const UserProgramsFamily();
+
+  /// Управление программами
+  ///
+  /// Copied from [UserPrograms].
+  UserProgramsProvider call(int userId) {
+    return UserProgramsProvider(userId);
+  }
+
+  @override
+  UserProgramsProvider getProviderOverride(
+    covariant UserProgramsProvider provider,
+  ) {
+    return call(provider.userId);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'userProgramsProvider';
+}
+
+/// Управление программами
+///
+/// Copied from [UserPrograms].
+class UserProgramsProvider
+    extends
+        AutoDisposeAsyncNotifierProviderImpl<
+          UserPrograms,
+          List<WorkoutProgram>
+        > {
+  /// Управление программами
+  ///
+  /// Copied from [UserPrograms].
+  UserProgramsProvider(int userId)
+    : this._internal(
+        () => UserPrograms()..userId = userId,
+        from: userProgramsProvider,
+        name: r'userProgramsProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$userProgramsHash,
+        dependencies: UserProgramsFamily._dependencies,
+        allTransitiveDependencies:
+            UserProgramsFamily._allTransitiveDependencies,
+        userId: userId,
+      );
+
+  UserProgramsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.userId,
+  }) : super.internal();
+
+  final int userId;
+
+  @override
+  FutureOr<List<WorkoutProgram>> runNotifierBuild(
+    covariant UserPrograms notifier,
+  ) {
+    return notifier.build(userId);
+  }
+
+  @override
+  Override overrideWith(UserPrograms Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: UserProgramsProvider._internal(
+        () => create()..userId = userId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        userId: userId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeAsyncNotifierProviderElement<UserPrograms, List<WorkoutProgram>>
+  createElement() {
+    return _UserProgramsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UserProgramsProvider && other.userId == userId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, userId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin UserProgramsRef
+    on AutoDisposeAsyncNotifierProviderRef<List<WorkoutProgram>> {
+  /// The parameter `userId` of this provider.
+  int get userId;
+}
+
+class _UserProgramsProviderElement
+    extends
+        AutoDisposeAsyncNotifierProviderElement<
+          UserPrograms,
+          List<WorkoutProgram>
+        >
+    with UserProgramsRef {
+  _UserProgramsProviderElement(super.provider);
+
+  @override
+  int get userId => (origin as UserProgramsProvider).userId;
 }
 
 // ignore_for_file: type=lint

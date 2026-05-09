@@ -74,7 +74,7 @@ class ProgramsListScreen extends StatelessWidget {
 
 class ProgramCard extends StatelessWidget {
   final WorkoutProgram? program;
-  final VoidCallback? onTap; // Добавляем колбэк для нажатия
+  final VoidCallback? onTap;
 
   const ProgramCard({
     super.key,

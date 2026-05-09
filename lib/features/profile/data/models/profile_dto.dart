@@ -9,7 +9,6 @@ part 'profile_dto.g.dart';
 
 @freezed
 class ProfileDto with _$ProfileDto {
-  // Обязательный конструктор для использования кастомных методов в freezed
   const ProfileDto._();
 
   const factory ProfileDto({
@@ -38,7 +37,6 @@ class ProfileDto with _$ProfileDto {
         birthDate: DateFormat('yyyy-MM-dd').format(profile.birthDate),
       );
 
-  /// Метод для создания JSON без ID и с приведением типов к int для Go (uint8)
   Map<String, dynamic> toCreateJson() {
     final map = toJson();
     map.remove('id');
@@ -48,7 +46,6 @@ class ProfileDto with _$ProfileDto {
     return map;
   }
 
-  /// Для обновления также приводим типы к целым числам
   Map<String, dynamic> toUpdateJson() {
     final map = toJson();
     map['weight'] = weight.toInt();

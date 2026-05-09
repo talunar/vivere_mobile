@@ -10,6 +10,6 @@ class WorkoutCategory with _$WorkoutCategory {
     required String name,
     required String image,
     String? description,
-    required List<WorkoutProgram> programs, // Ссылка на упражнения по ID
+    required List<WorkoutProgram> programs,
   }) = _WorkoutCategory;
 }

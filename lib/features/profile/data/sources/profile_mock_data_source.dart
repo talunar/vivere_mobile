@@ -22,7 +22,7 @@ class ProfileMockDataSource {
 
   Future<int> createProfile(ProfileDto data) async {
     await _delay();
-    return 123; // Возвращаем ID нового пользователя
+    return 123;
   }
 
   Future<ProfileDto> updateProfile(ProfileDto data) async {

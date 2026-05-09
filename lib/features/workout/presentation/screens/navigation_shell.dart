@@ -13,12 +13,9 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
-  // Ключ для управления навигацией внутри вкладки "Главная"
   final GlobalKey<NavigatorState> _workoutNavigatorKey = GlobalKey<NavigatorState>();
-
   void _onItemTapped(int index) {
     if (_selectedIndex == index) {
-      // Если нажали на уже выбранную вкладку "Главная", возвращаемся в ее начало
       if (index == 0) {
         _workoutNavigatorKey.currentState?.popUntil((route) => route.isFirst);
       }

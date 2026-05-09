@@ -1,43 +1,82 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../state/auth_state.dart';
+import '../../data/repositories/auth_repository.dart';
+import '../../domain/entities/auth_user.dart';
+import '../../../../core/domain/entities/user_id.dart';
+import 'package:vivere_mobile/core/network/dio_provider.dart';
 
-part of 'auth_provider.dart';
+part 'auth_provider.g.dart';
 
-// **************************************************************************
-// RiverpodGenerator
-// **************************************************************************
+@Riverpod(keepAlive: true)
+class AuthController extends _$AuthController {
+  @override
+  AuthState build() {
+    // Для тестирования
+    return const AuthState.unauthenticated();
+  }
 
-String _$authRepositoryHash() => r'13b01e711385a0a2dc6d90a4d410ed5a2bc2e863';
+  /// Вход
+  Future<void> continueToNextStep(String nick, String pass) async {
+    state = const AuthState.loading();
+    await Future.delayed(const Duration(milliseconds: 800));
+    
+    if (nick == 'admin') {
+      state = AuthState.authenticated(AuthUser(
+        id: UserId(1),
+        email: 'admin@vivere.app',
+        nickName: nick,
+      ));
+    } else {
+      state = AuthState.registrationStepName(
+        nickName: nick,
+        password: pass,
+      );
+    }
+  }
 
-/// See also [authRepository].
-@ProviderFor(authRepository)
-final authRepositoryProvider = Provider<AuthRepository>.internal(
-  authRepository,
-  name: r'authRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$authRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef AuthRepositoryRef = ProviderRef<AuthRepository>;
-String _$authControllerHash() => r'aae1c328af9c1fd551b2385a4052fa4847df201f';
-
-/// See also [AuthController].
-@ProviderFor(AuthController)
-final authControllerProvider =
-    NotifierProvider<AuthController, AuthState>.internal(
-      AuthController.new,
-      name: r'authControllerProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$authControllerHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
+  /// Сохранение Имени и Почты
+  void submitNameAndEmail({
+    required String firstName,
+    required String lastName,
+    required String email,
+  }) {
+    state.maybeMap(
+      registrationStepName: (step) {
+        state = AuthState.registrationStepPhysical(
+          nickName: step.nickName,
+          password: step.password,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+        );
+      },
+      orElse: () {},
     );
+  }
 
-typedef _$AuthController = Notifier<AuthState>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+  /// Регистрация (финализация)
+  Future<void> completeRegistration({
+    required int age,
+    required double weight,
+    required double height,
+  }) async {
+    state = const AuthState.loading();
+    await Future.delayed(const Duration(milliseconds: 800));
+    
+    state = AuthState.authenticated(AuthUser(
+      id: UserId(1),
+      email: 'new_user@vivere.app',
+      nickName: 'NewUser',
+    ));
+  }
+
+  Future<void> logout() async {
+    state = const AuthState.unauthenticated();
+  }
+}
+
+@Riverpod(keepAlive: true)
+AuthRepository authRepository(AuthRepositoryRef ref) {
+  final dio = ref.watch(dioProvider);
+  return AuthRepository(dio);
+}

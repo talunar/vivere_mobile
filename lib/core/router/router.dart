@@ -16,19 +16,14 @@ part 'router.g.dart';
 
 @Riverpod(keepAlive: true)
 GoRouter router(RouterRef ref) {
-  // 1. Создаем стабильный объект для уведомления роутера об изменениях.
-  // Мы используем ValueNotifier, экземпляр которого никогда не меняется.
   final refreshListenable = ValueNotifier<bool>(false);
-  
-  // 2. Слушаем изменения состояния авторизации. 
-  // Когда состояние меняется, мы "пинаем" notifier, но НЕ перезапускаем этот провайдер (router).
+
   ref.listen(authControllerProvider, (previous, next) {
     if (next is! AuthLoading) {
       refreshListenable.value = !refreshListenable.value;
     }
   });
 
-  // 3. Определяем начальную локацию ОДИН РАЗ при создании роутера (холодный старт).
   final initialState = ref.read(authControllerProvider);
   String initialLoc = '/login';
   
@@ -46,11 +41,9 @@ GoRouter router(RouterRef ref) {
     debugLogDiagnostics: true,
     
     redirect: (context, state) {
-      // Используем ref.read для получения актуального состояния внутри колбэка
       final authState = ref.read(authControllerProvider);
       final location = state.matchedLocation;
 
-      // Если идет загрузка, мы не делаем редирект, чтобы экран не дергался
       if (authState is AuthLoading) return null;
 
       return authState.maybeWhen(

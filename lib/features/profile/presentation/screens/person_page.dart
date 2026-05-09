@@ -42,6 +42,7 @@ class _ProfileDashboard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Слушаем провайдер программ пользователя (сгенерирован из класса UserPrograms)
     final programsAsync = ref.watch(userProgramsProvider(profile.id.value));
 
     return SingleChildScrollView(
@@ -98,7 +99,7 @@ class _ProfileDashboard extends ConsumerWidget {
             child: Wrap(
               spacing: 16,
               runSpacing: 16,
-              children: [
+              children: const [
                 _GoalItem(title: "3 км", subtitle: "Бег", isDone: false),
                 _GoalItem(title: "100", subtitle: "Отжимания", isDone: true),
                 _GoalItem(title: "100", subtitle: "Подтягивания", isDone: true),
@@ -112,7 +113,7 @@ class _ProfileDashboard extends ConsumerWidget {
             showArrow: true,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: const [
                 _CalorieItem(label: "Завтрак", value: "320 kkal"),
                 _CalorieItem(label: "Обед", value: "220 kkal"),
                 _CalorieItem(label: "Ужин", value: "220 kkal"),
@@ -136,9 +137,9 @@ class _ProfileDashboard extends ConsumerWidget {
           _DashboardCard(
             title: "Мои тренировки",
             showArrow: true,
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 Text("8 штук", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 Text("4 приобретено", style: TextStyle(color: Colors.black54, fontSize: 14)),
               ],
@@ -164,13 +165,14 @@ class _ProfileDashboard extends ConsumerWidget {
                       );
                     },
                     onDelete: () {
+                      // Вызываем удаление через нотификатор
                       ref.read(userProgramsProvider(profile.id.value).notifier).deleteProgram(program.id);
                     },
                   ),
                 )).toList(),
               ),
               loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
-              error: (err, _) => Text('Ошибка: $err'),
+              error: (err, _) => Text('Ошибка загрузки программ: $err'),
             ),
           ),
         ],
@@ -372,7 +374,7 @@ class _ProgramCard extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Container(
-            width: 352,
+            width: double.infinity,
             height: 160,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -391,7 +393,7 @@ class _ProgramCard extends StatelessWidget {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 15, top: 20, right: 12, bottom: 20),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -412,7 +414,7 @@ class _ProgramCard extends StatelessWidget {
                             const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
                             const SizedBox(width: 5),
                             Text(
-                              program.rating?.toString() ?? "4,8",
+                              program.rating?.toString() ?? "4.8",
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -449,20 +451,12 @@ class _ProgramCard extends StatelessWidget {
             ),
           ),
         ),
-        // Кнопка удаления в углу карточки
         Positioned(
           top: 10,
           right: 10,
-          child: GestureDetector(
-            onTap: onDelete,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.close, size: 20, color: Colors.black54),
-            ),
+          child: IconButton(
+            icon: const Icon(Icons.close, color: Colors.grey),
+            onPressed: onDelete,
           ),
         ),
       ],

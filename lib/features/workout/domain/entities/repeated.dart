@@ -7,7 +7,7 @@ class Repeated with _$Repeated {
   const factory Repeated({
     required int id,
     required int weight,
-    int? reps, // Добавим reps для Шага 4
-    int? seconds, // Добавим секунды для упражнений на время
+    int? reps,
+    int? seconds,
   }) = _Repeated;
 }

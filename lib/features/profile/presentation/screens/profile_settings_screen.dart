@@ -54,7 +54,6 @@ class ProfileSettingsScreen extends ConsumerWidget {
 class _NotificationIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Используем notify.svg или стандартную иконку если файла нет
     return Container(
       margin: const EdgeInsets.all(8),
       decoration: const BoxDecoration(
@@ -121,7 +120,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 
           const SizedBox(height: 32),
           
-          // Мои покупки (мок)
+          // Мои программы (мок)
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -135,7 +134,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Мои покупки",
+                        "Мои программы",
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 4),

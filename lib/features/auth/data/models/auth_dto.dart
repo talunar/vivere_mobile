@@ -6,8 +6,8 @@ part 'auth_dto.g.dart';
 @freezed
 class AuthDto with _$AuthDto {
   const factory AuthDto({
-    @JsonKey(name: 'nick_name') String? nickName, // Необязательное поле
-    String? password,                             // Необязательное поле
+    @JsonKey(name: 'nick_name') String? nickName,
+    String? password,
     @JsonKey(name: 'password2') String? confirmPassword,
   }) = _AuthDto;
 

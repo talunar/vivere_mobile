@@ -19,8 +19,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$Repeated {
   int get id => throw _privateConstructorUsedError;
   int get weight => throw _privateConstructorUsedError;
-  int? get reps =>
-      throw _privateConstructorUsedError; // Добавим reps для Шага 4
+  int? get reps => throw _privateConstructorUsedError;
   int? get seconds => throw _privateConstructorUsedError;
 
   /// Create a copy of Repeated
@@ -152,7 +151,6 @@ class _$RepeatedImpl implements _Repeated {
   final int weight;
   @override
   final int? reps;
-  // Добавим reps для Шага 4
   @override
   final int? seconds;
 
@@ -197,7 +195,7 @@ abstract class _Repeated implements Repeated {
   @override
   int get weight;
   @override
-  int? get reps; // Добавим reps для Шага 4
+  int? get reps;
   @override
   int? get seconds;
 

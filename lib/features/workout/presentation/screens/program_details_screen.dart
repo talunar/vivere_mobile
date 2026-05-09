@@ -14,24 +14,21 @@ class ProgramDetailsScreen extends StatefulWidget {
 }
 
 class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
-  // Состояние: добавлена ли программа в избранное
+  // Добавлена ли программа в избранное
   bool isBookmarked = false;
 
   @override
   Widget build(BuildContext context) {
-    // Получаем ширину экрана для адаптивного расчета высоты изображения
     final double screenWidth = MediaQuery.of(context).size.width;
     
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6), // Светло-серый фон как в дизайне
+      backgroundColor: const Color(0xFFF6F6F6),
       body: Stack(
         children: [
-          // Основное содержимое экрана, которое можно скроллить
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. ВЕРХНЕЕ ИЗОБРАЖЕНИЕ
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
                   child: Image.asset(
@@ -48,7 +45,7 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 2. ЗАГОЛОВОК И РЕЙТИНГ
+                      // Заголовок и рейтинг
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -77,7 +74,7 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // 3. ОПИСАНИЕ
+                      // Описание
                       Text(
                         widget.program.description ?? '',
                         style: const TextStyle(
@@ -88,14 +85,14 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                       ),
                       const SizedBox(height: 24),
 
-                      // 4. ПАРАМЕТРЫ ПРОГРАММЫ (Уровень, Инвентарь, Время)
+                      // Параметры программы
                       _InfoRow(label: 'Уровень:', value: widget.program.level ?? 'Продвинутый'),
                       _InfoRow(label: 'Инвентарь:', value: widget.program.equipment ?? 'Гантели, коврик'),
                       _InfoRow(label: 'Время:', value: '${widget.program.durationMinutes} минут'),
 
                       const SizedBox(height: 24),
 
-                      // 5. КАРТОЧКА ТРЕНЕРА
+                      // Тренер
                       Row(
                         children: [
                           const CircleAvatar(
@@ -124,12 +121,12 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                       ),
                       const SizedBox(height: 32),
 
-                      // 6. СПИСОК УПРАЖНЕНИЙ
+                      // Список упражнений
                       ...widget.program.exercises.map((exercise) => _ExerciseTile(exercise: exercise)).toList(),
 
                       const SizedBox(height: 30),
 
-                      // 7. КНОПКА "НАЧАТЬ ТРЕНИРОВКУ"
+                      // "Начать тренеровку"
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -165,7 +162,7 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
             ),
           ),
           
-          // 8. ВЕРХНИЕ КНОПКИ УПРАВЛЕНИЯ
+          // Верхнее меню
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             left: 16,

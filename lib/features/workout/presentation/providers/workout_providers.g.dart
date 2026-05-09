@@ -46,7 +46,9 @@ typedef UserExercisesRepositoryRef =
     AutoDisposeProviderRef<IUserExercisesRepository>;
 String _$workoutCategoriesHash() => r'a9662683814608eed2b71e15d9e32b50214e8292';
 
-/// See also [workoutCategories].
+/// Список всех категорий
+///
+/// Copied from [workoutCategories].
 @ProviderFor(workoutCategories)
 final workoutCategoriesProvider =
     AutoDisposeFutureProvider<List<WorkoutCategory>>.internal(
@@ -86,16 +88,24 @@ class _SystemHash {
   }
 }
 
-/// See also [workoutCategory].
+/// Получение конкретной категории (с превью программ)
+///
+/// Copied from [workoutCategory].
 @ProviderFor(workoutCategory)
 const workoutCategoryProvider = WorkoutCategoryFamily();
 
-/// See also [workoutCategory].
+/// Получение конкретной категории (с превью программ)
+///
+/// Copied from [workoutCategory].
 class WorkoutCategoryFamily extends Family<AsyncValue<WorkoutCategory>> {
-  /// See also [workoutCategory].
+  /// Получение конкретной категории (с превью программ)
+  ///
+  /// Copied from [workoutCategory].
   const WorkoutCategoryFamily();
 
-  /// See also [workoutCategory].
+  /// Получение конкретной категории (с превью программ)
+  ///
+  /// Copied from [workoutCategory].
   WorkoutCategoryProvider call(int id) {
     return WorkoutCategoryProvider(id);
   }
@@ -122,10 +132,14 @@ class WorkoutCategoryFamily extends Family<AsyncValue<WorkoutCategory>> {
   String? get name => r'workoutCategoryProvider';
 }
 
-/// See also [workoutCategory].
+/// Получение конкретной категории (с превью программ)
+///
+/// Copied from [workoutCategory].
 class WorkoutCategoryProvider
     extends AutoDisposeFutureProvider<WorkoutCategory> {
-  /// See also [workoutCategory].
+  /// Получение конкретной категории (с превью программ)
+  ///
+  /// Copied from [workoutCategory].
   WorkoutCategoryProvider(int id)
     : this._internal(
         (ref) => workoutCategory(ref as WorkoutCategoryRef, id),
@@ -208,17 +222,25 @@ class _WorkoutCategoryProviderElement
 String _$programsByCategoryHash() =>
     r'0e5036cbb7e43dac3d1fc2f3303b510521d56ee4';
 
-/// See also [programsByCategory].
+/// Все программы выбранной категории
+///
+/// Copied from [programsByCategory].
 @ProviderFor(programsByCategory)
 const programsByCategoryProvider = ProgramsByCategoryFamily();
 
-/// See also [programsByCategory].
+/// Все программы выбранной категории
+///
+/// Copied from [programsByCategory].
 class ProgramsByCategoryFamily
     extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// See also [programsByCategory].
+  /// Все программы выбранной категории
+  ///
+  /// Copied from [programsByCategory].
   const ProgramsByCategoryFamily();
 
-  /// See also [programsByCategory].
+  /// Все программы выбранной категории
+  ///
+  /// Copied from [programsByCategory].
   ProgramsByCategoryProvider call(int categoryId) {
     return ProgramsByCategoryProvider(categoryId);
   }
@@ -245,10 +267,14 @@ class ProgramsByCategoryFamily
   String? get name => r'programsByCategoryProvider';
 }
 
-/// See also [programsByCategory].
+/// Все программы выбранной категории
+///
+/// Copied from [programsByCategory].
 class ProgramsByCategoryProvider
     extends AutoDisposeFutureProvider<List<WorkoutProgram>> {
-  /// See also [programsByCategory].
+  /// Все программы выбранной категории
+  ///
+  /// Copied from [programsByCategory].
   ProgramsByCategoryProvider(int categoryId)
     : this._internal(
         (ref) => programsByCategory(ref as ProgramsByCategoryRef, categoryId),
@@ -334,16 +360,24 @@ class _ProgramsByCategoryProviderElement
 String _$workoutProgramDetailsHash() =>
     r'3f343eff1314d667aefc58bc7fa31cc205ac348e';
 
-/// See also [workoutProgramDetails].
+/// Полные детали программы (упражнения, описание, подходы)
+///
+/// Copied from [workoutProgramDetails].
 @ProviderFor(workoutProgramDetails)
 const workoutProgramDetailsProvider = WorkoutProgramDetailsFamily();
 
-/// See also [workoutProgramDetails].
+/// Полные детали программы (упражнения, описание, подходы)
+///
+/// Copied from [workoutProgramDetails].
 class WorkoutProgramDetailsFamily extends Family<AsyncValue<WorkoutProgram>> {
-  /// See also [workoutProgramDetails].
+  /// Полные детали программы (упражнения, описание, подходы)
+  ///
+  /// Copied from [workoutProgramDetails].
   const WorkoutProgramDetailsFamily();
 
-  /// See also [workoutProgramDetails].
+  /// Полные детали программы (упражнения, описание, подходы)
+  ///
+  /// Copied from [workoutProgramDetails].
   WorkoutProgramDetailsProvider call(int id) {
     return WorkoutProgramDetailsProvider(id);
   }
@@ -370,10 +404,14 @@ class WorkoutProgramDetailsFamily extends Family<AsyncValue<WorkoutProgram>> {
   String? get name => r'workoutProgramDetailsProvider';
 }
 
-/// See also [workoutProgramDetails].
+/// Полные детали программы (упражнения, описание, подходы)
+///
+/// Copied from [workoutProgramDetails].
 class WorkoutProgramDetailsProvider
     extends AutoDisposeFutureProvider<WorkoutProgram> {
-  /// See also [workoutProgramDetails].
+  /// Полные детали программы (упражнения, описание, подходы)
+  ///
+  /// Copied from [workoutProgramDetails].
   WorkoutProgramDetailsProvider(int id)
     : this._internal(
         (ref) => workoutProgramDetails(ref as WorkoutProgramDetailsRef, id),
@@ -453,7 +491,7 @@ class _WorkoutProgramDetailsProviderElement
   int get id => (origin as WorkoutProgramDetailsProvider).id;
 }
 
-String _$userProgramsHash() => r'2fb2367961050b7f7507675df44d726bed7eeb0e';
+String _$userProgramsHash() => r'f3d6de718cc1d40c8ca8ce1138766c4f47c00ff5';
 
 abstract class _$UserPrograms
     extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {
@@ -462,16 +500,24 @@ abstract class _$UserPrograms
   FutureOr<List<WorkoutProgram>> build(int userId);
 }
 
-/// See also [UserPrograms].
+/// Управление программами
+///
+/// Copied from [UserPrograms].
 @ProviderFor(UserPrograms)
 const userProgramsProvider = UserProgramsFamily();
 
-/// See also [UserPrograms].
+/// Управление программами
+///
+/// Copied from [UserPrograms].
 class UserProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// See also [UserPrograms].
+  /// Управление программами
+  ///
+  /// Copied from [UserPrograms].
   const UserProgramsFamily();
 
-  /// See also [UserPrograms].
+  /// Управление программами
+  ///
+  /// Copied from [UserPrograms].
   UserProgramsProvider call(int userId) {
     return UserProgramsProvider(userId);
   }
@@ -498,14 +544,18 @@ class UserProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
   String? get name => r'userProgramsProvider';
 }
 
-/// See also [UserPrograms].
+/// Управление программами
+///
+/// Copied from [UserPrograms].
 class UserProgramsProvider
     extends
         AutoDisposeAsyncNotifierProviderImpl<
           UserPrograms,
           List<WorkoutProgram>
         > {
-  /// See also [UserPrograms].
+  /// Управление программами
+  ///
+  /// Copied from [UserPrograms].
   UserProgramsProvider(int userId)
     : this._internal(
         () => UserPrograms()..userId = userId,

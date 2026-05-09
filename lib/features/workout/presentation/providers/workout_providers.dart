@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../data/repositories/workout_repository_impl.dart';
 import '../../data/repositories/user_exercises_repository_impl.dart';
 import '../../data/repositories/mock_workout_repository.dart';
 import '../../data/sources/user_exercises_mock_data_source.dart';
@@ -19,33 +20,38 @@ IUserExercisesRepository userExercisesRepository(UserExercisesRepositoryRef ref)
   return UserExercisesRepositoryImpl(UserExercisesMockDataSource());
 }
 
+/// Список всех категорий
 @riverpod
 Future<List<WorkoutCategory>> workoutCategories(WorkoutCategoriesRef ref) {
   return ref.watch(workoutRepositoryProvider).getCategories();
 }
 
+/// Получение конкретной категории (с превью программ)
 @riverpod
 Future<WorkoutCategory> workoutCategory(WorkoutCategoryRef ref, int id) {
   return ref.watch(workoutRepositoryProvider).getCategory(id);
 }
 
+/// Все программы выбранной категории
 @riverpod
 Future<List<WorkoutProgram>> programsByCategory(ProgramsByCategoryRef ref, int categoryId) {
   return ref.watch(workoutRepositoryProvider).getProgramsByCategory(categoryId);
 }
 
+/// Полные детали программы (упражнения, описание, подходы)
 @riverpod
 Future<WorkoutProgram> workoutProgramDetails(WorkoutProgramDetailsRef ref, int id) {
   return ref.watch(workoutRepositoryProvider).getProgramDetails(id);
 }
 
+/// Управление программами
 @riverpod
 class UserPrograms extends _$UserPrograms {
   @override
   Future<List<WorkoutProgram>> build(int userId) async {
     final repository = ref.watch(userExercisesRepositoryProvider);
     final exercises = await repository.getUserExercises(userId);
-    
+
     return exercises.map((e) => WorkoutProgram(
       id: e.id,
       title: e.name,
@@ -57,13 +63,13 @@ class UserPrograms extends _$UserPrograms {
   }
 
   Future<void> addProgram(WorkoutProgram program) async {
-    final repository = ref.read(userExercisesRepositoryProvider);
+    final currentState = state.value ?? [];
+    if (currentState.any((p) => p.id == program.id)) return;
+
     state = const AsyncLoading();
-    
     try {
-      // Мапим программу обратно в упражнение (как ожидает Go)
-      final exercise = program.exercises.first; 
-      await repository.addExercise(userId, exercise);
+      final repository = ref.read(userExercisesRepositoryProvider);
+      await repository.addExercise(userId, program.exercises.first);
       ref.invalidateSelf();
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -71,10 +77,9 @@ class UserPrograms extends _$UserPrograms {
   }
 
   Future<void> deleteProgram(int programId) async {
-    final repository = ref.read(userExercisesRepositoryProvider);
     state = const AsyncLoading();
-    
     try {
+      final repository = ref.read(userExercisesRepositoryProvider);
       await repository.deleteExercise(programId);
       ref.invalidateSelf();
     } catch (e, st) {

@@ -9,7 +9,7 @@ class WorkoutSession with _$WorkoutSession {
     required int programId,
     required DateTime startTime,
     DateTime? endTime,
-    required List<ExerciseResult> results, // То, что юзер реально сделал
+    required List<ExerciseResult> results,
   }) = _WorkoutSession;
 }
 
@@ -17,7 +17,7 @@ class WorkoutSession with _$WorkoutSession {
 class ExerciseResult with _$ExerciseResult {
   const factory ExerciseResult({
     required int exerciseId,
-    required List<SetRecord> sets, // Фактические веса и повторения
+    required List<SetRecord> sets,
   }) = _ExerciseResult;
 }
 

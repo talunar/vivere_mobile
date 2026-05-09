@@ -3,11 +3,10 @@ import '../models/workout_dto.dart';
 class UserExercisesMockDataSource {
   Future<void> _delay() => Future.delayed(const Duration(milliseconds: 500));
 
-  // Имитация /get-user-exercise/:id
   Future<List<ExerciserDto>> getUserExercises(int userId) async {
     await _delay();
     return [
-      const ExerciserDto(
+      ExerciserDto(
         id: 901,
         name: 'Утренняя разминка',
         description: 'Ваша ежедневная активность для пробуждения организма.',
@@ -17,7 +16,7 @@ class UserExercisesMockDataSource {
           RepeatedDto(id: 2, weight: 0),
         ],
       ),
-      const ExerciserDto(
+      ExerciserDto(
         id: 902,
         name: 'Растяжка',
         description: 'Улучшение гибкости после рабочего дня.',
@@ -31,15 +30,13 @@ class UserExercisesMockDataSource {
 
   Future<void> addExerciseForUser(int userId, ExerciserDto exercise) async {
     await _delay();
-    // POST запрос
-  }
-
-  Future<ExerciserDto> updateExercise(int exerciseId, ExerciserDto update) async {
-    await _delay();
-    return update;
   }
 
   Future<void> deleteExercise(int exerciseId) async {
+    await _delay();
+  }
+
+  Future<void> updateExercise(ExerciserDto exercise) async {
     await _delay();
   }
 }

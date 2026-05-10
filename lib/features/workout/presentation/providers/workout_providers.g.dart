@@ -44,27 +44,6 @@ final userExercisesRepositoryProvider =
 // ignore: unused_element
 typedef UserExercisesRepositoryRef =
     AutoDisposeProviderRef<IUserExercisesRepository>;
-String _$workoutCategoriesHash() => r'a9662683814608eed2b71e15d9e32b50214e8292';
-
-/// Список всех категорий
-///
-/// Copied from [workoutCategories].
-@ProviderFor(workoutCategories)
-final workoutCategoriesProvider =
-    AutoDisposeFutureProvider<List<WorkoutCategory>>.internal(
-      workoutCategories,
-      name: r'workoutCategoriesProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$workoutCategoriesHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef WorkoutCategoriesRef =
-    AutoDisposeFutureProviderRef<List<WorkoutCategory>>;
 String _$workoutCategoryHash() => r'4df32374cbfc91de7b2fd46b51d14410288f5c42';
 
 /// Copied from Dart SDK
@@ -491,7 +470,30 @@ class _WorkoutProgramDetailsProviderElement
   int get id => (origin as WorkoutProgramDetailsProvider).id;
 }
 
-String _$userProgramsHash() => r'f3d6de718cc1d40c8ca8ce1138766c4f47c00ff5';
+String _$paginatedWorkoutCategoriesHash() =>
+    r'4d9d37c6c33f4fd36eb0aa76cd93fda718b80ebc';
+
+/// ПАГИНАЦИЯ КАТЕГОРИЙ
+///
+/// Copied from [PaginatedWorkoutCategories].
+@ProviderFor(PaginatedWorkoutCategories)
+final paginatedWorkoutCategoriesProvider =
+    AutoDisposeAsyncNotifierProvider<
+      PaginatedWorkoutCategories,
+      List<WorkoutCategory>
+    >.internal(
+      PaginatedWorkoutCategories.new,
+      name: r'paginatedWorkoutCategoriesProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$paginatedWorkoutCategoriesHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$PaginatedWorkoutCategories =
+    AutoDisposeAsyncNotifier<List<WorkoutCategory>>;
+String _$userProgramsHash() => r'ac03395f15db245512238be76727e619e3311ca6';
 
 abstract class _$UserPrograms
     extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {

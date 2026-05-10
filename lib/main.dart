@@ -1,22 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/router.dart';
-import 'features/auth/data/repositories/mock_auth_repository.dart';
-import 'features/auth/presentation/providers/auth_provider.dart';
-import 'features/profile/data/repositories/mock_profile_repository.dart';
-import 'features/profile/presentation/providers/profile_providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    ProviderScope(
-      overrides: [
-        // Подменяем репозитории на моки для разработки
-        authRepositoryProvider.overrideWith((ref) => MockAuthRepository()),
-        profileRepositoryProvider.overrideWith((ref) => MockProfileRepository()),
-      ],
-      child: const MyApp(),
+    const ProviderScope(
+      child: MyApp(),
     ),
   );
 }

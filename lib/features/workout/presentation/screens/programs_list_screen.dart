@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/workout_program.dart';
-import 'program_details_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vivere_mobile/features/workout/domain/entities/workout_program.dart';
+import 'package:vivere_mobile/features/workout/presentation/providers/workout_providers.dart';
+import 'package:vivere_mobile/features/workout/presentation/screens/program_details_screen.dart';
 
-class ProgramsListScreen extends StatelessWidget {
+class ProgramsListScreen extends ConsumerWidget {
   final String categoryName;
-  final List<WorkoutProgram> programs;
+  final int categoryId;
 
   const ProgramsListScreen({
     super.key,
     required this.categoryName,
-    required this.programs,
+    required this.categoryId,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Загружаем программы по ID категории через Riverpod
+    final programsAsync = ref.watch(programsByCategoryProvider(categoryId));
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: SizedBox(
-            width: 24,
-            height: 24,
-            child: CustomPaint(
-              painter: BackIconPainter(color: Colors.black),
-            ),
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -40,32 +39,38 @@ class ProgramsListScreen extends StatelessWidget {
       ),
       body: Container(
         margin: const EdgeInsets.only(top: 8),
+        width: double.infinity,
         decoration: const BoxDecoration(
           color: Color(0xFFE2E2E2),
           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
-        child: ListView.separated(
-          // Добавляем отступ снизу (100), чтобы нижнее меню не перекрывало контент
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-          itemCount: programs.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            final program = programs[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: ProgramCard(
-                program: program,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProgramDetailsScreen(program: program),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+        child: programsAsync.when(
+          data: (programs) => ListView.separated(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+            itemCount: programs.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              final program = programs[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: ProgramCard(
+                  program: program,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProgramDetailsScreen(program: program),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: Color(0xFFFF5900)),
+          ),
+          error: (err, st) => Center(child: Text('Ошибка: $err')),
         ),
       ),
     );
@@ -85,11 +90,9 @@ class ProgramCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap, // Теперь при нажатии будет срабатывать переход
+      onTap: onTap,
       child: Container(
-        width: 352,
         height: 160,
-        // Убираем margin отсюда, чтобы управлять расстоянием в ListView или Column
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
@@ -98,16 +101,22 @@ class ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset(
-                "assets/design/workout_1.png",
+              child: Image.network(
+                program?.image ?? "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1000&auto=format&fit=crop",
                 width: 160,
                 height: 160,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  width: 160,
+                  height: 160,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.fitness_center, size: 40, color: Colors.white),
+                ),
               ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(left: 15, top: 20, right: 12, bottom: 20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -149,7 +158,7 @@ class ProgramCard extends StatelessWidget {
                           child: Text(
                             program?.trainerName ?? "Super train 3000",
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 14,
                               color: Colors.black.withOpacity(0.5),
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -166,30 +175,4 @@ class ProgramCard extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Кастомная иконка "Назад" (шеврон)
-class BackIconPainter extends CustomPainter {
-  final Color color;
-  BackIconPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final path = Path()
-      ..moveTo(size.width * 0.65, size.height * 0.25)
-      ..lineTo(size.width * 0.35, size.height * 0.5)
-      ..lineTo(size.width * 0.65, size.height * 0.75);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

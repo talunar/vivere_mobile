@@ -5,14 +5,14 @@ class ProfileMockDataSource {
 
   final ProfileDto _mockProfile = const ProfileDto(
     id: 1,
-    nickName: 'ivan_iron',
-    email: 'ivan@example.com',
-    firstName: 'Иван',
-    lastName: 'Иванов',
-    age: 28,
-    weight: 85.0,
-    height: 180.0,
-    birthDate: '1996-05-15',
+    nickName: 'zero_latency',
+    email: 'berserk_mode45@vivere.com',
+    firstName: 'Nova',
+    lastName: 'Polaris',
+    age: 30,
+    weight: 123.0,
+    height: 170.0,
+    birthDate: '1996-02-29',
   );
 
   Future<ProfileDto> getProfile(int id) async {

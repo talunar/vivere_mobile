@@ -8,19 +8,39 @@ class MockWorkoutRepository implements IWorkoutRepository {
   final String _trainerImageUrl = 'https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&w=200&auto=format&fit=crop';
 
   @override
-  Future<List<WorkoutCategory>> getCategories() async {
-    await Future.delayed(const Duration(milliseconds: 400));
-    return [
-      WorkoutCategory(id: 1, name: 'Силовые', image: _mockImageUrl, programs: _generatePrograms(1)),
-      WorkoutCategory(id: 2, name: 'Кардио', image: _mockImageUrl, programs: _generatePrograms(2)),
-      WorkoutCategory(id: 3, name: 'Разминка', image: _mockImageUrl, programs: _generatePrograms(3)),
-      WorkoutCategory(id: 4, name: 'Похудение', image: _mockImageUrl, programs: _generatePrograms(4)),
+  Future<List<WorkoutCategory>> getCategories({int limit = 10, int offset = 0}) async {
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    // Имитируем большую базу данных категорий (например, 25 штук)
+    final List<String> categoryNames = [
+      'Силовые', 'Кардио', 'Разминка', 'Похудение', 'Йога', 
+      'Пилатес', 'Кроссфит', 'Растяжка', 'Бокс', 'Танцы',
+      'Плавание', 'Велосипед', 'Бег', 'Медитация', 'Гибкость',
+      'Осанка', 'Пресс', 'Спина', 'Ноги', 'Руки',
+      'Грудь', 'Плечи', 'Функционал', 'HIIT', 'Табата'
     ];
+
+    final allCategories = List.generate(categoryNames.length, (index) => WorkoutCategory(
+      id: index + 1, 
+      name: categoryNames[index], 
+      image: _mockImageUrl, 
+      programs: _generatePrograms(index + 1)
+    ));
+
+    // Применяем пагинацию (offset и limit)
+    if (offset >= allCategories.length) return [];
+    
+    final end = (offset + limit) > allCategories.length 
+        ? allCategories.length 
+        : (offset + limit);
+        
+    return allCategories.sublist(offset, end);
   }
 
   @override
   Future<WorkoutCategory> getCategory(int id) async {
-    final categories = await getCategories();
+    // Для простоты мока загружаем небольшой список и ищем нужную
+    final categories = await getCategories(limit: 100, offset: 0);
     return categories.firstWhere((c) => c.id == id);
   }
 
@@ -43,7 +63,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
   WorkoutProgram _generateSingleProgram(int id) {
     return WorkoutProgram(
       id: id,
-      title: 'Программа тренировки',
+      title: 'Программа тренировки #$id',
       rating: 4.8,
       trainerName: 'Super train 3000',
       trainerImage: _trainerImageUrl,

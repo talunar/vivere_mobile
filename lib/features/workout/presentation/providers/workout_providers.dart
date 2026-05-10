@@ -1,12 +1,11 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../data/repositories/workout_repository_impl.dart';
-import '../../data/repositories/user_exercises_repository_impl.dart';
-import '../../data/repositories/mock_workout_repository.dart';
-import '../../data/sources/user_exercises_mock_data_source.dart';
-import '../../domain/entities/workout_category.dart';
-import '../../domain/entities/workout_program.dart';
-import '../../domain/repositories/i_workout_repository.dart';
-import '../../domain/repositories/i_user_exercises_repository.dart';
+import 'package:vivere_mobile/features/workout/data/repositories/user_exercises_repository_impl.dart';
+import 'package:vivere_mobile/features/workout/data/repositories/mock_workout_repository.dart';
+import 'package:vivere_mobile/features/workout/data/sources/user_exercises_mock_data_source.dart';
+import 'package:vivere_mobile/features/workout/domain/entities/workout_category.dart';
+import 'package:vivere_mobile/features/workout/domain/entities/workout_program.dart';
+import 'package:vivere_mobile/features/workout/domain/repositories/i_workout_repository.dart';
+import 'package:vivere_mobile/features/workout/domain/repositories/i_user_exercises_repository.dart';
 
 part 'workout_providers.g.dart';
 
@@ -20,10 +19,44 @@ IUserExercisesRepository userExercisesRepository(UserExercisesRepositoryRef ref)
   return UserExercisesRepositoryImpl(UserExercisesMockDataSource());
 }
 
-/// Список всех категорий
+/// ПАГИНАЦИЯ КАТЕГОРИЙ
 @riverpod
-Future<List<WorkoutCategory>> workoutCategories(WorkoutCategoriesRef ref) {
-  return ref.watch(workoutRepositoryProvider).getCategories();
+class PaginatedWorkoutCategories extends _$PaginatedWorkoutCategories {
+  int _offset = 0;
+  final int _limit = 5;
+  bool _hasReachedMax = false;
+
+  @override
+  Future<List<WorkoutCategory>> build() async {
+    return _fetch();
+  }
+
+  Future<List<WorkoutCategory>> _fetch() async {
+    final repo = ref.read(workoutRepositoryProvider);
+    return repo.getCategories(limit: _limit, offset: _offset);
+  }
+
+  Future<void> fetchNextPage() async {
+    if (_hasReachedMax || state.isLoading) return;
+
+    final previousState = state.value ?? [];
+    
+    // Временно ставим состояние в loading, сохраняя предыдущие данные
+    state = const AsyncLoading<List<WorkoutCategory>>().copyWithPrevious(state);
+    
+    _offset += _limit;
+    
+    state = await AsyncValue.guard(() async {
+      final newItems = await _fetch();
+      
+      if (newItems.isEmpty) {
+        _hasReachedMax = true;
+        return previousState;
+      }
+      
+      return [...previousState, ...newItems];
+    });
+  }
 }
 
 /// Получение конкретной категории (с превью программ)
@@ -63,9 +96,6 @@ class UserPrograms extends _$UserPrograms {
   }
 
   Future<void> addProgram(WorkoutProgram program) async {
-    final currentState = state.value ?? [];
-    if (currentState.any((p) => p.id == program.id)) return;
-
     state = const AsyncLoading();
     try {
       final repository = ref.read(userExercisesRepositoryProvider);
@@ -84,6 +114,16 @@ class UserPrograms extends _$UserPrograms {
       ref.invalidateSelf();
     } catch (e, st) {
       state = AsyncError(e, st);
+    }
+  }
+
+  Future<void> saveProgress(ExerciserInProgram exercise) async {
+    final repository = ref.read(userExercisesRepositoryProvider);
+    try {
+      await repository.updateExercise(exercise);
+      ref.invalidateSelf();
+    } catch (e) {
+      // Ошибка сохранения
     }
   }
 }

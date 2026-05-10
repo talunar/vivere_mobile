@@ -14,10 +14,31 @@ class WorkoutCatalogScreen extends ConsumerStatefulWidget {
 
 class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
   int? expandedCategoryId;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Добавляем слушатель скролла для бесконечного списка
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        // Если до конца списка осталось 200px, грузим следующую страницу
+        ref.read(paginatedWorkoutCategoriesProvider.notifier).fetchNextPage();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final categoriesAsync = ref.watch(workoutCategoriesProvider);
+    // Переключаемся на пагинированный провайдер
+    final categoriesAsync = ref.watch(paginatedWorkoutCategoriesProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -35,9 +56,18 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
       ),
       body: categoriesAsync.when(
         data: (categories) => ListView.builder(
+          controller: _scrollController,
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-          itemCount: categories.length,
+          // +1 для индикатора загрузки в самом низу
+          itemCount: categories.length + (categoriesAsync.isLoading ? 1 : 0),
           itemBuilder: (context, index) {
+            if (index == categories.length) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+              );
+            }
+
             final category = categories[index];
             final isExpanded = expandedCategoryId == category.id;
 
@@ -58,10 +88,11 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
                   ),
                   if (isExpanded)
                     Padding(
-                      padding: const EdgeInsets.only(top: 50), 
+                      padding: const EdgeInsets.only(top: 50),
                       child: _ProgramsExpandedList(
                         programs: category.programs,
                         categoryName: category.name,
+                        categoryId: category.id,
                       ),
                     ),
                 ],
@@ -69,7 +100,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
             );
           },
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
         error: (err, _) => Center(child: Text('Ошибка: $err')),
       ),
     );
@@ -95,19 +126,19 @@ class _CategoryHeader extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        height: isExpanded ? 265 : 180, 
+        height: isExpanded ? 265 : 180,
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           color: isExpanded ? const Color(0xFF141414) : Colors.transparent,
-          image: isExpanded 
-            ? null 
-            : const DecorationImage(
-                image: AssetImage("assets/design/workout_1.png"),
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
-                colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
-              ),
+          image: isExpanded
+              ? null
+              : const DecorationImage(
+            image: AssetImage("assets/design/workout_1.png"),
+            fit: BoxFit.cover,
+            alignment: Alignment.topCenter,
+            colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
+          ),
         ),
         child: Padding(
           padding: EdgeInsets.only(top: isExpanded ? 15 : 0, left: 20, right: 20, bottom: isExpanded ? 0 : 20),
@@ -127,8 +158,8 @@ class _CategoryHeader extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  color: const Color(0xFFF6F6F6), 
-                  fontSize: isExpanded ? 20 : 28, 
+                  color: const Color(0xFFF6F6F6),
+                  fontSize: isExpanded ? 20 : 28,
                   fontWeight: isExpanded ? FontWeight.bold : FontWeight.normal,
                   fontFamily: 'Golos Text',
                 ),
@@ -144,8 +175,13 @@ class _CategoryHeader extends StatelessWidget {
 class _ProgramsExpandedList extends StatelessWidget {
   final List<WorkoutProgram> programs;
   final String categoryName;
+  final int categoryId;
 
-  const _ProgramsExpandedList({required this.programs, required this.categoryName});
+  const _ProgramsExpandedList({
+    required this.programs,
+    required this.categoryName,
+    required this.categoryId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -162,8 +198,8 @@ class _ProgramsExpandedList extends StatelessWidget {
         );
       },
       child: Container(
-        height: 215, 
-        margin: EdgeInsets.zero, 
+        height: 215,
+        margin: EdgeInsets.zero,
         decoration: BoxDecoration(
           color: const Color(0xFFE2E2E2),
           borderRadius: BorderRadius.circular(24),
@@ -176,7 +212,7 @@ class _ProgramsExpandedList extends StatelessWidget {
             itemCount: programs.length > 5 ? 6 : programs.length,
             itemBuilder: (context, index) {
               if (index == 5) {
-                return _SeeAllButton(categoryName: categoryName, programs: programs);
+                return _SeeAllButton(categoryName: categoryName, categoryId: categoryId);
               }
               return _ProgramMiniCard(program: programs[index]);
             },
@@ -248,8 +284,12 @@ class _ProgramMiniCard extends StatelessWidget {
 
 class _SeeAllButton extends StatelessWidget {
   final String categoryName;
-  final List<WorkoutProgram> programs;
-  const _SeeAllButton({required this.categoryName, required this.programs});
+  final int categoryId;
+
+  const _SeeAllButton({
+    required this.categoryName,
+    required this.categoryId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -265,7 +305,7 @@ class _SeeAllButton extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => ProgramsListScreen(
                   categoryName: categoryName,
-                  programs: programs,
+                  categoryId: categoryId,
                 ),
               ),
             );

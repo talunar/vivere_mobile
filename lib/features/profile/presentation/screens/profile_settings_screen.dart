@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/profile_notifier.dart';
 import '../../domain/entities/user_profile.dart';
-import '../../domain/value_objects/physical_parameters.dart';
 
 class ProfileSettingsScreen extends ConsumerWidget {
   const ProfileSettingsScreen({super.key});
@@ -21,23 +19,22 @@ class ProfileSettingsScreen extends ConsumerWidget {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
+            toolbarHeight: 80,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Center(child: _NotificationIcon()),
             ),
+            leadingWidth: 70,
             title: const Text(
               "Настройки",
               style: TextStyle(
                 color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontWeight: FontWeight.w400,
+                fontSize: 24,
+                fontFamily: 'Golos Text',
               ),
             ),
             centerTitle: true,
-            actions: [
-              _NotificationIcon(),
-              const SizedBox(width: 8),
-            ],
           ),
           body: profileAsync.when(
             data: (profile) => _SettingsContent(profile: profile),
@@ -55,15 +52,13 @@ class _NotificationIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8),
+      width: 50,
+      height: 50,
       decoration: const BoxDecoration(
         color: Color(0xFFE2E2E2),
         shape: BoxShape.circle,
       ),
-      child: IconButton(
-        icon: const Icon(Icons.notifications_none, color: Colors.black, size: 20),
-        onPressed: () {},
-      ),
+      child: const Icon(Icons.notifications_none, color: Colors.black, size: 30),
     );
   }
 }
@@ -82,50 +77,51 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
-          // Аватар с кнопкой редактирования
+          const SizedBox(height: 10),
+          // Аватар
           Center(
             child: Stack(
+              alignment: Alignment.center,
               children: [
                 const CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage("assets/design/workout_1.png"), // Используется локальный файл
+                  radius: 54,
+                  backgroundImage: AssetImage("assets/design/workout_1.png"),
                 ),
                 Positioned(
-                  bottom: 0,
-                  right: 0,
                   child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.edit, size: 16, color: Colors.black),
+                    child: const Icon(Icons.edit, size: 18, color: Colors.black54),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 32),
-          
-          _InfoBlock(label: "Имя", value: "${widget.profile.firstName} ${widget.profile.lastName}"),
-          _InfoBlock(label: "Вес", value: "${widget.profile.weight.value.toInt()} кг"),
-          _InfoBlock(label: "Рост", value: "${widget.profile.height.value.toInt()} см"),
-          _InfoBlock(label: "Возраст", value: "${widget.profile.age} года"),
-          _InfoBlock(label: "Статус", value: "Участник сообщества"),
+          const SizedBox(height: 40),
+
+          _InfoBlock(label: "Имя", value: "${widget.profile.firstName} ${widget.profile.lastName}", isBold: true),
+          _InfoBlock(label: "Вес", value: "${widget.profile.weight.value.toInt()} кг", isBold: true),
+          _InfoBlock(label: "Рост", value: "${widget.profile.height.value.toInt()} см", isBold: true),
+          _InfoBlock(label: "Возраст", value: "${widget.profile.age} лет", isBold: true),
+          _InfoBlock(label: "Статус", value: "Участник сообщества", isBold: true),
           _InfoBlock(label: "Почта", value: widget.profile.email),
-          _InfoBlock(label: "Логин", value: widget.profile.nickName ?? ""),
-          _InfoBlock(label: "Пароль", value: "*********"),
+          _InfoBlock(label: "Логин", value: widget.profile.nickName),
+          _InfoBlock(label: "Пароль", value: "**********"),
 
           const SizedBox(height: 32),
-          
-          // Мои программы (мок)
+
+          // Мои покупки
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: const Color(0xFFE2E2E2),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(32),
             ),
             child: Row(
               children: [
@@ -134,38 +130,41 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Мои программы",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        "Мои покупки",
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400, fontFamily: 'Golos Text'),
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 8),
                       Text(
                         "8 тренировок",
-                        style: TextStyle(color: Colors.black54),
+                        style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500, fontFamily: 'Golos Text'),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  width: 54,
+                  height: 54,
                   decoration: const BoxDecoration(
                     color: Colors.black,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                  child: const Icon(Icons.arrow_forward, color: Colors.white, size: 28),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 40),
-          
-          TextButton(
-            onPressed: () => ref.read(authControllerProvider.notifier).logout(),
-            child: const Text(
-              "Выйти из аккаунта",
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+
+          Center(
+            child: TextButton(
+              onPressed: () => ref.read(authControllerProvider.notifier).logout(),
+              child: const Text(
+                "Выйти из аккаунта",
+                style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600, fontSize: 16),
+              ),
             ),
           ),
-          const SizedBox(height: 100),
+          const SizedBox(height: 60),
         ],
       ),
     );
@@ -175,23 +174,30 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 class _InfoBlock extends StatelessWidget {
   final String label;
   final String value;
-  const _InfoBlock({required this.label, required this.value});
+  final bool isBold;
+  const _InfoBlock({required this.label, required this.value, this.isBold = false});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+            style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 16, fontFamily: 'Golos Text'),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: isBold ? FontWeight.w400 : FontWeight.w400,
+              fontFamily: 'Golos Text',
+              color: Colors.black,
+              height: 1.1,
+            ),
           ),
         ],
       ),

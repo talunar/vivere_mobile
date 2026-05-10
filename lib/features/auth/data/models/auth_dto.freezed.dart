@@ -22,9 +22,8 @@ AuthDto _$AuthDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AuthDto {
   @JsonKey(name: 'nick_name')
-  String? get nickName => throw _privateConstructorUsedError; // Необязательное поле
-  String? get password =>
-      throw _privateConstructorUsedError; // Необязательное поле
+  String? get nickName => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
   @JsonKey(name: 'password2')
   String? get confirmPassword => throw _privateConstructorUsedError;
 
@@ -155,10 +154,8 @@ class _$AuthDtoImpl implements _AuthDto {
   @override
   @JsonKey(name: 'nick_name')
   final String? nickName;
-  // Необязательное поле
   @override
   final String? password;
-  // Необязательное поле
   @override
   @JsonKey(name: 'password2')
   final String? confirmPassword;
@@ -211,9 +208,9 @@ abstract class _AuthDto implements AuthDto {
 
   @override
   @JsonKey(name: 'nick_name')
-  String? get nickName; // Необязательное поле
+  String? get nickName;
   @override
-  String? get password; // Необязательное поле
+  String? get password;
   @override
   @JsonKey(name: 'password2')
   String? get confirmPassword;

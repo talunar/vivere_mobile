@@ -16,7 +16,6 @@ class ProgramsListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Загружаем программы по ID категории через Riverpod
     final programsAsync = ref.watch(programsByCategoryProvider(categoryId));
 
     return Scaffold(

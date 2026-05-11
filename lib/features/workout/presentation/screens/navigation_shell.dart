@@ -33,7 +33,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          // Вкладка 1: Главная с вложенным навигатором
+          // Главная с вложенным навигатором
           Navigator(
             key: _workoutNavigatorKey,
             onGenerateRoute: (settings) => MaterialPageRoute(
@@ -42,7 +42,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
           const Center(child: Text('План')),
           const Center(child: Text('Тренировки')),
-          // Вкладка 4: Профиль
+          // Профиль
           const PersonPage(),
         ],
       ),

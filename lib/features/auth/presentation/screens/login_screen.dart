@@ -58,14 +58,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const Text(
                         'Готовы\nк новому\nуровню?',
                         style: TextStyle(
-                          fontSize: 64, // Увеличили текст
+                          fontSize: 64,
                           fontWeight: FontWeight.w900,
                           height: 1.0,
                           fontFamily: 'Golos Text',
                           color: Color(0xFF141414),
                         ),
                       ),
-                      const Spacer(flex: 2), // Центрируем контент
+                      const Spacer(flex: 2),
                       _CustomTextField(
                         controller: loginController,
                         hintText: 'Логин',
@@ -93,7 +93,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF5900),
                             foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 64), // Увеличили кнопку
+                            minimumSize: const Size(double.infinity, 64),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -102,7 +102,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: const Text(
                             'Войти',
                             style: TextStyle(
-                              fontSize: 20, // Увеличили текст кнопки
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Golos Text',
                             ),

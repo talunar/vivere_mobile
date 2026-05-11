@@ -49,14 +49,14 @@ class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsS
                       const Text(
                         'Почти\nу цели',
                         style: TextStyle(
-                          fontSize: 64, // Увеличили текст
+                          fontSize: 64,
                           fontWeight: FontWeight.w900,
                           height: 1.0,
                           fontFamily: 'Golos Text',
                           color: Color(0xFF141414),
                         ),
                       ),
-                      const Spacer(flex: 2), // Центрируем
+                      const Spacer(flex: 2),
                       _CustomTextField(
                         controller: fNameController,
                         hintText: 'Имя',
@@ -84,7 +84,7 @@ class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsS
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF5900),
                           foregroundColor: Colors.white,
-                          minimumSize: const Size(double.infinity, 64), // Увеличили кнопку
+                          minimumSize: const Size(double.infinity, 64),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -93,7 +93,7 @@ class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsS
                         child: const Text(
                           'Продолжить',
                           style: TextStyle(
-                            fontSize: 20, // Увеличили текст
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Golos Text',
                           ),

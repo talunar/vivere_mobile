@@ -18,7 +18,14 @@ class UserExercisesRepositoryImpl implements IUserExercisesRepository {
 
   @override
   Future<void> addExercise(int userId, ExerciserInProgram exercise) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    final dto = ExerciserDto(
+      id: exercise.id,
+      name: exercise.name,
+      description: exercise.description,
+      image: exercise.image,
+      repeats: exercise.repeats.map((r) => r.toDto()).toList(),
+    );
+    await _dataSource.addExerciseForUser(userId, dto);
   }
 
   @override

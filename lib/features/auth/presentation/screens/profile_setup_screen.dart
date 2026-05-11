@@ -53,16 +53,15 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       const Text(
                         'Финиш',
                         style: TextStyle(
-                          fontSize: 64, // Увеличенный заголовок
+                          fontSize: 64,
                           fontWeight: FontWeight.w900,
                           height: 1.0,
                           fontFamily: 'Golos Text',
                           color: Color(0xFF141414),
                         ),
                       ),
-                      const Spacer(flex: 2), // Центрирование
-                      
-                      // Выбор пола
+                      const Spacer(flex: 2),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -119,7 +118,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF5900),
                             foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 64), // Увеличенная кнопка
+                            minimumSize: const Size(double.infinity, 64),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -128,7 +127,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           child: const Text(
                             'Зарегистрироваться',
                             style: TextStyle(
-                              fontSize: 20, // Увеличенный текст кнопки
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Golos Text',
                             ),

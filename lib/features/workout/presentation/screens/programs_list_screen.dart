@@ -16,10 +16,10 @@ class ProgramsListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Загружаем программы по ID категории через Riverpod
     final programsAsync = ref.watch(programsByCategoryProvider(categoryId));
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF6F6F6),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -51,19 +51,16 @@ class ProgramsListScreen extends ConsumerWidget {
             separatorBuilder: (context, index) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final program = programs[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: ProgramCard(
-                  program: program,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProgramDetailsScreen(program: program),
-                      ),
-                    );
-                  },
-                ),
+              return ProgramCard(
+                program: program,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProgramDetailsScreen(program: program),
+                    ),
+                  );
+                },
               );
             },
           ),
@@ -101,8 +98,8 @@ class ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.network(
-                program?.image ?? "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1000&auto=format&fit=crop",
+              child: Image.asset(
+                program?.image ?? "assets/images/programs/workout_1.png",
                 width: 160,
                 height: 160,
                 fit: BoxFit.cover,
@@ -149,9 +146,11 @@ class ProgramCard extends StatelessWidget {
                     const Spacer(),
                     Row(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 12,
-                          backgroundImage: AssetImage("assets/design/workout_1.png"),
+                          backgroundImage: AssetImage(
+                            program?.trainerImage ?? "assets/images/programs/workout_2.png",
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -159,7 +158,7 @@ class ProgramCard extends StatelessWidget {
                             program?.trainerName ?? "Super train 3000",
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black.withOpacity(0.5),
+                              color: Colors.black.withValues(alpha: 0.5),
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

@@ -20,12 +20,11 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
   Timer? _timer;
   int _remainingSeconds = 0;
   bool _isPaused = true;
+  bool _isSaving = false;
 
-  // Локальные контроллеры для редактирования текущего подхода
   late TextEditingController _weightController;
-  late TextEditingController _valueController; // для повторов или секунд
+  late TextEditingController _valueController;
 
-  // Храним копию упражнений с изменениями пользователя
   late List<ExerciserInProgram> _modifiedExercises;
 
   @override
@@ -68,12 +67,9 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
   }
 
   void _togglePause() {
-    setState(() {
-      _isPaused = !_isPaused;
-    });
+    setState(() => _isPaused = !_isPaused);
   }
 
-  // Сохраняем текущие введенные значения в локальный список
   void _saveCurrentInput() {
     final weight = int.tryParse(_weightController.text) ?? 0;
     final value = int.tryParse(_valueController.text) ?? 0;
@@ -93,9 +89,26 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
   }
 
   Future<void> _finishWorkout() async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Завершить тренировку?"),
+        content: const Text("Все результаты будут сохранены в ваш профиль."),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Еще нет")),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Завершить", style: TextStyle(color: Color(0xFFFF5900))),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    setState(() => _isSaving = true);
     _saveCurrentInput();
     
-    // Получаем userId из AuthController
     final authState = ref.read(authControllerProvider);
     final userId = authState.maybeWhen(
       authenticated: (user) => user.id.value,
@@ -103,13 +116,17 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     );
 
     if (userId != null) {
-      // Отправляем прогресс по каждому измененному упражнению на бэк (Go: UpdateExercise)
-      for (var exercise in _modifiedExercises) {
-        await ref.read(userProgramsProvider(userId).notifier).saveProgress(exercise);
-      }
+      // Вызываем групповое сохранение прогресса (готовность к Go: UpdateExercise)
+      await ref.read(userProgramsProvider(userId).notifier).saveAllProgress(_modifiedExercises);
     }
 
-    if (mounted) Navigator.pop(context);
+    if (mounted) {
+      setState(() => _isSaving = false);
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Тренировка завершена! Прогресс сохранен.')),
+      );
+    }
   }
 
   void _next() {
@@ -148,141 +165,153 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     final repeat = exercise.repeats.first;
     final isTimeBased = repeat.seconds != null;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
-          Stack(
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.white,
+          resizeToAvoidBottomInset: false,
+          body: Column(
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
-                child: Image.network(
-                  exercise.image,
-                  width: double.infinity,
-                  height: 300,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, _, __) => Container(
-                    height: 300,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.fitness_center, size: 64, color: Colors.grey),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 50,
-                left: 20,
-                child: _HeaderButton(
-                  icon: Icons.arrow_back,
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-            ],
-          ),
-
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Stack(
                 children: [
-                  Text(
-                    exercise.name,
-                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+                    child: Image.asset(
+                      exercise.image, // В моках у нас ассеты
+                      width: double.infinity,
+                      height: 300,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, _, __) => Container(
+                        height: 300,
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.fitness_center, size: 64, color: Colors.grey),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    exercise.description,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  Positioned(
+                    top: 50,
+                    left: 20,
+                    child: _HeaderButton(
+                      icon: Icons.arrow_back,
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   ),
-                  const SizedBox(height: 32),
-                  
-                  // Блок ввода данных (Прогресс)
-                  Row(
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        exercise.name,
+                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        exercise.description,
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600], fontFamily: 'Golos Text'),
+                      ),
+                      const SizedBox(height: 32),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _InputBox(
+                              label: 'Вес (кг)',
+                              controller: _weightController,
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _InputBox(
+                              label: isTimeBased ? 'Секунды' : 'Повторы',
+                              controller: _valueController,
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      if (isTimeBased)
+                        Center(
+                          child: _TimerDisplay(
+                            seconds: _remainingSeconds,
+                            totalSeconds: int.tryParse(_valueController.text) ?? repeat.seconds!,
+                            isPaused: _isPaused,
+                            onToggle: _togglePause,
+                          ),
+                        )
+                      else
+                        Center(
+                          child: Text(
+                            'x ${_valueController.text}',
+                            style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900), fontFamily: 'Golos Text'),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+                  child: Row(
                     children: [
                       Expanded(
-                        child: _InputBox(
-                          label: 'Вес (кг)',
-                          controller: _weightController,
-                          keyboardType: TextInputType.number,
+                        child: ElevatedButton(
+                          onPressed: currentIndex > 0 ? _prev : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey[200],
+                            foregroundColor: Colors.black87,
+                            minimumSize: const Size(0, 60),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+                          child: const Text('Назад', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: _InputBox(
-                          label: isTimeBased ? 'Секунды' : 'Повторы',
-                          controller: _valueController,
-                          keyboardType: TextInputType.number,
+                        child: ElevatedButton(
+                          onPressed: _next,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF5900),
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size(0, 60),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+                          child: Text(
+                            currentIndex == _modifiedExercises.length - 1 ? 'Завершить' : 'Вперед',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
+                          ),
                         ),
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 40),
-
-                  if (isTimeBased)
-                    Center(
-                      child: _TimerDisplay(
-                        seconds: _remainingSeconds,
-                        totalSeconds: int.tryParse(_valueController.text) ?? repeat.seconds!,
-                        isPaused: _isPaused,
-                        onToggle: _togglePause,
-                      ),
-                    )
-                  else
-                    Center(
-                      child: Text(
-                        'x ${_valueController.text}',
-                        style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900)),
-                      ),
-                    ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-
-          SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-              child: Row(
+        ),
+        if (_isSaving)
+          Container(
+            color: Colors.black54,
+            child: const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: currentIndex > 0 ? _prev : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[200],
-                        foregroundColor: Colors.black87,
-                        minimumSize: const Size(0, 60),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      ),
-                      child: const Text('Назад', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _next,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF5900),
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(0, 60),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      ),
-                      child: Text(
-                        currentIndex == _modifiedExercises.length - 1 ? 'Завершить' : 'Вперед',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
+                  CircularProgressIndicator(color: Color(0xFFFF5900)),
+                  SizedBox(height: 16),
+                  Text("Сохранение прогресса...", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 }
@@ -312,13 +341,13 @@ class _InputBox extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey)),
+        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey, fontFamily: 'Golos Text')),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.grey[100],
@@ -364,7 +393,7 @@ class _TimerDisplay extends StatelessWidget {
               icon: Icon(isPaused ? Icons.play_arrow : Icons.pause, size: 48, color: const Color(0xFFFF5900)),
               onPressed: onToggle,
             ),
-            Text('$minutesStr:$secondsStr', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Color(0xFFFF5900))),
+            Text('$minutesStr:$secondsStr', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Color(0xFFFF5900), fontFamily: 'Golos Text')),
           ],
         ),
       ],

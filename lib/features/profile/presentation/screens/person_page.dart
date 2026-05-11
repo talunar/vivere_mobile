@@ -68,7 +68,7 @@ class _ProfileDashboard extends ConsumerWidget {
           // Avatar & Name
           const CircleAvatar(
             radius: 64,
-            backgroundImage: AssetImage("assets/design/workout_1.png"),
+            backgroundImage: AssetImage("assets/images/avatar/workout_1.png"),
           ),
           const SizedBox(height: 16),
           Text(
@@ -81,7 +81,6 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 32),
 
-          // Stats Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -92,7 +91,6 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 32),
 
-          // Cards Feed
           _DashboardCard(
             title: "Цели на сегодня",
             showAdd: true,
@@ -165,7 +163,6 @@ class _ProfileDashboard extends ConsumerWidget {
                       );
                     },
                     onDelete: () {
-                      // Вызываем удаление через нотификатор
                       ref.read(userProgramsProvider(profile.id.value).notifier).deleteProgram(program.id);
                     },
                   ),
@@ -385,7 +382,7 @@ class _ProgramCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: Image.asset(
-                    "assets/design/workout_1.png",
+                    "assets/images/programs/workout_1.png",
                     width: 160,
                     height: 160,
                     fit: BoxFit.cover,

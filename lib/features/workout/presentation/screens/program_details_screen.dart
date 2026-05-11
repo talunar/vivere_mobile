@@ -1,26 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/workout_program.dart';
+import '../providers/workout_providers.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import 'workout_execution_screen.dart';
 
-/// Экран деталей программы тренировок.
-/// Содержит описание, информацию о тренере и список упражнений.
-class ProgramDetailsScreen extends StatefulWidget {
+class ProgramDetailsScreen extends ConsumerStatefulWidget {
   final WorkoutProgram program;
 
   const ProgramDetailsScreen({super.key, required this.program});
 
   @override
-  State<ProgramDetailsScreen> createState() => _ProgramDetailsScreenState();
+  ConsumerState<ProgramDetailsScreen> createState() => _ProgramDetailsScreenState();
 }
 
-class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
-  // Добавлена ли программа в избранное
+class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
   bool isBookmarked = false;
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    
+    final authState = ref.watch(authControllerProvider);
+
+    final userId = authState.maybeWhen(
+      authenticated: (user) => user.id.value,
+      orElse: () => null,
+    );
+
+    final userProgramsAsync = userId != null
+        ? ref.watch(userProgramsProvider(userId))
+        : const AsyncValue<List<WorkoutProgram>>.data([]);
+
+    final bool isAlreadyAdded = userProgramsAsync.maybeWhen(
+      data: (programs) => programs.any((p) => p.id == widget.program.id),
+      orElse: () => false,
+    );
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
       body: Stack(
@@ -32,20 +47,22 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
                   child: Image.asset(
-                    "assets/design/workout_1.png", // Используем локальный ассет
+                    widget.program.image ?? "assets/images/programs/workout_1.png",
                     width: double.infinity,
-                    height: screenWidth * (240 / 402), 
+                    height: screenWidth * (240 / 402),
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      height: screenWidth * (240 / 402),
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.fitness_center, size: 50, color: Colors.grey),
+                    ),
                   ),
                 ),
-
-                // Контент под изображением
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Заголовок и рейтинг
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -53,7 +70,7 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                             child: Text(
                               widget.program.title,
                               style: const TextStyle(
-                                fontSize: 28, 
+                                fontSize: 28,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF212121),
                                 fontFamily: 'Golos Text',
@@ -65,7 +82,7 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                               const Icon(Icons.star, color: Color(0xFFFFB800), size: 24),
                               const SizedBox(width: 4),
                               Text(
-                                widget.program.rating.toString(), 
+                                widget.program.rating?.toString() ?? '5.0',
                                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                               ),
                             ],
@@ -73,46 +90,40 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                         ],
                       ),
                       const SizedBox(height: 16),
-
-                      // Описание
                       Text(
                         widget.program.description ?? '',
                         style: const TextStyle(
-                          color: Color(0xFF757575), 
-                          fontSize: 15, 
+                          color: Color(0xFF757575),
+                          fontSize: 15,
                           height: 1.5,
+                          fontFamily: 'Golos Text',
                         ),
                       ),
                       const SizedBox(height: 24),
-
-                      // Параметры программы
                       _InfoRow(label: 'Уровень:', value: widget.program.level ?? 'Продвинутый'),
                       _InfoRow(label: 'Инвентарь:', value: widget.program.equipment ?? 'Гантели, коврик'),
-                      _InfoRow(label: 'Время:', value: '${widget.program.durationMinutes} минут'),
-
+                      _InfoRow(label: 'Время:', value: '${widget.program.durationMinutes ?? 15} минут'),
                       const SizedBox(height: 24),
-
-                      // Тренер
                       Row(
                         children: [
-                          const CircleAvatar(
+                          CircleAvatar(
                             radius: 24,
-                            backgroundImage: AssetImage("assets/design/workout_1.png"), 
-                            backgroundColor: Colors.grey,
+                            backgroundImage: AssetImage(widget.program.trainerImage ?? "assets/images/programs/workout_2.png"),
+                            backgroundColor: Colors.grey[300],
                           ),
                           const SizedBox(width: 12),
-                          const Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Super train 3000', 
-                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                                widget.program.trainerName ?? 'Vivere Pro Trainer',
+                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'Golos Text'),
                               ),
-                              Row(
+                              const Row(
                                 children: [
                                   Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
                                   SizedBox(width: 4),
-                                  Text('4,1', style: TextStyle(fontSize: 12, color: Color(0xFF757575))),
+                                  Text('4,9', style: TextStyle(fontSize: 12, color: Color(0xFF757575), fontFamily: 'Golos Text')),
                                 ],
                               ),
                             ],
@@ -120,13 +131,44 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                         ],
                       ),
                       const SizedBox(height: 32),
-
-                      // Список упражнений
                       ...widget.program.exercises.map((exercise) => _ExerciseTile(exercise: exercise)).toList(),
+                      const SizedBox(height: 32),
 
-                      const SizedBox(height: 30),
+                      if (userId != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: OutlinedButton(
+                            onPressed: () async {
+                              final notifier = ref.read(userProgramsProvider(userId).notifier);
+                              if (isAlreadyAdded) {
+                                await notifier.deleteProgram(widget.program.id);
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Программа удалена из ваших планов')),
+                                  );
+                                }
+                              } else {
+                                await notifier.addProgram(widget.program);
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Программа добавлена в ваши планы')),
+                                  );
+                                }
+                              }
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900),
+                              side: BorderSide(color: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900)),
+                              minimumSize: const Size(double.infinity, 60),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            ),
+                            child: Text(
+                              isAlreadyAdded ? 'Удалить из планов' : 'Добавить в мои планы',
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
+                            ),
+                          ),
+                        ),
 
-                      // "Начать тренеровку"
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -137,7 +179,7 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF5900), 
+                          backgroundColor: const Color(0xFFFF5900),
                           foregroundColor: Colors.white,
                           minimumSize: const Size(double.infinity, 60),
                           shape: RoundedRectangleBorder(
@@ -161,8 +203,6 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
               ],
             ),
           ),
-          
-          // Верхнее меню
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             left: 16,
@@ -171,7 +211,6 @@ class _ProgramDetailsScreenState extends State<ProgramDetailsScreen> {
               onPressed: () => Navigator.pop(context),
             ),
           ),
-          
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             right: 16,
@@ -200,7 +239,7 @@ class _CircleButton extends StatelessWidget {
   final bool isActive;
 
   const _CircleButton({
-    required this.painter, 
+    required this.painter,
     required this.onPressed,
     this.isActive = false,
   });
@@ -248,14 +287,14 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _ExerciseTile extends StatelessWidget {
-  final dynamic exercise;
+  final ExerciserInProgram exercise;
   const _ExerciseTile({required this.exercise});
 
   @override
   Widget build(BuildContext context) {
     final repeat = exercise.repeats.first;
-    final String subtitle = repeat.seconds != null 
-        ? '${repeat.seconds} секунд' 
+    final String subtitle = repeat.seconds != null
+        ? '${repeat.seconds} секунд'
         : '${repeat.reps} повторений';
 
     return Container(
@@ -270,10 +309,16 @@ class _ExerciseTile extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Image.asset(
-              "assets/design/workout_1.png", 
-              width: 64, 
-              height: 64, 
+              exercise.image, // Теперь берется из мока: assets/images/exercises/
+              width: 64,
+              height: 64,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                width: 64,
+                height: 64,
+                color: Colors.grey[200],
+                child: const Icon(Icons.fitness_center, color: Colors.grey),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -282,10 +327,10 @@ class _ExerciseTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  exercise.name, 
+                  exercise.name,
                   style: const TextStyle(
-                    fontWeight: FontWeight.w700, 
-                    fontSize: 16, 
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
                     color: Color(0xFF212121),
                     fontFamily: 'Golos Text',
                   ),
@@ -294,8 +339,8 @@ class _ExerciseTile extends StatelessWidget {
                 Text(
                   subtitle,
                   style: const TextStyle(
-                    color: Color(0xFFFF5900), 
-                    fontSize: 14, 
+                    color: Color(0xFFFF5900),
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Golos Text',
                   ),

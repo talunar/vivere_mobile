@@ -20,7 +20,7 @@ class MyApp extends ConsumerWidget {
     final goRouter = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'Vivere Mobile',
+      title: 'Vivere',
       debugShowCheckedModeBanner: false,
       routerConfig: goRouter,
       theme: ThemeData(

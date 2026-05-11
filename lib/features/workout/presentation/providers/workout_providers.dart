@@ -40,44 +40,37 @@ class PaginatedWorkoutCategories extends _$PaginatedWorkoutCategories {
     if (_hasReachedMax || state.isLoading) return;
 
     final previousState = state.value ?? [];
-    
-    // Временно ставим состояние в loading, сохраняя предыдущие данные
     state = const AsyncLoading<List<WorkoutCategory>>().copyWithPrevious(state);
     
     _offset += _limit;
     
     state = await AsyncValue.guard(() async {
       final newItems = await _fetch();
-      
       if (newItems.isEmpty) {
         _hasReachedMax = true;
         return previousState;
       }
-      
       return [...previousState, ...newItems];
     });
   }
 }
 
-/// Получение конкретной категории (с превью программ)
 @riverpod
 Future<WorkoutCategory> workoutCategory(WorkoutCategoryRef ref, int id) {
   return ref.watch(workoutRepositoryProvider).getCategory(id);
 }
 
-/// Все программы выбранной категории
 @riverpod
 Future<List<WorkoutProgram>> programsByCategory(ProgramsByCategoryRef ref, int categoryId) {
   return ref.watch(workoutRepositoryProvider).getProgramsByCategory(categoryId);
 }
 
-/// Полные детали программы (упражнения, описание, подходы)
 @riverpod
 Future<WorkoutProgram> workoutProgramDetails(WorkoutProgramDetailsRef ref, int id) {
   return ref.watch(workoutRepositoryProvider).getProgramDetails(id);
 }
 
-/// Управление программами
+/// Управление программами пользователя
 @riverpod
 class UserPrograms extends _$UserPrograms {
   @override
@@ -92,38 +85,49 @@ class UserPrograms extends _$UserPrograms {
       exercises: [e],
       durationMinutes: 15,
       rating: 5.0,
+      image: e.image,
     )).toList();
   }
 
   Future<void> addProgram(WorkoutProgram program) async {
-    state = const AsyncLoading();
     try {
       final repository = ref.read(userExercisesRepositoryProvider);
       await repository.addExercise(userId, program.exercises.first);
       ref.invalidateSelf();
-    } catch (e, st) {
-      state = AsyncError(e, st);
+    } catch (e) {
+      // Обработка ошибки
     }
   }
 
   Future<void> deleteProgram(int programId) async {
-    state = const AsyncLoading();
     try {
       final repository = ref.read(userExercisesRepositoryProvider);
       await repository.deleteExercise(programId);
       ref.invalidateSelf();
-    } catch (e, st) {
-      state = AsyncError(e, st);
+    } catch (e) {
+      // Обработка ошибки
     }
   }
 
-  Future<void> saveProgress(ExerciserInProgram exercise) async {
-    final repository = ref.read(userExercisesRepositoryProvider);
-    try {
-      await repository.updateExercise(exercise);
-      ref.invalidateSelf();
-    } catch (e) {
-      // Ошибка сохранения
-    }
+  // Групповое сохранение прогресса после тренировки
+  Future<void> saveAllProgress(List<ExerciserInProgram> exercises) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(userExercisesRepositoryProvider);
+      for (var exercise in exercises) {
+        await repository.updateExercise(exercise);
+      }
+      // Перезапрашиваем данные, чтобы UI обновился
+      final updatedExercises = await repository.getUserExercises(userId);
+      return updatedExercises.map((e) => WorkoutProgram(
+        id: e.id,
+        title: e.name,
+        description: e.description,
+        exercises: [e],
+        durationMinutes: 15,
+        rating: 5.0,
+        image: e.image,
+      )).toList();
+    });
   }
 }

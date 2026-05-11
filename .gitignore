@@ -12,6 +12,19 @@
 .swiftpm/
 migrate_working_dir/
 
+.env
+*.keystore
+*.jks
+
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/flutter_export_environment.sh
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
 /linux/
 /macos/
 /windows/

@@ -1,4 +1,4 @@
-# Vivere Mobile 🏃‍♀️
+# Vivere 🏃‍♀️
 
 **Vivere** is a modern fitness application built with `Flutter`, designed to track workouts and manage physical activity.
 
@@ -32,7 +32,7 @@ This project heavily relies on build_runner to generate navigation logic (.g.dar
 flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
-### Running the App: 
+### Running the App:
 ```Bash
 flutter run
 ```

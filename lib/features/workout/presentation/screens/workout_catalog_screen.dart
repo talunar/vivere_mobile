@@ -19,11 +19,9 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
   @override
   void initState() {
     super.initState();
-    // Добавляем слушатель скролла для бесконечного списка
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
           _scrollController.position.maxScrollExtent - 200) {
-        // Если до конца списка осталось 200px, грузим следующую страницу
         ref.read(paginatedWorkoutCategoriesProvider.notifier).fetchNextPage();
       }
     });
@@ -37,7 +35,6 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Переключаемся на пагинированный провайдер
     final categoriesAsync = ref.watch(paginatedWorkoutCategoriesProvider);
 
     return Scaffold(
@@ -58,7 +55,6 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
         data: (categories) => ListView.builder(
           controller: _scrollController,
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-          // +1 для индикатора загрузки в самом низу
           itemCount: categories.length + (categoriesAsync.isLoading ? 1 : 0),
           itemBuilder: (context, index) {
             if (index == categories.length) {
@@ -134,7 +130,7 @@ class _CategoryHeader extends StatelessWidget {
           image: isExpanded
               ? null
               : const DecorationImage(
-            image: AssetImage("assets/design/workout_1.png"),
+            image: AssetImage("assets/images/categories/workout_1.png"),
             fit: BoxFit.cover,
             alignment: Alignment.topCenter,
             colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
@@ -245,7 +241,7 @@ class _ProgramMiniCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.asset(
-                "assets/design/workout_1.png",
+                "assets/images/categories/workout_1.png",
                 height: 150,
                 width: 150,
                 fit: BoxFit.cover,

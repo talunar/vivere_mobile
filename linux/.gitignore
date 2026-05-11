@@ -1,9 +1,0 @@
-flutter/ephemeral
-.dart_tool/
-.packages
-.pub-cache/
-build/
-ios/Flutter/Generated.xcconfig
-**/*.freezed.dart
-**/*.g.dart
-.env

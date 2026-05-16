@@ -18,11 +18,11 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$UserProfile {
   UserId get id => throw _privateConstructorUsedError;
-  String get nickName => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
-  String get firstName => throw _privateConstructorUsedError;
-  String get lastName => throw _privateConstructorUsedError;
-  int get age => throw _privateConstructorUsedError;
+  NickName get nickName => throw _privateConstructorUsedError;
+  Email get email => throw _privateConstructorUsedError;
+  Name get firstName => throw _privateConstructorUsedError;
+  Name get lastName => throw _privateConstructorUsedError;
+  Age get age => throw _privateConstructorUsedError;
   Weight get weight => throw _privateConstructorUsedError;
   Height get height => throw _privateConstructorUsedError;
   DateTime get birthDate => throw _privateConstructorUsedError;
@@ -43,11 +43,11 @@ abstract class $UserProfileCopyWith<$Res> {
   @useResult
   $Res call({
     UserId id,
-    String nickName,
-    String email,
-    String firstName,
-    String lastName,
-    int age,
+    NickName nickName,
+    Email email,
+    Name firstName,
+    Name lastName,
+    Age age,
     Weight weight,
     Height height,
     DateTime birthDate,
@@ -88,23 +88,23 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
             nickName: null == nickName
                 ? _value.nickName
                 : nickName // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as NickName,
             email: null == email
                 ? _value.email
                 : email // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as Email,
             firstName: null == firstName
                 ? _value.firstName
                 : firstName // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as Name,
             lastName: null == lastName
                 ? _value.lastName
                 : lastName // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as Name,
             age: null == age
                 ? _value.age
                 : age // ignore: cast_nullable_to_non_nullable
-                      as int,
+                      as Age,
             weight: null == weight
                 ? _value.weight
                 : weight // ignore: cast_nullable_to_non_nullable
@@ -134,11 +134,11 @@ abstract class _$$UserProfileImplCopyWith<$Res>
   @useResult
   $Res call({
     UserId id,
-    String nickName,
-    String email,
-    String firstName,
-    String lastName,
-    int age,
+    NickName nickName,
+    Email email,
+    Name firstName,
+    Name lastName,
+    Age age,
     Weight weight,
     Height height,
     DateTime birthDate,
@@ -178,23 +178,23 @@ class __$$UserProfileImplCopyWithImpl<$Res>
         nickName: null == nickName
             ? _value.nickName
             : nickName // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as NickName,
         email: null == email
             ? _value.email
             : email // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as Email,
         firstName: null == firstName
             ? _value.firstName
             : firstName // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as Name,
         lastName: null == lastName
             ? _value.lastName
             : lastName // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as Name,
         age: null == age
             ? _value.age
             : age // ignore: cast_nullable_to_non_nullable
-                  as int,
+                  as Age,
         weight: null == weight
             ? _value.weight
             : weight // ignore: cast_nullable_to_non_nullable
@@ -230,15 +230,15 @@ class _$UserProfileImpl implements _UserProfile {
   @override
   final UserId id;
   @override
-  final String nickName;
+  final NickName nickName;
   @override
-  final String email;
+  final Email email;
   @override
-  final String firstName;
+  final Name firstName;
   @override
-  final String lastName;
+  final Name lastName;
   @override
-  final int age;
+  final Age age;
   @override
   final Weight weight;
   @override
@@ -297,11 +297,11 @@ class _$UserProfileImpl implements _UserProfile {
 abstract class _UserProfile implements UserProfile {
   const factory _UserProfile({
     required final UserId id,
-    required final String nickName,
-    required final String email,
-    required final String firstName,
-    required final String lastName,
-    required final int age,
+    required final NickName nickName,
+    required final Email email,
+    required final Name firstName,
+    required final Name lastName,
+    required final Age age,
     required final Weight weight,
     required final Height height,
     required final DateTime birthDate,
@@ -310,15 +310,15 @@ abstract class _UserProfile implements UserProfile {
   @override
   UserId get id;
   @override
-  String get nickName;
+  NickName get nickName;
   @override
-  String get email;
+  Email get email;
   @override
-  String get firstName;
+  Name get firstName;
   @override
-  String get lastName;
+  Name get lastName;
   @override
-  int get age;
+  Age get age;
   @override
   Weight get weight;
   @override

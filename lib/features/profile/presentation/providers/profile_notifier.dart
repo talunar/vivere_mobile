@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../core/domain/entities/user_id.dart';
 import '../../domain/entities/user_profile.dart';
 import 'profile_providers.dart';
@@ -13,14 +14,32 @@ class ProfileNotifier extends _$ProfileNotifier {
     return repository.getProfile(id);
   }
 
+  /// Сохранения изменений
   Future<void> saveProfile(UserProfile updatedProfile) async {
     state = const AsyncLoading<UserProfile>().copyWithPrevious(state);
 
     state = await AsyncValue.guard(() async {
       final repository = ref.read(profileRepositoryProvider);
-      // await Future.delayed(const Duration(seconds: 1));
       return await repository.updateProfile(updatedProfile);
     });
+  }
+
+  /// Удаления аккаунта
+  Future<void> deleteAccount() async {
+    final previousState = state;
+    state = const AsyncLoading<UserProfile>().copyWithPrevious(state);
+
+    try {
+      final repository = ref.read(profileRepositoryProvider);
+      final success = await repository.deleteProfile(id);
+      
+      if (success) {
+        await ref.read(authControllerProvider.notifier).logout();
+      }
+    } catch (e, st) {
+      state = AsyncError<UserProfile>(e, st).copyWithPrevious(previousState);
+      rethrow;
+    }
   }
 
   void updateLocal(UserProfile profile) {

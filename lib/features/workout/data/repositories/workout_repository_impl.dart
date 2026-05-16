@@ -38,9 +38,16 @@ class WorkoutRepositoryImpl implements IWorkoutRepository {
   }
 
   @override
-  Future<List<WorkoutProgram>> getProgramsByCategory(int categoryId) async {
+  Future<List<WorkoutProgram>> getProgramsByCategory(
+    int categoryId, {
+    int limit = 10,
+    int offset = 0,
+  }) async {
     try {
-      final response = await _dio.get('/categories/$categoryId/programs');
+      final response = await _dio.get('/categories/$categoryId/programs', queryParameters: {
+        'limit': limit,
+        'offset': offset,
+      });
       final List<dynamic> data = response.data;
       return data
           .map((json) => ProgramDto.fromJson(json).toDomain())

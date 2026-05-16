@@ -4,11 +4,10 @@ import '../../domain/entities/workout_program.dart';
 import '../../domain/repositories/i_workout_repository.dart';
 
 class MockWorkoutRepository implements IWorkoutRepository {
-  // Новые пути к ассетам
-  final String _programImagePath = 'assets/images/programs/workout_1.png';
-  final String _exerciseImagePath = 'assets/images/exercises/workout_1.png';
-  final String _categoryImagePath = 'assets/images/categories/workout_1.png'; // Предположим, там тоже есть файлы
-  final String _trainerImagePath = 'assets/images/programs/workout_2.png';
+  final String _programImagePath = 'assets/design/workout_1.png';
+  final String _exerciseImagePath = 'assets/design/workout_1.png';
+  final String _categoryImagePath = 'assets/design/workout_1.png';
+  final String _trainerImagePath = 'assets/design/workout_1.png';
 
   @override
   Future<List<WorkoutCategory>> getCategories({int limit = 10, int offset = 0}) async {
@@ -26,7 +25,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
       id: index + 1, 
       name: categoryNames[index], 
       image: _categoryImagePath, 
-      programs: _generatePrograms(index + 1)
+      programs: _generateProgramsList(index + 1, limit: 5, offset: 0)
     ));
 
     if (offset >= allCategories.length) return [];
@@ -45,9 +44,14 @@ class MockWorkoutRepository implements IWorkoutRepository {
   }
 
   @override
-  Future<List<WorkoutProgram>> getProgramsByCategory(int categoryId) async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return _generatePrograms(categoryId);
+  Future<List<WorkoutProgram>> getProgramsByCategory(
+    int categoryId, {
+    int limit = 10, 
+    int offset = 0,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    return _generateProgramsList(categoryId, limit: limit, offset: offset, total: 30);
   }
 
   @override
@@ -56,8 +60,13 @@ class MockWorkoutRepository implements IWorkoutRepository {
     return _generateSingleProgram(programId);
   }
 
-  List<WorkoutProgram> _generatePrograms(int catId) {
-    return List.generate(6, (index) => _generateSingleProgram(index + catId * 10));
+  List<WorkoutProgram> _generateProgramsList(int catId, {required int limit, required int offset, int total = 6}) {
+    if (offset >= total) return [];
+    
+    final end = (offset + limit) > total ? total : (offset + limit);
+    final count = end - offset;
+    
+    return List.generate(count, (index) => _generateSingleProgram(offset + index + catId * 100));
   }
 
   WorkoutProgram _generateSingleProgram(int id) {
@@ -76,7 +85,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
         id: i + (id * 100),
         name: i % 2 == 0 ? 'Упражнение ${i + 1}' : 'Приседания',
         description: 'Выполняйте упражнение плавно, следя за техникой и дыханием.',
-        image: i % 2 == 0 ? 'assets/images/exercises/workout_1.png' : 'assets/images/exercises/workout_2.png',
+        image: _exerciseImagePath,
         repeats: [
           if (i % 2 == 0)
             Repeated(id: 1, weight: 20, seconds: 30)

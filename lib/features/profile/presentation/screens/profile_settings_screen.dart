@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vivere_mobile/core/presentation/utils/app_validators.dart';
 import 'package:vivere_mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:vivere_mobile/core/domain/value_objects/app_value_objects.dart';
+import 'package:vivere_mobile/features/profile/domain/value_objects/physical_parameters.dart';
 import '../providers/profile_notifier.dart';
-import '../providers/profile_providers.dart';
 import '../../domain/entities/user_profile.dart';
-import '../../domain/value_objects/physical_parameters.dart';
 
 class ProfileSettingsScreen extends ConsumerWidget {
   const ProfileSettingsScreen({super.key});
@@ -83,46 +84,87 @@ class _SettingsContent extends ConsumerStatefulWidget {
 }
 
 class _SettingsContentState extends ConsumerState<_SettingsContent> {
-  late UserProfile _editingProfile;
+  late UserProfile _editedProfile;
 
   @override
   void initState() {
     super.initState();
-    _editingProfile = widget.profile;
+    _editedProfile = widget.profile;
+  }
+
+  void _showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Удаление аккаунта", style: TextStyle(fontFamily: 'Golos Text')),
+        content: const Text("Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя будет отменить."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                await ref.read(profileNotifierProvider(widget.profile.id).notifier).deleteAccount();
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Ошибка при удалении: $e'), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
+            child: const Text("Удалить", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showEditDialog({
     required String title,
     required String initialValue,
-    required Function(String) onSave,
+    required Function(String) onConfirm,
+    String? Function(String?)? validator,
     TextInputType keyboardType = TextInputType.text,
   }) {
+    final formKey = GlobalKey<FormState>();
     final controller = TextEditingController(text: initialValue);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Изменить $title", style: const TextStyle(fontFamily: 'Golos Text')),
-        content: TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          autofocus: true,
-          decoration: const InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFFFF5900)),
+        title: Text(title, style: const TextStyle(fontFamily: 'Golos Text')),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            autofocus: true,
+            validator: validator,
+            decoration: const InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFFFF5900)),
+              ),
             ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Отмена", style: TextStyle(color: Colors.grey, fontFamily: 'Golos Text')),
+            child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
-              onSave(controller.text);
-              Navigator.pop(context);
+              if (formKey.currentState!.validate()) {
+                onConfirm(controller.text);
+                Navigator.pop(context);
+                setState(() {});
+              }
             },
-            child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontFamily: 'Golos Text')),
+            child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900))),
           ),
         ],
       ),
@@ -143,7 +185,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               children: [
                 const CircleAvatar(
                   radius: 54,
-                  backgroundImage: AssetImage("assets/images/avatar/workout_1.png"),
+                  backgroundImage: AssetImage("assets/design/workout_1.png"),
                 ),
                 Transform.translate(
                   offset: const Offset(0, 10),
@@ -171,95 +213,110 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 
           _InfoBlock(
             label: "Имя",
-            value: _editingProfile.firstName,
+            value: "${_editedProfile.firstName.value} ${_editedProfile.lastName.value}",
             isBold: true,
             onTap: () => _showEditDialog(
-              title: "Имя",
-              initialValue: _editingProfile.firstName,
-              onSave: (val) => setState(() => _editingProfile = _editingProfile.copyWith(firstName: val)),
-            ),
-          ),
-          _InfoBlock(
-            label: "Фамилия",
-            value: _editingProfile.lastName,
-            isBold: true,
-            onTap: () => _showEditDialog(
-              title: "Фамилия",
-              initialValue: _editingProfile.lastName,
-              onSave: (val) => setState(() => _editingProfile = _editingProfile.copyWith(lastName: val)),
+              title: "Изменить имя и фамилию",
+              initialValue: "${_editedProfile.firstName.value} ${_editedProfile.lastName.value}",
+              validator: (val) => AppValidators.required(val, 'Введите имя'),
+              onConfirm: (val) {
+                final names = val.split(' ');
+                _editedProfile = _editedProfile.copyWith(
+                  firstName: Name(names.first),
+                  lastName: Name(names.length > 1 ? names.sublist(1).join(' ') : ''),
+                );
+              },
             ),
           ),
           _InfoBlock(
             label: "Вес",
-            value: "${_editingProfile.weight.value.toInt()} кг",
+            value: "${_editedProfile.weight.value.toInt()} кг",
             isBold: true,
             onTap: () => _showEditDialog(
-              title: "Вес",
-              initialValue: _editingProfile.weight.value.toInt().toString(),
+              title: "Изменить вес",
+              initialValue: _editedProfile.weight.value.toInt().toString(),
               keyboardType: TextInputType.number,
-              onSave: (val) {
-                final double? weight = double.tryParse(val);
-                if (weight != null) {
-                  setState(() => _editingProfile = _editingProfile.copyWith(weight: Weight(weight)));
-                }
+              validator: (val) => AppValidators.number(val, min: 30, max: 300),
+              onConfirm: (val) {
+                final weightVal = double.tryParse(val) ?? _editedProfile.weight.value;
+                _editedProfile = _editedProfile.copyWith(weight: Weight(weightVal));
               },
             ),
           ),
           _InfoBlock(
             label: "Рост",
-            value: "${_editingProfile.height.value.toInt()} см",
+            value: "${_editedProfile.height.value.toInt()} см",
             isBold: true,
             onTap: () => _showEditDialog(
-              title: "Рост",
-              initialValue: _editingProfile.height.value.toInt().toString(),
+              title: "Изменить рост",
+              initialValue: _editedProfile.height.value.toInt().toString(),
               keyboardType: TextInputType.number,
-              onSave: (val) {
-                final double? height = double.tryParse(val);
-                if (height != null) {
-                  setState(() => _editingProfile = _editingProfile.copyWith(height: Height(height)));
-                }
+              validator: (val) => AppValidators.number(val, min: 100, max: 250),
+              onConfirm: (val) {
+                final heightVal = double.tryParse(val) ?? _editedProfile.height.value;
+                _editedProfile = _editedProfile.copyWith(height: Height(heightVal));
               },
             ),
           ),
           _InfoBlock(
             label: "Возраст",
-            value: "${_editingProfile.age} лет",
+            value: "${_editedProfile.age.value} лет",
             isBold: true,
             onTap: () => _showEditDialog(
-              title: "Возраст",
-              initialValue: _editingProfile.age.toString(),
+              title: "Изменить возраст",
+              initialValue: _editedProfile.age.value.toString(),
               keyboardType: TextInputType.number,
-              onSave: (val) {
-                final int? age = int.tryParse(val);
-                if (age != null) {
-                  setState(() => _editingProfile = _editingProfile.copyWith(age: age));
-                }
+              validator: (val) => AppValidators.number(val, min: 14, max: 100),
+              onConfirm: (val) {
+                final ageVal = int.tryParse(val) ?? _editedProfile.age.value;
+                _editedProfile = _editedProfile.copyWith(age: Age(ageVal));
               },
             ),
           ),
           _InfoBlock(label: "Статус", value: "Участник сообщества", isBold: true),
           _InfoBlock(
             label: "Почта",
-            value: _editingProfile.email,
+            value: _editedProfile.email.value,
             onTap: () => _showEditDialog(
-              title: "Почта",
-              initialValue: _editingProfile.email,
+              title: "Изменить почту",
+              initialValue: _editedProfile.email.value,
               keyboardType: TextInputType.emailAddress,
-              onSave: (val) => setState(() => _editingProfile = _editingProfile.copyWith(email: val)),
+              validator: AppValidators.email,
+              onConfirm: (val) => _editedProfile = _editedProfile.copyWith(email: Email(val)),
             ),
           ),
-          _InfoBlock(label: "Логин", value: _editingProfile.nickName),
+          _InfoBlock(
+            label: "Логин",
+            value: _editedProfile.nickName.value,
+            onTap: () => _showEditDialog(
+              title: "Изменить логин",
+              initialValue: _editedProfile.nickName.value,
+              validator: AppValidators.nickName,
+              onConfirm: (val) => _editedProfile = _editedProfile.copyWith(nickName: NickName(val)),
+            ),
+          ),
           _InfoBlock(label: "Пароль", value: "**********"),
 
           const SizedBox(height: 24),
 
           ElevatedButton(
             onPressed: () async {
-              await ref.read(profileNotifierProvider(widget.profile.id).notifier).saveProfile(_editingProfile);
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Изменения сохранены')),
-                );
+              try {
+                await ref.read(profileNotifierProvider(_editedProfile.id).notifier).saveProfile(_editedProfile);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Изменения сохранены'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                  );
+                }
               }
             },
             style: ElevatedButton.styleFrom(
@@ -267,14 +324,9 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               foregroundColor: Colors.white,
               minimumSize: const Size(double.infinity, 60),
               elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
-            child: const Text(
-              'Сохранить',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
-            ),
+            child: const Text('Сохранить', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
           ),
 
           const SizedBox(height: 32),
@@ -291,30 +343,22 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      Text(
-                        "Мои покупки",
-                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400, fontFamily: 'Golos Text'),
-                      ),
+                      Text("Мои покупки", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400, fontFamily: 'Golos Text')),
                       SizedBox(height: 8),
-                      Text(
-                        "8 тренировок",
-                        style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500, fontFamily: 'Golos Text'),
-                      ),
+                      Text("8 тренировок", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500, fontFamily: 'Golos Text')),
                     ],
                   ),
                 ),
                 Container(
                   width: 54,
                   height: 54,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
                   child: const Icon(Icons.arrow_forward, color: Colors.white, size: 28),
                 ),
               ],
             ),
           ),
+
           const SizedBox(height: 32),
 
           Center(
@@ -324,39 +368,14 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                   onPressed: () => ref.read(authControllerProvider.notifier).logout(),
                   child: const Text(
                     "Выйти из аккаунта",
-                    style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'Golos Text'),
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600, fontSize: 16),
                   ),
                 ),
-                const SizedBox(height: 8),
                 TextButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text("Удалить аккаунт?", style: TextStyle(fontFamily: 'Golos Text')),
-                        content: const Text("Это действие нельзя будет отменить.", style: TextStyle(fontFamily: 'Golos Text')),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text("Отмена", style: TextStyle(color: Colors.grey, fontFamily: 'Golos Text')),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              final success = await ref.read(profileRepositoryProvider).deleteProfile(widget.profile.id);
-                              if (success && mounted) {
-                                Navigator.pop(context); // Закрываем диалог
-                                ref.read(authControllerProvider.notifier).logout(); // Выходим
-                              }
-                            },
-                            child: const Text("Удалить", style: TextStyle(color: Colors.red, fontFamily: 'Golos Text')),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                  onPressed: _showDeleteConfirmationDialog,
                   child: const Text(
                     "Удалить аккаунт",
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'Golos Text'),
+                    style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w400, fontSize: 14),
                   ),
                 ),
               ],
@@ -378,38 +397,33 @@ class _InfoBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
+      borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 16, fontFamily: 'Golos Text'),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: isBold ? FontWeight.w400 : FontWeight.w400,
-                      fontFamily: 'Golos Text',
-                      color: Colors.black,
-                      height: 1.1,
-                    ),
-                  ),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 16, fontFamily: 'Golos Text'),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
+                  fontFamily: 'Golos Text',
+                  color: Colors.black,
+                  height: 1.1,
                 ),
-                if (onTap != null)
-                  const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E)),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

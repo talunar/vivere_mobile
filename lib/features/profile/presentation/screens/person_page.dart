@@ -42,7 +42,6 @@ class _ProfileDashboard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Слушаем провайдер программ пользователя (сгенерирован из класса UserPrograms)
     final programsAsync = ref.watch(userProgramsProvider(profile.id.value));
 
     return SingleChildScrollView(
@@ -65,7 +64,7 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
 
-          // Avatar & Name
+          // Аватар и никнейм
           const CircleAvatar(
             radius: 64,
             backgroundImage: AssetImage("assets/images/avatar/workout_1.png"),

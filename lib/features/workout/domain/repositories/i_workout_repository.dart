@@ -7,7 +7,12 @@ abstract class IWorkoutRepository {
   
   Future<WorkoutCategory> getCategory(int id);
   
-  Future<List<WorkoutProgram>> getProgramsByCategory(int categoryId);
+  /// Получение программ категории с поддержкой пагинации
+  Future<List<WorkoutProgram>> getProgramsByCategory(
+    int categoryId, {
+    int limit = 10, 
+    int offset = 0,
+  });
   
   Future<WorkoutProgram> getProgramDetails(int programId);
 }

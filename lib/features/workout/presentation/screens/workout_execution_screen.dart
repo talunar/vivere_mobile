@@ -92,13 +92,13 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Завершить тренировку?"),
-        content: const Text("Все результаты будут сохранены в ваш профиль."),
+        title: const Text("Завершить тренировку?", style: TextStyle(fontFamily: 'Golos Text')),
+        content: const Text("Все результаты будут сохранены в ваш профиль.", style: TextStyle(fontFamily: 'Golos Text')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Еще нет")),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Еще нет", style: TextStyle(color: Colors.grey))),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text("Завершить", style: TextStyle(color: Color(0xFFFF5900))),
+            child: const Text("Завершить", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -116,7 +116,6 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     );
 
     if (userId != null) {
-      // Вызываем групповое сохранение прогресса (готовность к Go: UpdateExercise)
       await ref.read(userProgramsProvider(userId).notifier).saveAllProgress(_modifiedExercises);
     }
 
@@ -124,7 +123,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
       setState(() => _isSaving = false);
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Тренировка завершена! Прогресс сохранен.')),
+        const SnackBar(content: Text('Тренировка завершена! Прогресс сохранен.'), backgroundColor: Color(0xFFFF5900)),
       );
     }
   }
@@ -177,15 +176,10 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
                     child: Image.asset(
-                      exercise.image, // В моках у нас ассеты
+                      "assets/images/exercises/workout_3.png", // Исправлено на workout_3
                       width: double.infinity,
                       height: 300,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, _, __) => Container(
-                        height: 300,
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.fitness_center, size: 64, color: Colors.grey),
-                      ),
                     ),
                   ),
                   Positioned(
@@ -264,11 +258,11 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                         child: ElevatedButton(
                           onPressed: currentIndex > 0 ? _prev : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[200],
-                            foregroundColor: Colors.black87,
-                            minimumSize: const Size(0, 60),
+                            backgroundColor: const Color(0xFF727272).withOpacity(0.1),
+                            foregroundColor: const Color(0xFF141414),
+                            minimumSize: const Size(0, 50),
                             elevation: 0,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                           ),
                           child: const Text('Назад', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
                         ),
@@ -280,9 +274,9 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF5900),
                             foregroundColor: Colors.white,
-                            minimumSize: const Size(0, 60),
+                            minimumSize: const Size(0, 50),
                             elevation: 0,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                           ),
                           child: Text(
                             currentIndex == _modifiedExercises.length - 1 ? 'Завершить' : 'Вперед',
@@ -306,7 +300,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                 children: [
                   CircularProgressIndicator(color: Color(0xFFFF5900)),
                   SizedBox(height: 16),
-                  Text("Сохранение прогресса...", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text("Сохранение прогресса...", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
                 ],
               ),
             ),
@@ -350,7 +344,7 @@ class _InputBox extends StatelessWidget {
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: const Color(0xFFE2E2E2),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
             contentPadding: const EdgeInsets.symmetric(vertical: 16),
           ),

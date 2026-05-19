@@ -99,7 +99,7 @@ class ProgramCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: Image.asset(
-                program?.image ?? "assets/images/programs/workout_1.png",
+                "assets/images/programs/workout_1.png",
                 width: 160,
                 height: 160,
                 fit: BoxFit.cover,
@@ -158,7 +158,7 @@ class ProgramCard extends StatelessWidget {
                             program?.trainerName ?? "Super train 3000",
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black.withValues(alpha: 0.5),
+                              color: Colors.black.withOpacity(0.5),
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

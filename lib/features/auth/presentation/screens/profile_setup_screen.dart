@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/presentation/utils/app_validators.dart';
 import '../providers/auth_provider.dart';
 import '../state/auth_state.dart';
 
@@ -11,7 +13,8 @@ class ProfileSetupScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
-  late final TextEditingController ageController;
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController dobController;
   late final TextEditingController weightController;
   late final TextEditingController heightController;
   Gender selectedGender = Gender.male;
@@ -19,17 +22,45 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   @override
   void initState() {
     super.initState();
-    ageController = TextEditingController();
+    dobController = TextEditingController();
     weightController = TextEditingController();
     heightController = TextEditingController();
   }
 
   @override
   void dispose() {
-    ageController.dispose();
+    dobController.dispose();
     weightController.dispose();
     heightController.dispose();
     super.dispose();
+  }
+
+  int _calculateAge(String dob) {
+    try {
+      final parts = dob.split('.');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      final birthDate = DateTime(year, month, day);
+      final today = DateTime.now();
+      int age = today.year - birthDate.year;
+      if (today.month < birthDate.month || (today.month == birthDate.month && today.day < birthDate.day)) {
+        age--;
+      }
+      return age;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  void _onComplete() {
+    if (_formKey.currentState?.validate() ?? false) {
+      ref.read(authControllerProvider.notifier).completeRegistration(
+            age: _calculateAge(dobController.text),
+            weight: double.tryParse(weightController.text.replaceAll(',', '.')) ?? 0.0,
+            height: double.tryParse(heightController.text.replaceAll(',', '.')) ?? 0.0,
+          );
+    }
   }
 
   @override
@@ -46,96 +77,98 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 60),
-                      const Text(
-                        'Финиш',
-                        style: TextStyle(
-                          fontSize: 64,
-                          fontWeight: FontWeight.w900,
-                          height: 1.0,
-                          fontFamily: 'Golos Text',
-                          color: Color(0xFF141414),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 60),
+                        const Text(
+                          'Финиш',
+                          style: TextStyle(
+                            fontSize: 64,
+                            fontWeight: FontWeight.w900,
+                            height: 1.0,
+                            fontFamily: 'Golos Text',
+                            color: Color(0xFF141414),
+                          ),
                         ),
-                      ),
-                      const Spacer(flex: 2),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _GenderButton(
-                            label: 'Мужчина',
-                            isSelected: selectedGender == Gender.male,
-                            onTap: () => setState(() => selectedGender = Gender.male),
-                          ),
-                          _GenderButton(
-                            label: 'Женщина',
-                            isSelected: selectedGender == Gender.female,
-                            onTap: () => setState(() => selectedGender = Gender.female),
-                          ),
-                          _GenderButton(
-                            label: 'Другое',
-                            isSelected: selectedGender == Gender.other,
-                            onTap: () => setState(() => selectedGender = Gender.other),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 32),
-                      
-                      _CustomTextField(
-                        controller: ageController,
-                        hintText: 'Возраст',
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 16),
-                      _CustomTextField(
-                        controller: weightController,
-                        hintText: 'Вес',
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 16),
-                      _CustomTextField(
-                        controller: heightController,
-                        hintText: 'Рост',
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 32),
-                      
-                      authState.maybeMap(
-                        loading: (_) => const Center(
-                          child: CircularProgressIndicator(color: Color(0xFFFF5900)),
+                        const Spacer(flex: 2),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _GenderButton(
+                              label: 'Мужчина',
+                              isSelected: selectedGender == Gender.male,
+                              onTap: () => setState(() => selectedGender = Gender.male),
+                            ),
+                            _GenderButton(
+                              label: 'Женщина',
+                              isSelected: selectedGender == Gender.female,
+                              onTap: () => setState(() => selectedGender = Gender.female),
+                            ),
+                            _GenderButton(
+                              label: 'Другое',
+                              isSelected: selectedGender == Gender.other,
+                              onTap: () => setState(() => selectedGender = Gender.other),
+                            ),
+                          ],
                         ),
-                        orElse: () => ElevatedButton(
-                          onPressed: () {
-                            ref.read(authControllerProvider.notifier).completeRegistration(
-                              age: int.tryParse(ageController.text) ?? 0,
-                              weight: double.tryParse(weightController.text) ?? 0.0,
-                              height: double.tryParse(heightController.text) ?? 0.0,
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5900),
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 64),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                        const SizedBox(height: 32),
+                        _CustomTextField(
+                          controller: dobController,
+                          label: 'Дата рождения',
+                          hintText: 'дд.мм.гггг',
+                          keyboardType: TextInputType.number,
+                          validator: AppValidators.date,
+                          inputFormatters: [
+                            _DateInputFormatter(),
+                            LengthLimitingTextInputFormatter(10),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        _CustomTextField(
+                          controller: weightController,
+                          hintText: 'Вес (кг)',
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          validator: (v) => AppValidators.number(v, min: 20, max: 300),
+                        ),
+                        const SizedBox(height: 16),
+                        _CustomTextField(
+                          controller: heightController,
+                          hintText: 'Рост (см)',
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          validator: (v) => AppValidators.number(v, min: 50, max: 250),
+                        ),
+                        const SizedBox(height: 32),
+                        authState.maybeMap(
+                          loading: (_) => const Center(
+                            child: CircularProgressIndicator(color: Color(0xFFFF5900)),
+                          ),
+                          orElse: () => ElevatedButton(
+                            onPressed: _onComplete,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF5900),
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size(double.infinity, 50),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                            ),
+                            child: const Text(
+                              'Зарегистрироваться',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Golos Text',
+                              ),
                             ),
                           ),
-                          child: const Text(
-                            'Зарегистрироваться',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Golos Text',
-                            ),
-                          ),
                         ),
-                      ),
-                      const Spacer(flex: 3),
-                    ],
+                        const Spacer(flex: 3),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -167,7 +200,7 @@ class _GenderButton extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 20, // Чуть больше текст
+              fontSize: 20,
               fontFamily: 'Golos Text',
               color: isSelected ? const Color(0xFFFF5900) : const Color(0xFF9E9E9E),
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -190,31 +223,93 @@ class _CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final TextInputType? keyboardType;
+  final String? Function(String?)? validator;
+  final List<TextInputFormatter>? inputFormatters;
+  final String? label;
 
   const _CustomTextField({
     required this.controller,
     required this.hintText,
     this.keyboardType,
+    this.validator,
+    this.inputFormatters,
+    this.label,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFE2E2E2),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: const TextStyle(fontSize: 18, fontFamily: 'Golos Text'), // Увеличенный текст
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          border: InputBorder.none,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (label != null) ...[
+          Text(
+            label!,
+            style: const TextStyle(
+              fontSize: 16,
+              fontFamily: 'Golos Text',
+              color: Color(0xFF141414),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          validator: validator,
+          inputFormatters: inputFormatters,
+          style: const TextStyle(fontSize: 18, fontFamily: 'Golos Text', color: Color(0xFF141414)),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            filled: true,
+            fillColor: const Color(0xFFE2E2E2),
+            errorStyle: const TextStyle(color: Color(0xFFFF5900)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1.5),
+            ),
+          ),
         ),
-      ),
+      ],
+    );
+  }
+}
+
+class _DateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final text = newValue.text;
+    if (text.length < oldValue.text.length) return newValue;
+    final digits = text.replaceAll(RegExp(r'[^\d]'), '');
+    final buffer = StringBuffer();
+    for (int i = 0; i < digits.length; i++) {
+      buffer.write(digits[i]);
+      if (i == 1 || i == 3) {
+         if (i < digits.length) buffer.write('.');
+      }
+    }
+    final formatted = buffer.toString();
+    return TextEditingValue(
+      text: formatted.length > 10 ? formatted.substring(0, 10) : formatted,
+      selection: TextSelection.collapsed(offset: formatted.length > 10 ? 10 : formatted.length),
     );
   }
 }

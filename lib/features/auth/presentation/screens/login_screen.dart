@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/presentation/utils/app_validators.dart';
 import '../providers/auth_provider.dart';
 import '../state/auth_state.dart';
 
@@ -11,6 +12,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   late final TextEditingController loginController;
   late final TextEditingController passController;
   bool isObscured = true;
@@ -29,6 +31,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
+  void _onLogin() {
+    if (_formKey.currentState?.validate() ?? false) {
+      ref.read(authControllerProvider.notifier).continueToNextStep(
+            loginController.text.trim(),
+            passController.text.trim(),
+          );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
@@ -36,7 +47,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen(authControllerProvider, (previous, next) {
       if (next is AuthError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.message), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(next.message), 
+            backgroundColor: const Color(0xFFFF5900),
+          ),
         );
       }
     });
@@ -51,66 +65,66 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 60),
-                      const Text(
-                        'Готовы\nк новому\nуровню?',
-                        style: TextStyle(
-                          fontSize: 64,
-                          fontWeight: FontWeight.w900,
-                          height: 1.0,
-                          fontFamily: 'Golos Text',
-                          color: Color(0xFF141414),
-                        ),
-                      ),
-                      const Spacer(flex: 2),
-                      _CustomTextField(
-                        controller: loginController,
-                        hintText: 'Логин',
-                      ),
-                      const SizedBox(height: 16),
-                      _CustomTextField(
-                        controller: passController,
-                        hintText: 'Пароль',
-                        isPassword: true,
-                        isObscured: isObscured,
-                        onToggleObscure: () => setState(() => isObscured = !isObscured),
-                      ),
-                      const SizedBox(height: 32),
-                      authState.maybeMap(
-                        loading: (_) => const Center(
-                          child: CircularProgressIndicator(color: Color(0xFFFF5900)),
-                        ),
-                        orElse: () => ElevatedButton(
-                          onPressed: () {
-                            ref.read(authControllerProvider.notifier).continueToNextStep(
-                              loginController.text.trim(),
-                              passController.text.trim(),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5900),
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 64),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          child: const Text(
-                            'Войти',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Golos Text',
-                            ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 60),
+                        const Text(
+                          'Готовы\nк новому\nуровню?',
+                          style: TextStyle(
+                            fontSize: 58,
+                            fontWeight: FontWeight.w900,
+                            height: 1.0,
+                            fontFamily: 'Golos Text',
+                            color: Color(0xFF141414),
                           ),
                         ),
-                      ),
-                      const Spacer(flex: 3),
-                    ],
+                        const Spacer(flex: 2),
+                        _CustomTextField(
+                          controller: loginController,
+                          hintText: 'Логин',
+                          validator: AppValidators.nickName,
+                        ),
+                        const SizedBox(height: 16),
+                        _CustomTextField(
+                          controller: passController,
+                          hintText: 'Пароль',
+                          isPassword: true,
+                          isObscured: isObscured,
+                          onToggleObscure: () => setState(() => isObscured = !isObscured),
+                          validator: AppValidators.password,
+                        ),
+                        const SizedBox(height: 32),
+                        authState.maybeMap(
+                          loading: (_) => const Center(
+                            child: CircularProgressIndicator(color: Color(0xFFFF5900)),
+                          ),
+                          orElse: () => ElevatedButton(
+                            onPressed: _onLogin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF5900),
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size(double.infinity, 50),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                            ),
+                            child: const Text(
+                              'Войти',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Golos Text',
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Spacer(flex: 3),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -128,6 +142,7 @@ class _CustomTextField extends StatelessWidget {
   final bool isPassword;
   final bool isObscured;
   final VoidCallback? onToggleObscure;
+  final String? Function(String?)? validator;
 
   const _CustomTextField({
     required this.controller,
@@ -135,34 +150,52 @@ class _CustomTextField extends StatelessWidget {
     this.isPassword = false,
     this.isObscured = false,
     this.onToggleObscure,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFE2E2E2),
-        borderRadius: BorderRadius.circular(20), // Больше скругление
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: isPassword && isObscured,
-        style: const TextStyle(fontSize: 18, fontFamily: 'Golos Text'), // Больше текст
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          border: InputBorder.none,
-          suffixIcon: isPassword
-              ? IconButton(
-                  icon: Icon(
-                    isObscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                    color: const Color(0xFF9E9E9E),
-                  ),
-                  onPressed: onToggleObscure,
-                )
-              : null,
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword && isObscured,
+      validator: validator,
+      style: const TextStyle(fontSize: 20, fontFamily: 'Golos Text'),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        filled: true,
+        fillColor: const Color(0xFFE2E2E2),
+        errorStyle: const TextStyle(color: Color(0xFFFF5900)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide.none,
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+        ),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  isObscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                  color: const Color(0xFF9E9E9E),
+                ),
+                onPressed: onToggleObscure,
+              )
+            : null,
       ),
     );
   }

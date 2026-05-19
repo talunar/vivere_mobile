@@ -47,15 +47,10 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
                   child: Image.asset(
-                    widget.program.image ?? "assets/images/programs/workout_1.png",
+                    "assets/images/programs/workout_1.png",
                     width: double.infinity,
                     height: screenWidth * (240 / 402),
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      height: screenWidth * (240 / 402),
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.fitness_center, size: 50, color: Colors.grey),
-                    ),
                   ),
                 ),
                 Padding(
@@ -108,7 +103,7 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                         children: [
                           CircleAvatar(
                             radius: 24,
-                            backgroundImage: AssetImage(widget.program.trainerImage ?? "assets/images/programs/workout_2.png"),
+                            backgroundImage: AssetImage("assets/images/programs/workout_2.png"),
                             backgroundColor: Colors.grey[300],
                           ),
                           const SizedBox(width: 12),
@@ -159,8 +154,8 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                             style: OutlinedButton.styleFrom(
                               foregroundColor: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900),
                               side: BorderSide(color: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900)),
-                              minimumSize: const Size(double.infinity, 60),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              minimumSize: const Size(double.infinity, 50),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                             ),
                             child: Text(
                               isAlreadyAdded ? 'Удалить из планов' : 'Добавить в мои планы',
@@ -181,9 +176,9 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF5900),
                           foregroundColor: Colors.white,
-                          minimumSize: const Size(double.infinity, 60),
+                          minimumSize: const Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(50),
                           ),
                           elevation: 0,
                         ),
@@ -309,16 +304,10 @@ class _ExerciseTile extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Image.asset(
-              exercise.image, // Теперь берется из мока: assets/images/exercises/
+              "assets/images/programs/workout_3.png",
               width: 64,
               height: 64,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: 64,
-                height: 64,
-                color: Colors.grey[200],
-                child: const Icon(Icons.fitness_center, color: Colors.grey),
-              ),
             ),
           ),
           const SizedBox(width: 16),

@@ -40,6 +40,15 @@ class _ProfileDashboard extends ConsumerWidget {
   final UserProfile profile;
   const _ProfileDashboard({required this.profile});
 
+  String _getAgeString(int age) {
+    int lastDigit = age % 10;
+    int lastTwoDigits = age % 100;
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return "$age лет";
+    if (lastDigit == 1) return "$age год";
+    if (lastDigit >= 2 && lastDigit <= 4) return "$age года";
+    return "$age лет";
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final programsAsync = ref.watch(userProgramsProvider(profile.id.value));
@@ -71,7 +80,7 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            "${profile.firstName} ${profile.lastName}",
+            "${profile.firstName.value} ${profile.lastName.value}",
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
           ),
           const Text(
@@ -85,7 +94,7 @@ class _ProfileDashboard extends ConsumerWidget {
             children: [
               _StatItem(label: "Вес", value: "${profile.weight.value.toInt()} кг", icon: Icons.fitness_center),
               _StatItem(label: "Рост", value: "${profile.height.value.toInt()} см", icon: Icons.height),
-              _StatItem(label: "Возраст", value: "${profile.age}", icon: Icons.person_outline),
+              _StatItem(label: "Возраст", value: _getAgeString(profile.age.value), icon: Icons.person_outline),
             ],
           ),
           const SizedBox(height: 32),
@@ -224,7 +233,7 @@ class _StatItem extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
             ),
             Text(
               label,
@@ -323,7 +332,7 @@ class _CalorieItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+        Text(value, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         Text(label, style: const TextStyle(color: Colors.black54, fontSize: 14)),
       ],
     );

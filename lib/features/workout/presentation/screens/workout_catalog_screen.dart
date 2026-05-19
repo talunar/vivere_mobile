@@ -130,7 +130,7 @@ class _CategoryHeader extends StatelessWidget {
           image: isExpanded
               ? null
               : const DecorationImage(
-            image: AssetImage("assets/images/categories/workout_1.png"),
+            image: AssetImage("assets/images/programs/workout_1.png"),
             fit: BoxFit.cover,
             alignment: Alignment.topCenter,
             colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
@@ -205,9 +205,10 @@ class _ProgramsExpandedList extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            itemCount: programs.length > 5 ? 6 : programs.length,
+            itemCount: (programs.length > 5 ? 5 : programs.length) + 1,
             itemBuilder: (context, index) {
-              if (index == 5) {
+              final displayedCount = programs.length > 5 ? 5 : programs.length;
+              if (index == displayedCount) {
                 return _SeeAllButton(categoryName: categoryName, categoryId: categoryId);
               }
               return _ProgramMiniCard(program: programs[index]);
@@ -241,7 +242,7 @@ class _ProgramMiniCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.asset(
-                "assets/images/categories/workout_1.png",
+                "assets/images/programs/workout_1.png",
                 height: 150,
                 width: 150,
                 fit: BoxFit.cover,

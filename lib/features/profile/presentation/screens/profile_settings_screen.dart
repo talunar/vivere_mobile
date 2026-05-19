@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vivere_mobile/core/presentation/utils/app_validators.dart';
 import 'package:vivere_mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:vivere_mobile/core/domain/value_objects/app_value_objects.dart';
 import 'package:vivere_mobile/features/profile/domain/value_objects/physical_parameters.dart';
+import 'package:intl/intl.dart';
 import '../providers/profile_notifier.dart';
 import '../../domain/entities/user_profile.dart';
 
@@ -92,6 +94,33 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     _editedProfile = widget.profile;
   }
 
+  String _getAgeString(int age) {
+    int lastDigit = age % 10;
+    int lastTwoDigits = age % 100;
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return "$age лет";
+    if (lastDigit == 1) return "$age год";
+    if (lastDigit >= 2 && lastDigit <= 4) return "$age года";
+    return "$age лет";
+  }
+
+  int _calculateAge(String dob) {
+    try {
+      final parts = dob.split('.');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      final birthDate = DateTime(year, month, day);
+      final today = DateTime.now();
+      int age = today.year - birthDate.year;
+      if (today.month < birthDate.month || (today.month == birthDate.month && today.day < birthDate.day)) {
+        age--;
+      }
+      return age;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   void _showDeleteConfirmationDialog() {
     showDialog(
       context: context,
@@ -129,6 +158,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     required Function(String) onConfirm,
     String? Function(String?)? validator,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final formKey = GlobalKey<FormState>();
     final controller = TextEditingController(text: initialValue);
@@ -136,17 +166,37 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title, style: const TextStyle(fontFamily: 'Golos Text')),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(title, style: const TextStyle(fontFamily: 'Golos Text', fontSize: 20, fontWeight: FontWeight.bold)),
         content: Form(
           key: formKey,
           child: TextFormField(
             controller: controller,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             autofocus: true,
             validator: validator,
-            decoration: const InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFFF5900)),
+            style: const TextStyle(fontFamily: 'Golos Text', fontSize: 18),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: const Color(0xFFE2E2E2),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              errorStyle: const TextStyle(color: Color(0xFFFF5900)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1.5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Color(0xFFFF5900), width: 2),
               ),
             ),
           ),
@@ -154,7 +204,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+            child: const Text("Отмена", style: TextStyle(color: Colors.grey, fontFamily: 'Golos Text')),
           ),
           TextButton(
             onPressed: () {
@@ -164,7 +214,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                 setState(() {});
               }
             },
-            child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900))),
+            child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
           ),
         ],
       ),
@@ -214,13 +264,21 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
           _InfoBlock(
             label: "Имя",
             value: "${_editedProfile.firstName.value} ${_editedProfile.lastName.value}",
-            isBold: true,
             onTap: () => _showEditDialog(
               title: "Изменить имя и фамилию",
               initialValue: "${_editedProfile.firstName.value} ${_editedProfile.lastName.value}",
-              validator: (val) => AppValidators.required(val, 'Введите имя'),
+              validator: (val) {
+                if (val == null || val.isEmpty) return 'Введите имя и фамилию';
+                final names = val.trim().split(' ');
+                if (names.length < 2) return 'Введите фамилию через пробел';
+                final nameError = AppValidators.name(names[0]);
+                if (nameError != null) return nameError;
+                final lastNameError = AppValidators.lastName(names.sublist(1).join(' '));
+                if (lastNameError != null) return lastNameError;
+                return null;
+              },
               onConfirm: (val) {
-                final names = val.split(' ');
+                final names = val.trim().split(' ');
                 _editedProfile = _editedProfile.copyWith(
                   firstName: Name(names.first),
                   lastName: Name(names.length > 1 ? names.sublist(1).join(' ') : ''),
@@ -231,14 +289,14 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
           _InfoBlock(
             label: "Вес",
             value: "${_editedProfile.weight.value.toInt()} кг",
-            isBold: true,
             onTap: () => _showEditDialog(
               title: "Изменить вес",
               initialValue: _editedProfile.weight.value.toInt().toString(),
               keyboardType: TextInputType.number,
               validator: (val) => AppValidators.number(val, min: 30, max: 300),
               onConfirm: (val) {
-                final weightVal = double.tryParse(val) ?? _editedProfile.weight.value;
+                final normalized = val.replaceAll(',', '.');
+                final weightVal = double.tryParse(normalized) ?? _editedProfile.weight.value;
                 _editedProfile = _editedProfile.copyWith(weight: Weight(weightVal));
               },
             ),
@@ -246,34 +304,42 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
           _InfoBlock(
             label: "Рост",
             value: "${_editedProfile.height.value.toInt()} см",
-            isBold: true,
             onTap: () => _showEditDialog(
               title: "Изменить рост",
               initialValue: _editedProfile.height.value.toInt().toString(),
               keyboardType: TextInputType.number,
               validator: (val) => AppValidators.number(val, min: 100, max: 250),
               onConfirm: (val) {
-                final heightVal = double.tryParse(val) ?? _editedProfile.height.value;
+                final normalized = val.replaceAll(',', '.');
+                final heightVal = double.tryParse(normalized) ?? _editedProfile.height.value;
                 _editedProfile = _editedProfile.copyWith(height: Height(heightVal));
               },
             ),
           ),
           _InfoBlock(
             label: "Возраст",
-            value: "${_editedProfile.age.value} лет",
-            isBold: true,
+            value: _getAgeString(_editedProfile.age.value),
             onTap: () => _showEditDialog(
-              title: "Изменить возраст",
-              initialValue: _editedProfile.age.value.toString(),
+              title: "Изменить дату рождения",
+              initialValue: DateFormat('dd.MM.yyyy').format(_editedProfile.birthDate),
               keyboardType: TextInputType.number,
-              validator: (val) => AppValidators.number(val, min: 14, max: 100),
+              inputFormatters: [
+                _DateInputFormatter(),
+                LengthLimitingTextInputFormatter(10),
+              ],
+              validator: AppValidators.date,
               onConfirm: (val) {
-                final ageVal = int.tryParse(val) ?? _editedProfile.age.value;
-                _editedProfile = _editedProfile.copyWith(age: Age(ageVal));
+                final newAge = _calculateAge(val);
+                final parts = val.split('.');
+                final newBirthDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+                _editedProfile = _editedProfile.copyWith(
+                  age: Age(newAge),
+                  birthDate: newBirthDate,
+                );
               },
             ),
           ),
-          _InfoBlock(label: "Статус", value: "Участник сообщества", isBold: true),
+          _InfoBlock(label: "Статус", value: "Участник сообщества"),
           _InfoBlock(
             label: "Почта",
             value: _editedProfile.email.value,
@@ -391,9 +457,8 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 class _InfoBlock extends StatelessWidget {
   final String label;
   final String value;
-  final bool isBold;
   final VoidCallback? onTap;
-  const _InfoBlock({required this.label, required this.value, this.isBold = false, this.onTap});
+  const _InfoBlock({required this.label, required this.value, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -401,7 +466,7 @@ class _InfoBlock extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: SizedBox(
           width: double.infinity,
           child: Column(
@@ -409,14 +474,14 @@ class _InfoBlock extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 16, fontFamily: 'Golos Text'),
+                style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14, fontFamily: 'Golos Text'),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 value,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
                   fontFamily: 'Golos Text',
                   color: Colors.black,
                   height: 1.1,
@@ -426,6 +491,27 @@ class _InfoBlock extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final text = newValue.text;
+    if (text.length < oldValue.text.length) return newValue;
+    final digits = text.replaceAll(RegExp(r'[^\d]'), '');
+    final buffer = StringBuffer();
+    for (int i = 0; i < digits.length; i++) {
+      buffer.write(digits[i]);
+      if (i == 1 || i == 3) {
+         if (i < digits.length) buffer.write('.');
+      }
+    }
+    final formatted = buffer.toString();
+    return TextEditingValue(
+      text: formatted.length > 10 ? formatted.substring(0, 10) : formatted,
+      selection: TextSelection.collapsed(offset: formatted.length > 10 ? 10 : formatted.length),
     );
   }
 }

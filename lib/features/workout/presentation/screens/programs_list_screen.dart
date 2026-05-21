@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/features/workout/domain/entities/workout_program.dart';
 import 'package:vivere_mobile/features/workout/presentation/providers/workout_providers.dart';
 import 'package:vivere_mobile/features/workout/presentation/screens/program_details_screen.dart';
@@ -20,55 +21,78 @@ class ProgramsListScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          categoryName,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Golos Text',
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Container(
-        margin: const EdgeInsets.only(top: 8),
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          color: Color(0xFFE2E2E2),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        ),
-        child: programsAsync.when(
-          data: (programs) => ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-            itemCount: programs.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 10),
-            itemBuilder: (context, index) {
-              final program = programs[index];
-              return ProgramCard(
-                program: program,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProgramDetailsScreen(program: program),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 10,
+              left: 16,
+              right: 16,
+            ),
+            child: SizedBox(
+              height: 54,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: SvgPicture.asset(
+                        'assets/icons/back.svg',
+                        width: 54,
+                        height: 54,
+                      ),
                     ),
-                  );
-                },
-              );
-            },
+                  ),
+                  Text(
+                    categoryName,
+                    style: const TextStyle(
+                      color: Color(0xFF141414),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFFFF5900)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Color(0xFFE2E2E2),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+              ),
+              child: programsAsync.when(
+                data: (programs) => ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+                  itemCount: programs.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    final program = programs[index];
+                    return ProgramCard(
+                      program: program,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProgramDetailsScreen(program: program),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: Color(0xFFFF5900)),
+                ),
+                error: (err, st) => Center(child: Text('Ошибка: $err')),
+              ),
+            ),
           ),
-          error: (err, st) => Center(child: Text('Ошибка: $err')),
-        ),
+        ],
       ),
     );
   }
@@ -103,12 +127,6 @@ class ProgramCard extends StatelessWidget {
                 width: 160,
                 height: 160,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  width: 160,
-                  height: 160,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.fitness_center, size: 40, color: Colors.white),
-                ),
               ),
             ),
             Expanded(
@@ -122,7 +140,6 @@ class ProgramCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        fontFamily: 'Golos Text',
                         color: Color(0xFF141414),
                       ),
                       maxLines: 2,
@@ -146,19 +163,17 @@ class ProgramCard extends StatelessWidget {
                     const Spacer(),
                     Row(
                       children: [
-                        CircleAvatar(
+                        const CircleAvatar(
                           radius: 12,
-                          backgroundImage: AssetImage(
-                            program?.trainerImage ?? "assets/images/programs/workout_2.png",
-                          ),
+                          backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             program?.trainerName ?? "Super train 3000",
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              color: Colors.black.withOpacity(0.5),
+                              color: Colors.black54,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

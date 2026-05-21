@@ -66,7 +66,6 @@ class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsS
                             fontSize: 58,
                             fontWeight: FontWeight.w900,
                             height: 1.0,
-                            fontFamily: 'Golos Text',
                             color: Color(0xFF141414),
                           ),
                         ),
@@ -97,18 +96,17 @@ class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsS
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF5900),
                             foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 50),
+                            minimumSize: const Size(double.infinity, 64),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           child: const Text(
                             'Продолжить',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Golos Text',
                             ),
                           ),
                         ),
@@ -145,14 +143,14 @@ class _CustomTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType ?? TextInputType.text,
       validator: validator,
-      style: const TextStyle(fontSize: 18, fontFamily: 'Golos Text', color: Color(0xFF141414)),
+      style: const TextStyle(fontSize: 18, color: Color(0xFF141414)),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         filled: true,
         fillColor: const Color(0xFFE2E2E2),
-        errorStyle: const TextStyle(color: Color(0xFFFF5900)),
+        errorStyle: const TextStyle(color: Color(0xFFFF5900), fontSize: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
@@ -163,7 +161,7 @@ class _CustomTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),

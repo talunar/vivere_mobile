@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../domain/entities/workout_program.dart';
 import '../../domain/entities/repeated.dart';
@@ -92,6 +93,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text("Завершить тренировку?", style: TextStyle(fontFamily: 'Golos Text')),
         content: const Text("Все результаты будут сохранены в ваш профиль.", style: TextStyle(fontFamily: 'Golos Text')),
         actions: [
@@ -160,6 +162,8 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double imageHeight = screenWidth * (240 / 402);
     final exercise = _modifiedExercises[currentIndex];
     final repeat = exercise.repeats.first;
     final isTimeBased = repeat.seconds != null;
@@ -168,66 +172,87 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
       children: [
         Scaffold(
           backgroundColor: Colors.white,
-          resizeToAvoidBottomInset: false,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            toolbarHeight: 80,
+            leadingWidth: 70,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Center(
+                child: _CircleHeaderButton(
+                  asset: 'assets/icons/back.svg',
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ),
+          ),
           body: Column(
             children: [
+              // Верхний блок с изображением
               Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
-                    child: Image.asset(
-                      "assets/images/exercises/workout_3.png", // Исправлено на workout_3
-                      width: double.infinity,
-                      height: 300,
-                      fit: BoxFit.cover,
+                  SizedBox(
+                    width: double.infinity,
+                    height: imageHeight,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+                      child: Image.asset(
+                        "assets/images/exercises/workout_3.png",
+                        width: double.infinity,
+                        height: imageHeight,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.topCenter,
+                      ),
                     ),
                   ),
+                  // Индикатор упражнений (1 / 5)
                   Positioned(
-                    top: 50,
+                    bottom: 20,
                     left: 20,
-                    child: _HeaderButton(
-                      icon: Icons.arrow_back,
-                      onPressed: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 24, 
+                            fontWeight: FontWeight.w900, 
+                            color: Color(0xFF141414), 
+                            fontFamily: 'Golos Text'
+                          ),
+                          children: [
+                            TextSpan(text: "${currentIndex + 1}", style: const TextStyle(color: Color(0xFFFF5900))),
+                            TextSpan(text: " / ${widget.exercises.length}"),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
+              // Основной контент
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         exercise.name,
-                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
+                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Color(0xFF141414)),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         exercise.description,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600], fontFamily: 'Golos Text'),
+                        style: const TextStyle(fontSize: 15, color: Color(0xFF757575), height: 1.4),
                       ),
                       const SizedBox(height: 32),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _InputBox(
-                              label: 'Вес (кг)',
-                              controller: _weightController,
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _InputBox(
-                              label: isTimeBased ? 'Секунды' : 'Повторы',
-                              controller: _valueController,
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 40),
                       if (isTimeBased)
                         Center(
                           child: _TimerDisplay(
@@ -239,15 +264,25 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                         )
                       else
                         Center(
-                          child: Text(
-                            'x ${_valueController.text}',
-                            style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900), fontFamily: 'Golos Text'),
+                          child: Column(
+                            children: [
+                              Text(
+                                'x ${_valueController.text}',
+                                style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900), fontFamily: 'Golos Text'),
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                "Повторений",
+                                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16, fontFamily: 'Golos Text'),
+                              ),
+                            ],
                           ),
                         ),
                     ],
                   ),
                 ),
               ),
+              // Кнопки управления
               SafeArea(
                 top: false,
                 child: Padding(
@@ -258,7 +293,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                         child: ElevatedButton(
                           onPressed: currentIndex > 0 ? _prev : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF727272).withOpacity(0.1),
+                            backgroundColor: const Color(0xFFE2E2E2),
                             foregroundColor: const Color(0xFF141414),
                             minimumSize: const Size(0, 50),
                             elevation: 0,
@@ -310,46 +345,22 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
   }
 }
 
-class _HeaderButton extends StatelessWidget {
-  final IconData icon;
+class _CircleHeaderButton extends StatelessWidget {
+  final String asset;
   final VoidCallback onPressed;
-  const _HeaderButton({required this.icon, required this.onPressed});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-      child: IconButton(icon: Icon(icon, color: Colors.black), onPressed: onPressed),
-    );
-  }
-}
-
-class _InputBox extends StatelessWidget {
-  final String label;
-  final TextEditingController controller;
-  final TextInputType keyboardType;
-
-  const _InputBox({required this.label, required this.controller, required this.keyboardType});
+  const _CircleHeaderButton({required this.asset, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey, fontFamily: 'Golos Text')),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color(0xFFE2E2E2),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-        ),
-      ],
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        padding: const EdgeInsets.all(12),
+        child: SvgPicture.asset(asset, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
+      ),
     );
   }
 }
@@ -376,7 +387,7 @@ class _TimerDisplay extends StatelessWidget {
           child: CircularProgressIndicator(
             value: totalSeconds > 0 ? seconds / totalSeconds : 0,
             strokeWidth: 10,
-            backgroundColor: Colors.grey[200],
+            backgroundColor: const Color(0xFFE2E2E2),
             valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFF5900)),
           ),
         ),
@@ -384,7 +395,7 @@ class _TimerDisplay extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: Icon(isPaused ? Icons.play_arrow : Icons.pause, size: 48, color: const Color(0xFFFF5900)),
+              icon: Icon(isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 64, color: const Color(0xFFFF5900)),
               onPressed: onToggle,
             ),
             Text('$minutesStr:$secondsStr', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Color(0xFFFF5900), fontFamily: 'Golos Text')),

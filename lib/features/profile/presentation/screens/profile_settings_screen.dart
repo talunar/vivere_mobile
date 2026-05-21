@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/core/presentation/utils/app_validators.dart';
 import 'package:vivere_mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:vivere_mobile/core/domain/value_objects/app_value_objects.dart';
@@ -19,15 +20,28 @@ class ProfileSettingsScreen extends ConsumerWidget {
     return authState.maybeWhen(
       authenticated: (user) {
         final profileAsync = ref.watch(profileNotifierProvider(user.id));
+        const bool hasNotifications = false;
+
         return Scaffold(
           backgroundColor: const Color(0xFFF6F6F6),
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
+            scrolledUnderElevation: 0,
             toolbarHeight: 80,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
-              onPressed: () => Navigator.pop(context),
+            leadingWidth: 70,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Center(
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: SvgPicture.asset(
+                    'assets/icons/back.svg',
+                    width: 54,
+                    height: 54,
+                  ),
+                ),
+              ),
             ),
             title: const Text(
               "Настройки",
@@ -35,14 +49,19 @@ class ProfileSettingsScreen extends ConsumerWidget {
                 color: Colors.black,
                 fontWeight: FontWeight.w400,
                 fontSize: 24,
-                fontFamily: 'Golos Text',
               ),
             ),
             centerTitle: true,
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
-                child: Center(child: _NotificationIcon()),
+                child: Center(
+                  child: SvgPicture.asset(
+                    hasNotifications ? 'assets/icons/notify_on.svg' : 'assets/icons/notify.svg',
+                    width: 54,
+                    height: 54,
+                  ),
+                ),
               ),
             ],
           ),
@@ -58,21 +77,6 @@ class ProfileSettingsScreen extends ConsumerWidget {
       orElse: () => const Scaffold(
         body: Center(child: Text('Пользователь не авторизован')),
       ),
-    );
-  }
-}
-
-class _NotificationIcon extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: const BoxDecoration(
-        color: Color(0xFFE2E2E2),
-        shape: BoxShape.circle,
-      ),
-      child: const Icon(Icons.notifications_none, color: Colors.black, size: 24),
     );
   }
 }
@@ -125,7 +129,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Удаление аккаунта", style: TextStyle(fontFamily: 'Golos Text')),
+        title: const Text("Удаление аккаунта"),
         content: const Text("Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя будет отменить."),
         actions: [
           TextButton(
@@ -167,7 +171,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(title, style: const TextStyle(fontFamily: 'Golos Text', fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         content: Form(
           key: formKey,
           child: TextFormField(
@@ -176,7 +180,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
             inputFormatters: inputFormatters,
             autofocus: true,
             validator: validator,
-            style: const TextStyle(fontFamily: 'Golos Text', fontSize: 18),
+            style: const TextStyle(fontSize: 18),
             decoration: InputDecoration(
               filled: true,
               fillColor: const Color(0xFFE2E2E2),
@@ -204,7 +208,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Отмена", style: TextStyle(color: Colors.grey, fontFamily: 'Golos Text')),
+            child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
@@ -214,7 +218,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                 setState(() {});
               }
             },
-            child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
+            child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -235,7 +239,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               children: [
                 const CircleAvatar(
                   radius: 54,
-                  backgroundImage: AssetImage("assets/design/workout_1.png"),
+                  backgroundImage: AssetImage("assets/设计/workout_1.png"),
                 ),
                 Transform.translate(
                   offset: const Offset(0, 10),
@@ -392,60 +396,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
-            child: const Text('Сохранить', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
-          ),
-
-          const SizedBox(height: 32),
-
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE2E2E2),
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text("Мои покупки", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400, fontFamily: 'Golos Text')),
-                      SizedBox(height: 8),
-                      Text("8 тренировок", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500, fontFamily: 'Golos Text')),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 54,
-                  height: 54,
-                  decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
-                  child: const Icon(Icons.arrow_forward, color: Colors.white, size: 28),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 32),
-
-          Center(
-            child: Column(
-              children: [
-                TextButton(
-                  onPressed: () => ref.read(authControllerProvider.notifier).logout(),
-                  child: const Text(
-                    "Выйти из аккаунта",
-                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600, fontSize: 16),
-                  ),
-                ),
-                TextButton(
-                  onPressed: _showDeleteConfirmationDialog,
-                  child: const Text(
-                    "Удалить аккаунт",
-                    style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w400, fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
+            child: const Text('Сохранить', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(height: 60),
         ],
@@ -474,7 +425,7 @@ class _InfoBlock extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14, fontFamily: 'Golos Text'),
+                style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
               ),
               const SizedBox(height: 2),
               Text(
@@ -482,7 +433,6 @@ class _InfoBlock extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w400,
-                  fontFamily: 'Golos Text',
                   color: Colors.black,
                   height: 1.1,
                 ),

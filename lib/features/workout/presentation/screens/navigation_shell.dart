@@ -33,7 +33,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          // Главная с вложенным навигатором
           Navigator(
             key: _workoutNavigatorKey,
             onGenerateRoute: (settings) => MaterialPageRoute(
@@ -98,8 +97,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         padding: const EdgeInsets.only(top: 12, bottom: 8),
         child: SvgPicture.asset(
           assetPath,
-          width: 28,
-          height: 28,
+          width: 30,
+          height: 30,
           colorFilter: ColorFilter.mode(
             isActive ? const Color(0xFFFF5900) : const Color(0xFF9E9E9E),
             BlendMode.srcIn,

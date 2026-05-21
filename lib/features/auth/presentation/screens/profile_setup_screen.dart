@@ -89,7 +89,6 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             fontSize: 64,
                             fontWeight: FontWeight.w900,
                             height: 1.0,
-                            fontFamily: 'Golos Text',
                             color: Color(0xFF141414),
                           ),
                         ),
@@ -161,7 +160,6 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'Golos Text',
                               ),
                             ),
                           ),
@@ -201,7 +199,6 @@ class _GenderButton extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 20,
-              fontFamily: 'Golos Text',
               color: isSelected ? const Color(0xFFFF5900) : const Color(0xFF9E9E9E),
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
@@ -246,7 +243,6 @@ class _CustomTextField extends StatelessWidget {
             label!,
             style: const TextStyle(
               fontSize: 16,
-              fontFamily: 'Golos Text',
               color: Color(0xFF141414),
               fontWeight: FontWeight.w500,
             ),
@@ -258,7 +254,7 @@ class _CustomTextField extends StatelessWidget {
           keyboardType: keyboardType,
           validator: validator,
           inputFormatters: inputFormatters,
-          style: const TextStyle(fontSize: 18, fontFamily: 'Golos Text', color: Color(0xFF141414)),
+          style: const TextStyle(fontSize: 18, color: Color(0xFF141414)),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),

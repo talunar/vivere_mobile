@@ -77,7 +77,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             fontSize: 58,
                             fontWeight: FontWeight.w900,
                             height: 1.0,
-                            fontFamily: 'Golos Text',
                             color: Color(0xFF141414),
                           ),
                         ),
@@ -117,7 +116,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'Golos Text',
                               ),
                             ),
                           ),
@@ -159,7 +157,7 @@ class _CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: isPassword && isObscured,
       validator: validator,
-      style: const TextStyle(fontSize: 20, fontFamily: 'Golos Text'),
+      style: const TextStyle(fontSize: 20),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),

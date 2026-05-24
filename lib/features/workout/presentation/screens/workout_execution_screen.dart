@@ -94,8 +94,8 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text("Завершить тренировку?", style: TextStyle(fontFamily: 'Golos Text')),
-        content: const Text("Все результаты будут сохранены в ваш профиль.", style: TextStyle(fontFamily: 'Golos Text')),
+        title: const Text("Завершить тренировку?", style: TextStyle(fontWeight: FontWeight.bold)),
+        content: const Text("Все результаты будут сохранены в ваш профиль."),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Еще нет", style: TextStyle(color: Colors.grey))),
           TextButton(
@@ -110,7 +110,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
 
     setState(() => _isSaving = true);
     _saveCurrentInput();
-    
+
     final authState = ref.read(authControllerProvider);
     final userId = authState.maybeWhen(
       authenticated: (user) => user.id.value,
@@ -164,6 +164,8 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double imageHeight = screenWidth * (240 / 402);
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+
     final exercise = _modifiedExercises[currentIndex];
     final repeat = exercise.repeats.first;
     final isTimeBased = repeat.seconds != null;
@@ -172,26 +174,8 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
       children: [
         Scaffold(
           backgroundColor: Colors.white,
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            toolbarHeight: 80,
-            leadingWidth: 70,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Center(
-                child: _CircleHeaderButton(
-                  asset: 'assets/icons/back.svg',
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-            ),
-          ),
           body: Column(
             children: [
-              // Верхний блок с изображением
               Stack(
                 children: [
                   SizedBox(
@@ -204,32 +188,70 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                         width: double.infinity,
                         height: imageHeight,
                         fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
+                        alignment: Alignment.bottomCenter,
                       ),
                     ),
                   ),
-                  // Индикатор упражнений (1 / 5)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: statusBarHeight + 80,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black45,
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: statusBarHeight + 6,
+                    left: 16,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: SizedBox(
+                        width: 44,
+                        height: 44,
+                        child: SvgPicture.asset(
+                          'assets/icons/back.svg',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Индикатор упражнений
                   Positioned(
                     bottom: 20,
                     left: 20,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      height: 44,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(22),
                       ),
-                      child: RichText(
-                        text: TextSpan(
-                          style: const TextStyle(
-                            fontSize: 24, 
-                            fontWeight: FontWeight.w900, 
-                            color: Color(0xFF141414), 
-                            fontFamily: 'Golos Text'
+                      child: Center(
+                        child: RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF141414),
+                            ),
+                            children: [
+                              TextSpan(
+                                  text: "${currentIndex + 1}",
+                                  style: const TextStyle(color: Color(0xFFFF5900))
+                              ),
+                              TextSpan(text: " / ${widget.exercises.length}"),
+                            ],
                           ),
-                          children: [
-                            TextSpan(text: "${currentIndex + 1}", style: const TextStyle(color: Color(0xFFFF5900))),
-                            TextSpan(text: " / ${widget.exercises.length}"),
-                          ],
                         ),
                       ),
                     ),
@@ -268,12 +290,12 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                             children: [
                               Text(
                                 'x ${_valueController.text}',
-                                style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900), fontFamily: 'Golos Text'),
+                                style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900)),
                               ),
                               const SizedBox(height: 8),
                               const Text(
                                 "Повторений",
-                                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16, fontFamily: 'Golos Text'),
+                                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16),
                               ),
                             ],
                           ),
@@ -299,7 +321,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                             elevation: 0,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                           ),
-                          child: const Text('Назад', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
+                          child: const Text('Назад', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -315,7 +337,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                           ),
                           child: Text(
                             currentIndex == _modifiedExercises.length - 1 ? 'Завершить' : 'Вперед',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text'),
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
@@ -335,32 +357,12 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                 children: [
                   CircularProgressIndicator(color: Color(0xFFFF5900)),
                   SizedBox(height: 16),
-                  Text("Сохранение прогресса...", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
+                  Text("Сохранение прогресса...", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           ),
       ],
-    );
-  }
-}
-
-class _CircleHeaderButton extends StatelessWidget {
-  final String asset;
-  final VoidCallback onPressed;
-  const _CircleHeaderButton({required this.asset, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-        padding: const EdgeInsets.all(12),
-        child: SvgPicture.asset(asset, colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn)),
-      ),
     );
   }
 }
@@ -398,7 +400,7 @@ class _TimerDisplay extends StatelessWidget {
               icon: Icon(isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 64, color: const Color(0xFFFF5900)),
               onPressed: onToggle,
             ),
-            Text('$minutesStr:$secondsStr', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Color(0xFFFF5900), fontFamily: 'Golos Text')),
+            Text('$minutesStr:$secondsStr', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Color(0xFFFF5900))),
           ],
         ),
       ],

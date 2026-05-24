@@ -79,93 +79,100 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 child: IntrinsicHeight(
                   child: Form(
                     key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 60),
-                        const Text(
-                          'Финиш',
-                          style: TextStyle(
-                            fontSize: 64,
-                            fontWeight: FontWeight.w900,
-                            height: 1.0,
-                            color: Color(0xFF141414),
-                          ),
-                        ),
-                        const Spacer(flex: 2),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Center(
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 352),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _GenderButton(
-                              label: 'Мужчина',
-                              isSelected: selectedGender == Gender.male,
-                              onTap: () => setState(() => selectedGender = Gender.male),
-                            ),
-                            _GenderButton(
-                              label: 'Женщина',
-                              isSelected: selectedGender == Gender.female,
-                              onTap: () => setState(() => selectedGender = Gender.female),
-                            ),
-                            _GenderButton(
-                              label: 'Другое',
-                              isSelected: selectedGender == Gender.other,
-                              onTap: () => setState(() => selectedGender = Gender.other),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 32),
-                        _CustomTextField(
-                          controller: dobController,
-                          label: 'Дата рождения',
-                          hintText: 'дд.мм.гггг',
-                          keyboardType: TextInputType.number,
-                          validator: AppValidators.date,
-                          inputFormatters: [
-                            _DateInputFormatter(),
-                            LengthLimitingTextInputFormatter(10),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        _CustomTextField(
-                          controller: weightController,
-                          hintText: 'Вес (кг)',
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          validator: (v) => AppValidators.number(v, min: 20, max: 300),
-                        ),
-                        const SizedBox(height: 16),
-                        _CustomTextField(
-                          controller: heightController,
-                          hintText: 'Рост (см)',
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          validator: (v) => AppValidators.number(v, min: 50, max: 250),
-                        ),
-                        const SizedBox(height: 32),
-                        authState.maybeMap(
-                          loading: (_) => const Center(
-                            child: CircularProgressIndicator(color: Color(0xFFFF5900)),
-                          ),
-                          orElse: () => ElevatedButton(
-                            onPressed: _onComplete,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFF5900),
-                              foregroundColor: Colors.white,
-                              minimumSize: const Size(double.infinity, 50),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                            ),
-                            child: const Text(
-                              'Зарегистрироваться',
+                            const SizedBox(height: 60),
+                            const Text(
+                              'Финиш',
                               style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 64,
+                                fontWeight: FontWeight.w900,
+                                height: 1.0,
+                                color: Color(0xFF141414),
                               ),
                             ),
-                          ),
+                            const Spacer(flex: 2),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _GenderButton(
+                                  label: 'Мужчина',
+                                  isSelected: selectedGender == Gender.male,
+                                  onTap: () => setState(() => selectedGender = Gender.male),
+                                ),
+                                _GenderButton(
+                                  label: 'Женщина',
+                                  isSelected: selectedGender == Gender.female,
+                                  onTap: () => setState(() => selectedGender = Gender.female),
+                                ),
+                                _GenderButton(
+                                  label: 'Другое',
+                                  isSelected: selectedGender == Gender.other,
+                                  onTap: () => setState(() => selectedGender = Gender.other),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 32),
+                            _CustomTextField(
+                              controller: dobController,
+                              hintText: 'Возраст',
+                              keyboardType: TextInputType.number,
+                              validator: AppValidators.date,
+                              inputFormatters: [
+                                _DateInputFormatter(),
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            _CustomTextField(
+                              controller: weightController,
+                              hintText: 'Вес',
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              validator: (v) => AppValidators.number(v, min: 20, max: 300),
+                            ),
+                            const SizedBox(height: 16),
+                            _CustomTextField(
+                              controller: heightController,
+                              hintText: 'Рост',
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              validator: (v) => AppValidators.number(v, min: 50, max: 250),
+                            ),
+                            const SizedBox(height: 32),
+                            authState.maybeMap(
+                              loading: (_) => const Center(
+                                child: CircularProgressIndicator(color: Color(0xFFFF5900)),
+                              ),
+                              orElse: () => SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: _onComplete,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFF5900),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Зарегистрироваться',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Spacer(flex: 3),
+                          ],
                         ),
-                        const Spacer(flex: 3),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -222,7 +229,6 @@ class _CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatters;
-  final String? label;
 
   const _CustomTextField({
     required this.controller,
@@ -230,61 +236,45 @@ class _CustomTextField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.inputFormatters,
-    this.label,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (label != null) ...[
-          Text(
-            label!,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Color(0xFF141414),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          validator: validator,
-          inputFormatters: inputFormatters,
-          style: const TextStyle(fontSize: 18, color: Color(0xFF141414)),
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            filled: true,
-            fillColor: const Color(0xFFE2E2E2),
-            errorStyle: const TextStyle(color: Color(0xFFFF5900)),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1.5),
-            ),
-          ),
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: validator,
+      inputFormatters: inputFormatters,
+      style: const TextStyle(fontSize: 18, color: Color(0xFF141414)),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+        filled: true,
+        fillColor: const Color(0xFFE2E2E2),
+        constraints: const BoxConstraints(minHeight: 50, maxHeight: 75),
+        errorStyle: const TextStyle(color: Color(0xFFFF5900), height: 0.8),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: BorderSide.none,
         ),
-      ],
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+        ),
+      ),
     );
   }
 }

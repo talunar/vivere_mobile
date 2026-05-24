@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../domain/entities/workout_program.dart';
 import '../providers/workout_providers.dart';
 import 'program_details_screen.dart';
 
@@ -62,16 +63,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   _DashboardCard(
                     title: "Калории сегодня",
                     showArrow: true,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            _CalorieItem(label: "Завтрак", value: "320 kkal"),
-                            _CalorieItem(label: "Обед", value: "220 kkal"),
-                            _CalorieItem(label: "Ужин", value: "220 kkal"),
-                          ],
-                      ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          _CalorieItem(label: "Завтрак", value: "320 kkal"),
+                          _CalorieItem(label: "Обед", value: "220 kkal"),
+                          _CalorieItem(label: "Ужин", value: "220 kkal"),
+                        ],
                     ),
                   ),
 
@@ -178,7 +176,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           ),
                         ),
                       ),
-                      const _IconBtn(asset: 'assets/icons/settings.svg'),
+                      const SizedBox(width: 44),
                     ],
                   ),
                 ),
@@ -220,7 +218,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             final isSelected = day == _selectedDate.day;
             final isToday = day == DateTime.now().day && DateTime.now().month == 3;
 
-            // Логика подчеркивания: вторник (2) и четверг (4) при наличии программ
             final bool shouldUnderline = hasWorkouts && (date.weekday == DateTime.tuesday || date.weekday == DateTime.thursday);
 
             return GestureDetector(
@@ -299,14 +296,14 @@ class _DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 8),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 16, bottom: 14),
       decoration: BoxDecoration(color: const Color(0xFFE2E2E2), borderRadius: BorderRadius.circular(32)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
@@ -314,10 +311,10 @@ class _DashboardCard extends StatelessWidget {
                 if (showArrow) const Icon(Icons.arrow_circle_right, size: 36, color: Colors.black),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          child,
-        ],
+            const SizedBox(height: 16),
+            child,
+          ],
+        ),
       ),
     );
   }
@@ -341,7 +338,7 @@ class _CalorieItem extends StatelessWidget {
 }
 
 class _ProgramCard extends StatelessWidget {
-  final dynamic program;
+  final WorkoutProgram program;
   final VoidCallback? onTap;
 
   const _ProgramCard({required this.program, this.onTap});

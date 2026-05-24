@@ -1,38 +1,35 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import '../../domain/entities/auth_user.dart';
+import 'package:flutter/material.dart';
 
-part 'auth_state.freezed.dart';
+class RegistrationDetailsScreen extends ConsumerWidget {
+  const RegistrationDetailsScreen({super.key});
 
-/// Перечисление для выбора пола
-enum Gender { male, female, other}
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fNameController = TextEditingController();
+    final lNameController = TextEditingController();
+    final emailController = TextEditingController();
 
-@freezed
-sealed class AuthState with _$AuthState {
-  const factory AuthState.initial() = AuthInitial;
-  const factory AuthState.loading() = AuthLoading;
-  const factory AuthState.unauthenticated() = Unauthenticated;
-
-  /// Если юзера нет и нужно ввести ФИО и Почту
-  const factory AuthState.registrationStepName({
-    required String nickName,
-    required String password,
-  }) = RegistrationStepName;
-
-  /// После ФИО и почты мы переходим к росту/весу/полу
-  const factory AuthState.registrationStepPhysical({
-    required String nickName,
-    required String password,
-    required String firstName,
-    required String lastName,
-    required String email,
-  }) = RegistrationStepPhysical;
-
-  /// Состояние, если профиль существует, но данные в нем пустые (для старых юзеров)
-  const factory AuthState.profileSetupRequired(AuthUser user) = ProfileSetupRequired;
-
-  /// Финальное состояние — пользователь полностью вошел
-  const factory AuthState.authenticated(AuthUser user) = Authenticated;
-
-  /// Состояние ошибки (неверный пароль, проблемы с сетью)
-  const factory AuthState.error(String message, {Object? error}) = AuthError;
+    return Scaffold(
+      appBar: AppBar(title: const Text('О вас')),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          const Text('Давайте познакомимся', style: TextStyle(fontSize: 24)),
+          const SizedBox(height: 20),
+          TextField(controller: fNameController, decoration: const InputDecoration(labelText: 'Имя')),
+          TextField(controller: lNameController, decoration: const InputDecoration(labelText: 'Фамилия')),
+          TextField(controller: emailController, decoration: const InputDecoration(labelText: 'Email')),
+          const SizedBox(height: 32),
+          ElevatedButton(
+            onPressed: () => ref.read(authControllerProvider.notifier).submitNameAndEmail(
+              firstName: fNameController.text,
+              lastName: lNameController.text,
+              email: emailController.text,
+            ),
+            child: const Text('К параметрам тела'),
+          ),
+        ],
+      ),
+    );
+  }
 }

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../workout/domain/entities/workout_program.dart';
 import '../../../workout/presentation/screens/program_details_screen.dart';
 import '../../../workout/presentation/providers/workout_providers.dart';
+import '../../../workout/presentation/screens/calendar_screen.dart';
 import '../providers/profile_notifier.dart';
 import '../../domain/entities/user_profile.dart';
 
@@ -15,6 +17,8 @@ class PersonPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final double headerHeight = statusBarHeight + 56;
 
     return authState.maybeWhen(
       authenticated: (user) {
@@ -23,11 +27,68 @@ class PersonPage extends ConsumerWidget {
 
         return Scaffold(
           backgroundColor: const Color(0xFFF6F6F6),
-          // AppBar удален, чтобы иконки прокручивались вместе с контентом
           body: profileAsync.when(
-            data: (profile) => _ProfileDashboard(
-              profile: profile,
-              hasNotifications: hasNotifications,
+            data: (profile) => Stack(
+              children: [
+                Positioned.fill(
+                  child: _ProfileDashboard(profile: profile),
+                ),
+
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: headerHeight + 45,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFFF6F6F6),
+                          const Color(0xFFF6F6F6),
+                          const Color(0xFFF6F6F6),
+                          const Color(0xFFF6F6F6).withOpacity(0.98),
+                          const Color(0xFFF6F6F6).withOpacity(0.78),
+                          const Color(0xFFF6F6F6).withOpacity(0.45),
+                          const Color(0xFFF6F6F6).withOpacity(0.16),
+                          const Color(0xFFF6F6F6).withOpacity(0.0),
+                        ],
+                        stops: const [0.0, 0.4, 0.65, 0.72, 0.80, 0.88, 0.95, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SafeArea(
+                    bottom: false,
+                    child: SizedBox(
+                      height: 56,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            _IconBtn(
+                              asset: hasNotifications ? 'assets/icons/notify_on.svg' : 'assets/icons/notify.svg',
+                            ),
+                            const SizedBox(width: 8),
+                            const _IconBtn(asset: 'assets/icons/chat.svg'),
+                            const Spacer(),
+                            _IconBtn(
+                              asset: 'assets/icons/settings.svg',
+                              onTap: () => context.push('/profile_settings'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
             error: (err, _) => Center(child: Text('Ошибка: $err')),
@@ -41,12 +102,8 @@ class PersonPage extends ConsumerWidget {
 
 class _ProfileDashboard extends ConsumerWidget {
   final UserProfile profile;
-  final bool hasNotifications;
-  
-  const _ProfileDashboard({
-    required this.profile,
-    required this.hasNotifications,
-  });
+
+  const _ProfileDashboard({required this.profile});
 
   String _getAgeString(int age) {
     int lastDigit = age % 10;
@@ -61,65 +118,49 @@ class _ProfileDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final programsAsync = ref.watch(userProgramsProvider(profile.id.value));
     final double topPadding = MediaQuery.of(context).padding.top;
+    final now = DateTime.now();
+    final monthName = DateFormat('MMMM', 'ru_RU').format(now);
+    final capitalizedMonth = monthName[0].toUpperCase() + monthName.substring(1);
 
     return SingleChildScrollView(
-
-      padding: EdgeInsets.fromLTRB(20, topPadding + 10, 20, 120),
+      padding: EdgeInsets.fromLTRB(16, topPadding + 56 + 24, 16, 120),
       child: Column(
         children: [
-          Row(
-            children: [
-              _IconBtn(
-                asset: hasNotifications ? 'assets/icons/notify_on.svg' : 'assets/icons/notify.svg',
-              ),
-              const SizedBox(width: 8),
-              const _IconBtn(asset: 'assets/icons/chat.svg'),
-              const Spacer(),
-              _IconBtn(
-                asset: 'assets/icons/settings.svg',
-                onTap: () => context.push('/profile_settings'),
-              ),
-            ],
+          const CircleAvatar(
+            radius: 64,
+            backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
           ),
           const SizedBox(height: 12),
 
-          // Аватар
-          const CircleAvatar(
-            radius: 64, 
-            backgroundImage: AssetImage("assets/images/avatar/workout_1.png"),
-          ),
-          const SizedBox(height: 12),
-          
-          // Имя и статус
           Text(
             "${profile.firstName.value} ${profile.lastName.value}",
             style: const TextStyle(
-              fontSize: 24, 
+              fontSize: 24,
               fontWeight: FontWeight.w700,
               color: Color(0xFF141414),
             ),
           ),
           const Text(
             "Участник сообщества",
-            style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16, fontFamily: 'Golos Text'),
+            style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16),
           ),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _StatItem(
-                label: "Вес", 
-                value: "${profile.weight.value.toInt()} кг", 
+                label: "Вес",
+                value: "${profile.weight.value.toInt()} кг",
                 asset: 'assets/icons/weight.svg',
               ),
               _StatItem(
-                label: "Рост", 
-                value: "${profile.height.value.toInt()} см", 
+                label: "Рост",
+                value: "${profile.height.value.toInt()} см",
                 asset: 'assets/icons/height.svg',
               ),
               _StatItem(
-                label: "Возраст", 
-                value: _getAgeString(profile.age.value), 
+                label: "Возраст",
+                value: _getAgeString(profile.age.value),
                 asset: 'assets/icons/profile.svg',
               ),
             ],
@@ -129,9 +170,13 @@ class _ProfileDashboard extends ConsumerWidget {
           _DashboardCard(
             title: "Цели на сегодня",
             showAdd: true,
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
+            child: GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 2.5,
               children: const [
                 _GoalItem(title: "3 км", subtitle: "Бег", isDone: false),
                 _GoalItem(title: "100", subtitle: "Отжимания", isDone: true),
@@ -156,34 +201,131 @@ class _ProfileDashboard extends ConsumerWidget {
           const SizedBox(height: 16),
 
           _DashboardCard(
-            title: "Текущие программы",
-            showAdd: true,
-            child: programsAsync.when(
-              data: (programs) => Column(
-                children: programs.map((program) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: _ProgramCard(
-                    program: program,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProgramDetailsScreen(program: program),
-                        ),
-                      );
-                    },
-                    onDelete: () {
-                      ref.read(userProgramsProvider(profile.id.value).notifier).deleteProgram(program.id);
-                    },
-                  ),
-                )).toList(),
-              ),
-              loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
-              error: (err, _) => Text('Ошибка загрузки программ: $err', style: const TextStyle(fontFamily: 'Golos Text')),
+            title: capitalizedMonth,
+            showArrow: true,
+            onArrowTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CalendarScreen()),
+              );
+            },
+            child: programsAsync.maybeWhen(
+              data: (programs) => _WeekCalendar(hasWorkouts: programs.isNotEmpty),
+              orElse: () => const _WeekCalendar(hasWorkouts: false),
             ),
+          ),
+          const SizedBox(height: 16),
+
+          _DashboardCard(
+            title: "Мои тренировки",
+            showArrow: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                programsAsync.maybeWhen(
+                  data: (programs) => Text(
+                    "${programs.length} штук",
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                  orElse: () => const Text("0 штук", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                ),
+                const Text(
+                  "4 приобретено",
+                  style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          programsAsync.when(
+            data: (programs) {
+              if (programs.isEmpty) return const SizedBox.shrink();
+              return _DashboardCard(
+                title: "Текущие программы",
+                showAdd: true,
+                child: Column(
+                  children: programs.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final program = entry.value;
+                    final isLast = index == programs.length - 1;
+
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
+                      child: _ProgramCard(
+                        program: program,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProgramDetailsScreen(program: program),
+                            ),
+                          );
+                        },
+                        onDelete: () {
+                          ref.read(userProgramsProvider(profile.id.value).notifier).deleteProgram(program.id);
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+            loading: () => const _DashboardCard(
+              title: "Текущие программы",
+              child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+            ),
+            error: (err, _) => Text('Ошибка загрузки программ: $err'),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _WeekCalendar extends StatelessWidget {
+  final bool hasWorkouts;
+  const _WeekCalendar({required this.hasWorkouts});
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    final days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: List.generate(7, (index) {
+        final date = startOfWeek.add(Duration(days: index));
+        final isToday = date.day == now.day && date.month == now.month;
+
+        // Логика подчеркивания: только вторник (2) и четверг (4)
+        final bool shouldUnderline = hasWorkouts && (date.weekday == DateTime.tuesday || date.weekday == DateTime.thursday);
+
+        return Column(
+          children: [
+            Text(
+              days[index],
+              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "${date.day}",
+              style: TextStyle(
+                color: isToday ? const Color(0xFFFF5900) : const Color(0xFF141414),
+                fontWeight: isToday ? FontWeight.bold : FontWeight.w400,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              width: 20,
+              height: 2,
+              color: shouldUnderline ? const Color(0xFFFF5900) : Colors.transparent,
+            ),
+          ],
+        );
+      }),
     );
   }
 }
@@ -198,14 +340,14 @@ class _IconBtn extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 54, 
-        height: 54,
+        width: 44,
+        height: 44,
         decoration: const BoxDecoration(color: Color(0xFFE2E2E2), shape: BoxShape.circle),
         child: Center(
           child: SvgPicture.asset(
             asset,
-            width: 54, 
-            height: 54,
+            width: 44,
+            height: 44,
             fit: BoxFit.contain,
           ),
         ),
@@ -240,11 +382,11 @@ class _StatItem extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, fontFamily: 'Golos Text'),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
             ),
             Text(
               label,
-              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14, fontFamily: 'Golos Text'),
+              style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
             ),
           ],
         ),
@@ -258,28 +400,48 @@ class _DashboardCard extends StatelessWidget {
   final Widget child;
   final bool showAdd;
   final bool showArrow;
+  final VoidCallback? onArrowTap;
 
-  const _DashboardCard({required this.title, required this.child, this.showAdd = false, this.showArrow = false});
+  const _DashboardCard({
+    required this.title,
+    required this.child,
+    this.showAdd = false,
+    this.showArrow = false,
+    this.onArrowTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      // Внутренние отступы: 12 (бока), 16 (верх), 24 (низ)
+      padding: const EdgeInsets.fromLTRB(12, 16, 12, 24),
       decoration: BoxDecoration(color: const Color(0xFFE2E2E2), borderRadius: BorderRadius.circular(32)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400, fontFamily: 'Golos Text')),
-              if (showAdd) const Icon(Icons.add_circle, size: 36, color: Colors.black),
-              if (showArrow) const Icon(Icons.arrow_circle_right, size: 36, color: Colors.black),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
+                if (showAdd) const Icon(Icons.add_circle, size: 36, color: Colors.black),
+                if (showArrow)
+                  GestureDetector(
+                    onTap: onArrowTap,
+                    behavior: HitTestBehavior.opaque,
+                    child: const Icon(Icons.arrow_circle_right, size: 36, color: Colors.black),
+                  ),
+              ],
+            ),
           ),
-          const SizedBox(height: 20),
-          child,
+          const SizedBox(height: 16),
+          // Добавлен отступ 4, чтобы контент начинался ровно под заголовком
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: child,
+          ),
         ],
       ),
     );
@@ -294,37 +456,33 @@ class _GoalItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double itemWidth = (MediaQuery.of(context).size.width - 40 - 48 - 16) / 2;
-    return SizedBox(
-      width: itemWidth,
-      child: Row(
-        children: [
-          Icon(
-            isDone ? Icons.check_circle : Icons.circle_outlined,
-            color: isDone ? const Color(0xFFFF5900) : Colors.white,
-            size: 32,
+    return Row(
+      children: [
+        Icon(
+          isDone ? Icons.check_circle : Icons.circle_outlined,
+          color: isDone ? const Color(0xFFFF5900) : Colors.white,
+          size: 32,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(color: Colors.black54, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: 'Golos Text'),
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(color: Colors.black54, fontSize: 14, fontFamily: 'Golos Text'),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -339,8 +497,8 @@ class _CalorieItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: 'Golos Text')),
-        Text(label, style: const TextStyle(color: Colors.black54, fontSize: 14, fontFamily: 'Golos Text')),
+        Text(value, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        Text(label, style: const TextStyle(color: Colors.black54, fontSize: 14)),
       ],
     );
   }

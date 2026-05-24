@@ -11,15 +11,24 @@ part 'auth_provider.g.dart';
 class AuthController extends _$AuthController {
   @override
   AuthState build() {
-    // Для тестирования
     return const AuthState.unauthenticated();
   }
 
   /// Вход
   Future<void> continueToNextStep(String nick, String pass) async {
     state = const AuthState.loading();
-    await Future.delayed(const Duration(milliseconds: 800));
-    
+    // Имитация задержки сети
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // ВРЕМЕННО: вход сразу минуя регистрацию
+    state = AuthState.authenticated(AuthUser(
+      id: UserId(1),
+      email: '${nick.isEmpty ? "user" : nick}@vivere.app',
+      nickName: nick.isEmpty ? "TestUser" : nick,
+    ));
+
+    /* ВЕРНУТЬ
+    // Оригинальная логика регистрации:
     if (nick == 'admin') {
       state = AuthState.authenticated(AuthUser(
         id: UserId(1),
@@ -32,9 +41,9 @@ class AuthController extends _$AuthController {
         password: pass,
       );
     }
+    */
   }
 
-  /// Сохранение Имени и Почты
   void submitNameAndEmail({
     required String firstName,
     required String lastName,
@@ -54,7 +63,6 @@ class AuthController extends _$AuthController {
     );
   }
 
-  /// Регистрация (финализация)
   Future<void> completeRegistration({
     required int age,
     required double weight,
@@ -62,7 +70,7 @@ class AuthController extends _$AuthController {
   }) async {
     state = const AuthState.loading();
     await Future.delayed(const Duration(milliseconds: 800));
-    
+
     state = AuthState.authenticated(AuthUser(
       id: UserId(1),
       email: 'new_user@vivere.app',

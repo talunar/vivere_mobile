@@ -4,6 +4,7 @@ import '../providers/workout_providers.dart';
 import '../../domain/entities/workout_program.dart';
 import 'programs_list_screen.dart';
 import 'program_details_screen.dart';
+import 'dart:ui' as ui;
 
 class WorkoutCatalogScreen extends ConsumerStatefulWidget {
   const WorkoutCatalogScreen({super.key});
@@ -36,68 +37,88 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(paginatedWorkoutCategoriesProvider);
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final double headerHeight = statusBarHeight + 40;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        title: const Text(
-          'Тренировки',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Golos Text',
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: categoriesAsync.when(
-        data: (categories) => ListView.builder(
-          controller: _scrollController,
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-          itemCount: categories.length + (categoriesAsync.isLoading ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index == categories.length) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
-              );
-            }
+      backgroundColor: const Color(0xFFF6F6F6),
+      body: Stack(
+        children: [
+          // Основной контент
+          categoriesAsync.when(
+            data: (categories) => ListView.builder(
+              controller: _scrollController,
+              padding: EdgeInsets.fromLTRB(16, headerHeight + 20, 16, 100),
+              itemCount: categories.length + (categoriesAsync.isLoading ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == categories.length) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+                  );
+                }
 
-            final category = categories[index];
-            final isExpanded = expandedCategoryId == category.id;
+                final category = categories[index];
+                final isExpanded = expandedCategoryId == category.id;
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  _CategoryHeader(
-                    title: category.name,
-                    imageUrl: category.image,
-                    isExpanded: isExpanded,
-                    onTap: () {
-                      setState(() {
-                        expandedCategoryId = isExpanded ? null : category.id;
-                      });
-                    },
-                  ),
-                  if (isExpanded)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 50),
-                      child: _ProgramsExpandedList(
-                        programs: category.programs,
-                        categoryName: category.name,
-                        categoryId: category.id,
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      _CategoryHeader(
+                        title: category.name,
+                        imageUrl: category.image,
+                        isExpanded: isExpanded,
+                        onTap: () {
+                          setState(() {
+                            expandedCategoryId = isExpanded ? null : category.id;
+                          });
+                        },
                       ),
-                    ),
-                ],
+                      if (isExpanded)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50),
+                          child: _ProgramsExpandedList(
+                            programs: category.programs,
+                            categoryName: category.name,
+                            categoryId: category.id,
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+            error: (err, _) => Center(child: Text('Ошибка: $err')),
+          ),
+
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: headerHeight + 28,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFFF6F6F6),
+                    const Color(0xFFF6F6F6),
+                    const Color(0xFFF6F6F6).withOpacity(0.98),
+                    const Color(0xFFF6F6F6).withOpacity(0.78),
+                    const Color(0xFFF6F6F6).withOpacity(0.3),
+                    const Color(0xFFF6F6F6).withOpacity(0.1),
+                    const Color(0xFFF6F6F6).withOpacity(0.0),
+                  ],
+                  stops: const [0.0, 0.2, 0.45, 0.52, 0.80, 0.88, 0.95]
+                ),
               ),
-            );
-          },
-        ),
-        loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
-        error: (err, _) => Center(child: Text('Ошибка: $err')),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -127,37 +148,92 @@ class _CategoryHeader extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           color: isExpanded ? const Color(0xFF141414) : Colors.transparent,
-          image: isExpanded
-              ? null
-              : const DecorationImage(
-            image: AssetImage("assets/images/programs/workout_1.png"),
-            fit: BoxFit.cover,
-            alignment: Alignment.topCenter,
-            colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
-          ),
         ),
-        child: Padding(
-          padding: EdgeInsets.only(top: isExpanded ? 15 : 0, left: 20, right: 20, bottom: isExpanded ? 0 : 20),
-          child: Column(
-            crossAxisAlignment: isExpanded ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-            mainAxisAlignment: isExpanded ? MainAxisAlignment.start : MainAxisAlignment.end,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
             children: [
               if (!isExpanded)
-                const Text(
-                  '10 программ',
-                  style: TextStyle(
-                    color: Color(0xFFF6F6F6),
-                    fontSize: 14,
-                    fontFamily: 'Golos Text',
+                Positioned.fill(
+                  child: Image.asset(
+                    "assets/images/categories/workout_1.png",
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
                   ),
                 ),
-              Text(
-                title,
-                style: TextStyle(
-                  color: const Color(0xFFF6F6F6),
-                  fontSize: isExpanded ? 20 : 28,
-                  fontWeight: isExpanded ? FontWeight.bold : FontWeight.normal,
-                  fontFamily: 'Golos Text',
+
+              if (!isExpanded)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 140,
+                  child: Stack(
+                    children: [
+                      ShaderMask(
+                        shaderCallback: (Rect bounds) {
+                          return const LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Colors.white, Colors.transparent],
+                            stops: [0.0, 0.8],
+                          ).createShader(bounds);
+                        },
+                        blendMode: BlendMode.dstIn,
+                        child: ImageFiltered(
+                          imageFilter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          child: Image.asset(
+                            "assets/images/categories/workout_1.png",
+                            fit: BoxFit.cover,
+                            alignment: Alignment.bottomCenter,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Colors.black87,
+                              Colors.black45,
+                              Colors.transparent,
+                            ],
+                            stops: [0.0, 0.4, 0.9],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+              Padding(
+                padding: EdgeInsets.only(
+                    top: isExpanded ? 15 : 0,
+                    left: 20,
+                    right: 20,
+                    bottom: isExpanded ? 0 : 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: isExpanded
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.end,
+                  children: [
+                    if (!isExpanded)
+                      const Text(
+                        '10 программ',
+                        style: TextStyle(color: Color(0xFFF6F6F6), fontSize: 14),
+                      ),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: const Color(0xFFF6F6F6),
+                        fontSize: isExpanded ? 20 : 28,
+                        fontWeight:
+                        isExpanded ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -195,7 +271,6 @@ class _ProgramsExpandedList extends StatelessWidget {
       },
       child: Container(
         height: 215,
-        margin: EdgeInsets.zero,
         decoration: BoxDecoration(
           color: const Color(0xFFE2E2E2),
           borderRadius: BorderRadius.circular(24),
@@ -209,7 +284,8 @@ class _ProgramsExpandedList extends StatelessWidget {
             itemBuilder: (context, index) {
               final displayedCount = programs.length > 5 ? 5 : programs.length;
               if (index == displayedCount) {
-                return _SeeAllButton(categoryName: categoryName, categoryId: categoryId);
+                return _SeeAllButton(
+                    categoryName: categoryName, categoryId: categoryId);
               }
               return _ProgramMiniCard(program: programs[index]);
             },
@@ -230,7 +306,8 @@ class _ProgramMiniCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProgramDetailsScreen(program: program)),
+          MaterialPageRoute(
+              builder: (context) => ProgramDetailsScreen(program: program)),
         );
       },
       child: Container(
@@ -246,17 +323,13 @@ class _ProgramMiniCard extends StatelessWidget {
                 height: 150,
                 width: 150,
                 fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
+                alignment: Alignment.bottomCenter,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               program.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                fontFamily: 'Golos Text',
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -265,10 +338,7 @@ class _ProgramMiniCard extends StatelessWidget {
                 const Icon(Icons.star, color: Color(0xFFFFB800), size: 12),
                 Text(
                   ' ${program.rating}',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
                 ),
               ],
             ),
@@ -283,10 +353,7 @@ class _SeeAllButton extends StatelessWidget {
   final String categoryName;
   final int categoryId;
 
-  const _SeeAllButton({
-    required this.categoryName,
-    required this.categoryId,
-  });
+  const _SeeAllButton({required this.categoryName, required this.categoryId});
 
   @override
   Widget build(BuildContext context) {

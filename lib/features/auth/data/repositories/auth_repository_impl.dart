@@ -21,7 +21,7 @@ class AuthRepository implements IAuthRepository {
     );
   }
 
-/* TODO Используем Заглушку. После подключения к бэку - раскомментировать
+/* Используем Заглушку. После подключения к бэку - раскомментировать
   @override
   Future<AuthUser> signIn(String nickName, String password) async {
     try {
@@ -57,10 +57,9 @@ class AuthRepository implements IAuthRepository {
       final response = await _dio.post('/register', data: {
         'nick_name': nickName,
         'password': password,
-        'password2': password, // Для валидации на Go
+        'password2': password,
       });
 
-      // Бэк возвращает {"register": "ok"}
       if (response.data['register'] == 'ok') {
         return const AuthDto().toDomain(
           nickName: nickName,
@@ -80,7 +79,6 @@ class AuthRepository implements IAuthRepository {
     try {
       await _dio.get('/logout');
     } catch (e) {
-      // Игнорируем ошибки при выходе
     }
     print('Выход из системы: куки будут удалены бэкендом');
   }

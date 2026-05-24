@@ -16,12 +16,13 @@ class ProgramDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
-  bool isBookmarked = false;
+  bool? _isBookmarkedLocal;
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double imageHeight = screenWidth * (240 / 402);
+
     final authState = ref.watch(authControllerProvider);
 
     final userId = authState.maybeWhen(
@@ -37,6 +38,8 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
       data: (programs) => programs.any((p) => p.id == widget.program.id),
       orElse: () => false,
     );
+
+    final bool isBookmarked = _isBookmarkedLocal ?? isAlreadyAdded;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
@@ -54,36 +57,89 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                     child: Image.asset(
                       "assets/images/programs/workout_1.png",
                       fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
+                      alignment: Alignment.bottomCenter,
                     ),
                   ),
                 ),
                 Positioned(
-                  top: MediaQuery.of(context).padding.top + 10,
-                  left: 16,
-                  right: 16,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: SvgPicture.asset(
-                          'assets/icons/back.svg',
-                          width: 54,
-                          height: 54,
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: MediaQuery.of(context).padding.top + 80,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black45,
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SafeArea(
+                    bottom: false,
+                    child: SizedBox(
+                      height: 56,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: SizedBox(
+                                width: 44,
+                                height: 44,
+                                child: SvgPicture.asset(
+                                  'assets/icons/back.svg',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                            // Иконка Избранного (СПРАВА)
+                            GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  _isBookmarkedLocal = !isBookmarked;
+                                });
+
+                                if (userId != null) {
+                                  final notifier = ref.read(userProgramsProvider(userId).notifier);
+                                  try {
+                                    if (isBookmarked) {
+                                      await notifier.deleteProgram(widget.program.id);
+                                    } else {
+                                      await notifier.addProgram(widget.program);
+                                    }
+                                  } catch (e) {
+                                    setState(() {
+                                      _isBookmarkedLocal = isBookmarked;
+                                    });
+                                  }
+                                }
+                              },
+                              child: SizedBox(
+                                width: 44,
+                                height: 44,
+                                child: SvgPicture.asset(
+                                  isBookmarked
+                                      ? 'assets/icons/bookmark_filled.svg'
+                                      : 'assets/icons/bookmark.svg',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => setState(() => isBookmarked = !isBookmarked),
-                        child: SvgPicture.asset(
-                          isBookmarked
-                              ? 'assets/icons/bookmark_filled.svg'
-                              : 'assets/icons/bookmark.svg',
-                          width: 54,
-                          height: 54,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -99,7 +155,7 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                       Expanded(
                         child: Text(
                           widget.program.title,
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Color(0xFF141414), fontFamily: 'Golos Text'),
+                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Color(0xFF141414)),
                         ),
                       ),
                       Row(
@@ -108,7 +164,7 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                           const SizedBox(width: 4),
                           Text(
                             widget.program.rating?.toString() ?? '5.0',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF141414), fontFamily: 'Golos Text'),
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Color(0xFF141414)),
                           ),
                         ],
                       ),
@@ -117,7 +173,7 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     widget.program.description ?? '',
-                    style: const TextStyle(color: Color(0xFF757575), fontSize: 15, height: 1.5, fontFamily: 'Golos Text'),
+                    style: const TextStyle(color: Color(0xFF757575), fontSize: 15, height: 1.5),
                   ),
                   const SizedBox(height: 24),
                   _InfoRow(label: 'Уровень:', value: widget.program.level ?? 'Продвинутый'),
@@ -141,8 +197,8 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                           const Row(
                             children: [
                               Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
-                              SizedBox(width: 4),
-                              Text('4,9', style: TextStyle(fontSize: 12, color: Color(0xFF757575), fontFamily: 'Golos Text')),
+                              const SizedBox(width: 4),
+                              Text('4,9', style: TextStyle(fontSize: 12, color: Color(0xFF757575))),
                             ],
                           ),
                         ],
@@ -152,37 +208,57 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                   const SizedBox(height: 32),
                   ...widget.program.exercises.map((exercise) => _ExerciseTile(exercise: exercise)).toList(),
                   const SizedBox(height: 32),
-                  if (userId != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: OutlinedButton(
-                        onPressed: () async {
-                          final notifier = ref.read(userProgramsProvider(userId).notifier);
-                          if (isAlreadyAdded) {
-                            await notifier.deleteProgram(widget.program.id);
-                          } else {
-                            await notifier.addProgram(widget.program);
-                          }
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900),
-                          side: BorderSide(color: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900)),
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                        ),
-                        child: Text(isAlreadyAdded ? 'Удалить из планов' : 'Добавить в мои планы', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Golos Text')),
+
+                  // Блок кнопок действий
+                  Center(
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 352),
+                      child: Column(
+                        children: [
+                          if (userId != null)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: OutlinedButton(
+                                  onPressed: () async {
+                                    final notifier = ref.read(userProgramsProvider(userId).notifier);
+                                    if (isAlreadyAdded) {
+                                      await notifier.deleteProgram(widget.program.id);
+                                    } else {
+                                      await notifier.addProgram(widget.program);
+                                    }
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900),
+                                    side: BorderSide(color: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900)),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                                  ),
+                                  child: Text(
+                                      isAlreadyAdded ? 'Удалить из планов' : 'Добавить в мои планы',
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+                                  ),
+                                ),
+                              ),
+                            ),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => WorkoutExecutionScreen(exercises: widget.program.exercises))),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF5900),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                                elevation: 0,
+                              ),
+                              child: const Text('Начать тренировку', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => WorkoutExecutionScreen(exercises: widget.program.exercises))),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF5900),
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                      elevation: 0,
-                    ),
-                    child: const Text('Начать тренировку', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, fontFamily: 'Golos Text')),
                   ),
                   const SizedBox(height: 100),
                 ],
@@ -205,7 +281,7 @@ class _InfoRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(color: Color(0xFF141414), fontSize: 16, fontFamily: 'Golos Text'),
+          style: const TextStyle(color: Color(0xFF141414), fontSize: 16),
           children: [
             TextSpan(text: '$label ', style: const TextStyle(fontWeight: FontWeight.w700)),
             TextSpan(text: value, style: const TextStyle(color: Color(0xFF757575))),
@@ -238,9 +314,9 @@ class _ExerciseTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Color(0xFF141414), fontFamily: 'Golos Text')),
+                Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Color(0xFF141414))),
                 const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(color: Color(0xFFFF5900), fontSize: 14, fontWeight: FontWeight.w500, fontFamily: 'Golos Text')),
+                Text(subtitle, style: const TextStyle(color: Color(0xFFFF5900), fontSize: 14, fontWeight: FontWeight.w500)),
               ],
             ),
           ),

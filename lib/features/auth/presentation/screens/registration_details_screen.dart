@@ -56,62 +56,70 @@ class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsS
                 child: IntrinsicHeight(
                   child: Form(
                     key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 60),
-                        const Text(
-                          'Почти\nу цели',
-                          style: TextStyle(
-                            fontSize: 58,
-                            fontWeight: FontWeight.w900,
-                            height: 1.0,
-                            color: Color(0xFF141414),
-                          ),
-                        ),
-                        const Spacer(flex: 2),
-                        _CustomTextField(
-                          controller: fNameController,
-                          hintText: 'Имя',
-                          keyboardType: TextInputType.name,
-                          validator: AppValidators.name,
-                        ),
-                        const SizedBox(height: 16),
-                        _CustomTextField(
-                          controller: lNameController,
-                          hintText: 'Фамилия',
-                          keyboardType: TextInputType.name,
-                          validator: AppValidators.lastName,
-                        ),
-                        const SizedBox(height: 16),
-                        _CustomTextField(
-                          controller: emailController,
-                          hintText: 'Почта',
-                          keyboardType: TextInputType.emailAddress,
-                          validator: AppValidators.email,
-                        ),
-                        const SizedBox(height: 32),
-                        ElevatedButton(
-                          onPressed: _onContinue,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5900),
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(double.infinity, 64),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                    child: Center(
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 352),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 60),
+                            const Text(
+                              'Почти\nу цели',
+                              style: TextStyle(
+                                fontSize: 58,
+                                fontWeight: FontWeight.w900,
+                                height: 1.0,
+                                color: Color(0xFF141414),
+                              ),
                             ),
-                          ),
-                          child: const Text(
-                            'Продолжить',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                            const Spacer(flex: 2),
+                            _CustomTextField(
+                              controller: fNameController,
+                              hintText: 'Имя',
+                              keyboardType: TextInputType.name,
+                              validator: AppValidators.name,
                             ),
-                          ),
+                            const SizedBox(height: 16),
+                            _CustomTextField(
+                              controller: lNameController,
+                              hintText: 'Фамилия',
+                              keyboardType: TextInputType.name,
+                              validator: AppValidators.lastName,
+                            ),
+                            const SizedBox(height: 16),
+                            _CustomTextField(
+                              controller: emailController,
+                              hintText: 'Почта',
+                              keyboardType: TextInputType.emailAddress,
+                              validator: AppValidators.email,
+                            ),
+                            const SizedBox(height: 32),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: _onContinue,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFFF5900),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Продолжить',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Spacer(flex: 3),
+                          ],
                         ),
-                        const Spacer(flex: 3),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -147,28 +155,29 @@ class _CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24),
         filled: true,
         fillColor: const Color(0xFFE2E2E2),
+        constraints: const BoxConstraints(minHeight: 50, maxHeight: 75),
         errorStyle: const TextStyle(color: Color(0xFFFF5900), fontSize: 12),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(50),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(50),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(50),
           borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(50),
           borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(50),
           borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1.5),
         ),
       ),

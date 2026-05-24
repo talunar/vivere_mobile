@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../profile/presentation/screens/person_page.dart';
 import 'workout_catalog_screen.dart';
+import 'calendar_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -14,10 +15,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
   final GlobalKey<NavigatorState> _workoutNavigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _calendarNavigatorKey = GlobalKey<NavigatorState>();
+
   void _onItemTapped(int index) {
     if (_selectedIndex == index) {
       if (index == 0) {
         _workoutNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+      } else if (index == 1) {
+        _calendarNavigatorKey.currentState?.popUntil((route) => route.isFirst);
       }
     } else {
       setState(() {
@@ -39,7 +44,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               builder: (context) => const WorkoutCatalogScreen(),
             ),
           ),
-          const Center(child: Text('План')),
+          Navigator(
+            key: _calendarNavigatorKey,
+            onGenerateRoute: (settings) => MaterialPageRoute(
+              builder: (context) => const CalendarScreen(),
+            ),
+          ),
           const Center(child: Text('Тренировки')),
           // Профиль
           const PersonPage(),

@@ -16,6 +16,8 @@ class ProfileSettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    final double appBarHeight = statusBarHeight + 56;
 
     return authState.maybeWhen(
       authenticated: (user) {
@@ -24,49 +26,106 @@ class ProfileSettingsScreen extends ConsumerWidget {
 
         return Scaffold(
           backgroundColor: const Color(0xFFF6F6F6),
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            toolbarHeight: 80,
-            leadingWidth: 70,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Center(
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: SvgPicture.asset(
-                    'assets/icons/back.svg',
-                    width: 54,
-                    height: 54,
-                  ),
-                ),
-              ),
-            ),
-            title: const Text(
-              "Настройки",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w400,
-                fontSize: 24,
-              ),
-            ),
-            centerTitle: true,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: Center(
-                  child: SvgPicture.asset(
-                    hasNotifications ? 'assets/icons/notify_on.svg' : 'assets/icons/notify.svg',
-                    width: 54,
-                    height: 54,
-                  ),
-                ),
-              ),
-            ],
-          ),
           body: profileAsync.when(
-            data: (profile) => _SettingsContent(profile: profile),
+            data: (profile) => Stack(
+              children: [
+                Positioned.fill(
+                  child: _SettingsContent(
+                    profile: profile,
+                    headerHeight: appBarHeight,
+                  ),
+                ),
+
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: appBarHeight + 45,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFFF6F6F6),
+                          const Color(0xFFF6F6F6),
+                          const Color(0xFFF6F6F6),
+                          const Color(0xFFF6F6F6).withOpacity(0.98),
+                          const Color(0xFFF6F6F6).withOpacity(0.78),
+                          const Color(0xFFF6F6F6).withOpacity(0.45),
+                          const Color(0xFFF6F6F6).withOpacity(0.16),
+                          const Color(0xFFF6F6F6).withOpacity(0.0),
+                        ],
+                        stops: const [0.0, 0.4, 0.65, 0.72, 0.80, 0.88, 0.95, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SafeArea(
+                    bottom: false,
+                    child: SizedBox(
+                      height: 56,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                width: 44,
+                                height: 44,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFE2E2E2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/icons/back.svg',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Expanded(
+                              child: Center(
+                                child: Text(
+                                  "Настройки",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            /* Мне кажется уведомления не должны быть в настройках
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFE2E2E2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  hasNotifications ? 'assets/icons/notify_on.svg' : 'assets/icons/notify.svg',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ), */
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             loading: () => const Center(
               child: CircularProgressIndicator(color: Color(0xFFFF5900)),
             ),
@@ -83,7 +142,12 @@ class ProfileSettingsScreen extends ConsumerWidget {
 
 class _SettingsContent extends ConsumerStatefulWidget {
   final UserProfile profile;
-  const _SettingsContent({required this.profile});
+  final double headerHeight;
+
+  const _SettingsContent({
+    required this.profile,
+    required this.headerHeight,
+  });
 
   @override
   ConsumerState<_SettingsContent> createState() => _SettingsContentState();
@@ -129,6 +193,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text("Удаление аккаунта"),
         content: const Text("Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя будет отменить."),
         actions: [
@@ -187,19 +252,19 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               errorStyle: const TextStyle(color: Color(0xFFFF5900)),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(50),
                 borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(50),
                 borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1.5),
               ),
               errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(50),
                 borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(50),
                 borderSide: const BorderSide(color: Color(0xFFFF5900), width: 2),
               ),
             ),
@@ -228,18 +293,17 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.fromLTRB(24, widget.headerHeight + 24, 24, 60),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 10),
           Center(
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
                 const CircleAvatar(
                   radius: 54,
-                  backgroundImage: AssetImage("assets/设计/workout_1.png"),
+                  backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
                 ),
                 Transform.translate(
                   offset: const Offset(0, 10),
@@ -263,7 +327,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               ],
             ),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 28),
 
           _InfoBlock(
             label: "Имя",
@@ -369,36 +433,62 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 
           const SizedBox(height: 24),
 
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                await ref.read(profileNotifierProvider(_editedProfile.id).notifier).saveProfile(_editedProfile);
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Изменения сохранены'),
-                      backgroundColor: Colors.green,
+          Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 352),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          await ref.read(profileNotifierProvider(_editedProfile.id).notifier).saveProfile(_editedProfile);
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Изменения сохранены'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                            );
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF5900),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                      ),
+                      child: const Text('Сохранить', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-                  );
-                }
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF5900),
-              foregroundColor: Colors.white,
-              minimumSize: const Size(double.infinity, 60),
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _showDeleteConfirmationDialog,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF727272),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                      ),
+                      child: const Text('Удалить профиль', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            child: const Text('Сохранить', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ),
-          const SizedBox(height: 60),
         ],
       ),
     );
@@ -455,7 +545,7 @@ class _DateInputFormatter extends TextInputFormatter {
     for (int i = 0; i < digits.length; i++) {
       buffer.write(digits[i]);
       if (i == 1 || i == 3) {
-         if (i < digits.length) buffer.write('.');
+        if (i < digits.length) buffer.write('.');
       }
     }
     final formatted = buffer.toString();

@@ -121,9 +121,11 @@ class _ProfileDashboard extends ConsumerWidget {
     final now = DateTime.now();
     final monthName = DateFormat('MMMM', 'ru_RU').format(now);
     final capitalizedMonth = monthName[0].toUpperCase() + monthName.substring(1);
+    
+    final double itemWidth = (MediaQuery.of(context).size.width - 32 - 24 - 8 - 16) / 2;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(16, topPadding + 56 + 24, 16, 120),
+      padding: EdgeInsets.fromLTRB(16, topPadding + 56 + 30, 16, 120),
       child: Column(
         children: [
           const CircleAvatar(
@@ -146,18 +148,20 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _StatItem(
                 label: "Вес",
                 value: "${profile.weight.value.toInt()} кг",
                 asset: 'assets/icons/weight.svg',
               ),
+              const SizedBox(width: 32),
               _StatItem(
                 label: "Рост",
                 value: "${profile.height.value.toInt()} см",
                 asset: 'assets/icons/height.svg',
               ),
+              const SizedBox(width: 32),
               _StatItem(
                 label: "Возраст",
                 value: _getAgeString(profile.age.value),
@@ -170,17 +174,22 @@ class _ProfileDashboard extends ConsumerWidget {
           _DashboardCard(
             title: "Цели на сегодня",
             showAdd: true,
-            child: GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 2.5,
-              children: const [
-                _GoalItem(title: "3 км", subtitle: "Бег", isDone: false),
-                _GoalItem(title: "100", subtitle: "Отжимания", isDone: true),
-                _GoalItem(title: "100", subtitle: "Подтягивания", isDone: true),
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                SizedBox(
+                  width: itemWidth,
+                  child: const _GoalItem(title: "3 км", subtitle: "Бег", isDone: false),
+                ),
+                SizedBox(
+                  width: itemWidth,
+                  child: const _GoalItem(title: "100", subtitle: "Отжимания", isDone: true),
+                ),
+                SizedBox(
+                  width: itemWidth,
+                  child: const _GoalItem(title: "100", subtitle: "Подтягивания", isDone: true),
+                ),
               ],
             ),
           ),
@@ -262,9 +271,6 @@ class _ProfileDashboard extends ConsumerWidget {
                             ),
                           );
                         },
-                        onDelete: () {
-                          ref.read(userProgramsProvider(profile.id.value).notifier).deleteProgram(program.id);
-                        },
                       ),
                     );
                   }).toList(),
@@ -299,7 +305,6 @@ class _WeekCalendar extends StatelessWidget {
         final date = startOfWeek.add(Duration(days: index));
         final isToday = date.day == now.day && date.month == now.month;
 
-        // Логика подчеркивания: только вторник (2) и четверг (4)
         final bool shouldUnderline = hasWorkouts && (date.weekday == DateTime.tuesday || date.weekday == DateTime.thursday);
 
         return Column(
@@ -382,7 +387,7 @@ class _StatItem extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Color(0xFF141414)),
             ),
             Text(
               label,
@@ -414,75 +419,105 @@ class _DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      // Внутренние отступы: 12 (бока), 16 (верх), 24 (низ)
-      padding: const EdgeInsets.fromLTRB(12, 16, 12, 24),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 16, bottom: 14),
       decoration: BoxDecoration(color: const Color(0xFFE2E2E2), borderRadius: BorderRadius.circular(32)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
-                if (showAdd) const Icon(Icons.add_circle, size: 36, color: Colors.black),
-                if (showArrow)
-                  GestureDetector(
-                    onTap: onArrowTap,
-                    behavior: HitTestBehavior.opaque,
-                    child: const Icon(Icons.arrow_circle_right, size: 36, color: Colors.black),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+                    overflow: TextOverflow.ellipsis,
                   ),
+                ),
+                const SizedBox(width: 8),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (showAdd) const Icon(Icons.add_circle, size: 36, color: Colors.black),
+                    if (showArrow) ...[
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: onArrowTap,
+                        behavior: HitTestBehavior.opaque,
+                        child: const Icon(Icons.arrow_circle_right, size: 36, color: Colors.black),
+                      ),
+                    ],
+                  ],
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          // Добавлен отступ 4, чтобы контент начинался ровно под заголовком
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: child,
-          ),
-        ],
+            const SizedBox(height: 16),
+            child,
+          ],
+        ),
       ),
     );
   }
 }
 
-class _GoalItem extends StatelessWidget {
+class _GoalItem extends StatefulWidget {
   final String title;
   final String subtitle;
   final bool isDone;
   const _GoalItem({required this.title, required this.subtitle, required this.isDone});
 
   @override
+  State<_GoalItem> createState() => _GoalItemState();
+}
+
+class _GoalItemState extends State<_GoalItem> {
+  late bool _isDone;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDone = widget.isDone;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          isDone ? Icons.check_circle : Icons.circle_outlined,
-          color: isDone ? const Color(0xFFFF5900) : Colors.white,
-          size: 32,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                subtitle,
-                style: const TextStyle(color: Colors.black54, fontSize: 14),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _isDone = !_isDone;
+        });
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Row(
+        children: [
+          SvgPicture.asset(
+            _isDone ? 'assets/icons/on.svg' : 'assets/icons/off.svg',
+            width: 32,
+            height: 32,
           ),
-        ),
-      ],
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.title,
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, height: 1.2),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  widget.subtitle,
+                  style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14, height: 1.2),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -507,102 +542,89 @@ class _CalorieItem extends StatelessWidget {
 class _ProgramCard extends StatelessWidget {
   final WorkoutProgram program;
   final VoidCallback? onTap;
-  final VoidCallback? onDelete;
 
-  const _ProgramCard({required this.program, this.onTap, this.onDelete});
+  const _ProgramCard({required this.program, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: double.infinity,
-            height: 160,
-            decoration: BoxDecoration(
-              color: Colors.white,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 160,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
               borderRadius: BorderRadius.circular(30),
+              child: Image.asset(
+                "assets/images/programs/workout_1.png",
+                width: 160,
+                height: 160,
+                fit: BoxFit.cover,
+              ),
             ),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: Image.asset(
-                    "assets/images/programs/workout_1.png",
-                    width: 160,
-                    height: 160,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      program.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF141414),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
                       children: [
+                        const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
+                        const SizedBox(width: 5),
                         Text(
-                          program.title,
+                          program.rating?.toString() ?? "4.8",
                           style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                             color: Color(0xFF141414),
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
-                            const SizedBox(width: 5),
-                            Text(
-                              program.rating?.toString() ?? "4.8",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF141414),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 12,
-                              backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                program.trainerName ?? "Super train 3000",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black.withOpacity(0.5),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        )
                       ],
                     ),
-                  ),
-                )
-              ],
-            ),
-          ),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 12,
+                          backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            program.trainerName ?? "Super train 3000",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(0.5),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
         ),
-        Positioned(
-          top: 10,
-          right: 10,
-          child: IconButton(
-            icon: const Icon(Icons.close, color: Colors.grey),
-            onPressed: onDelete,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

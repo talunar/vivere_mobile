@@ -1,42 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../profile/presentation/screens/person_page.dart';
+import '../providers/navigation_provider.dart';
 import 'workout_catalog_screen.dart';
 import 'calendar_screen.dart';
 
-class MainNavigationScreen extends StatefulWidget {
+class MainNavigationScreen extends ConsumerStatefulWidget {
   const MainNavigationScreen({super.key});
 
   @override
-  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+  ConsumerState<MainNavigationScreen> createState() => _MainNavigationScreenState();
 }
 
-class _MainNavigationScreenState extends State<MainNavigationScreen> {
-  int _selectedIndex = 0;
-
+class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   final GlobalKey<NavigatorState> _workoutNavigatorKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> _calendarNavigatorKey = GlobalKey<NavigatorState>();
 
   void _onItemTapped(int index) {
-    if (_selectedIndex == index) {
+    final selectedIndex = ref.read(navigationNotifierProvider);
+    if (selectedIndex == index) {
       if (index == 0) {
         _workoutNavigatorKey.currentState?.popUntil((route) => route.isFirst);
       } else if (index == 1) {
         _calendarNavigatorKey.currentState?.popUntil((route) => route.isFirst);
       }
     } else {
-      setState(() {
-        _selectedIndex = index;
-      });
+      ref.read(navigationNotifierProvider.notifier).setIndex(index);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndex = ref.watch(navigationNotifierProvider);
+
     return Scaffold(
       extendBody: true,
       body: IndexedStack(
-        index: _selectedIndex,
+        index: selectedIndex,
         children: [
           Navigator(
             key: _workoutNavigatorKey,
@@ -51,7 +52,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             ),
           ),
           const Center(child: Text('Тренировки')),
-          // Профиль
           const PersonPage(),
         ],
       ),
@@ -72,7 +72,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             topRight: Radius.circular(30.0),
           ),
           child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
+            currentIndex: selectedIndex,
             onTap: _onItemTapped,
             type: BottomNavigationBarType.fixed,
             backgroundColor: const Color(0xFFF6F6F6),
@@ -89,10 +89,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             ),
             elevation: 0,
             items: [
-              _buildMenuItem('assets/icons/category.svg', 'Главная', 0),
-              _buildMenuItem('assets/icons/calendar.svg', 'План', 1),
-              _buildMenuItem('assets/icons/favorites.svg', 'Мои тренировки', 2),
-              _buildMenuItem('assets/icons/profile.svg', 'Профиль', 3),
+              _buildMenuItem('assets/icons/category.svg', 'Главная', 0, selectedIndex),
+              _buildMenuItem('assets/icons/calendar.svg', 'Календарь', 1, selectedIndex),
+              _buildMenuItem('assets/icons/favorites.svg', 'Тренировки', 2, selectedIndex),
+              _buildMenuItem('assets/icons/profile.svg', 'Профиль', 3, selectedIndex),
             ],
           ),
         ),
@@ -100,8 +100,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     );
   }
 
-  BottomNavigationBarItem _buildMenuItem(String assetPath, String label, int index) {
-    final bool isActive = _selectedIndex == index;
+  BottomNavigationBarItem _buildMenuItem(String assetPath, String label, int index, int selectedIndex) {
+    final bool isActive = selectedIndex == index;
     return BottomNavigationBarItem(
       icon: Padding(
         padding: const EdgeInsets.only(top: 12, bottom: 8),

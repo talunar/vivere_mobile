@@ -8,6 +8,7 @@ import '../../../workout/domain/entities/workout_program.dart';
 import '../../../workout/presentation/screens/program_details_screen.dart';
 import '../../../workout/presentation/providers/workout_providers.dart';
 import '../../../workout/presentation/screens/calendar_screen.dart';
+import '../../../workout/presentation/providers/navigation_provider.dart';
 import '../providers/profile_notifier.dart';
 import '../../domain/entities/user_profile.dart';
 
@@ -213,10 +214,7 @@ class _ProfileDashboard extends ConsumerWidget {
             title: capitalizedMonth,
             showArrow: true,
             onArrowTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CalendarScreen()),
-              );
+              ref.read(navigationNotifierProvider.notifier).setIndex(1);
             },
             child: programsAsync.maybeWhen(
               data: (programs) => _WeekCalendar(hasWorkouts: programs.isNotEmpty),

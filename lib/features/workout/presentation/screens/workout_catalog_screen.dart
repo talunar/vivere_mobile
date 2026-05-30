@@ -44,7 +44,6 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
       backgroundColor: const Color(0xFFF6F6F6),
       body: Stack(
         children: [
-          // Основной контент
           categoriesAsync.when(
             data: (categories) => ListView.builder(
               controller: _scrollController,
@@ -102,18 +101,18 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(0xFFF6F6F6),
-                    const Color(0xFFF6F6F6),
-                    const Color(0xFFF6F6F6).withOpacity(0.98),
-                    const Color(0xFFF6F6F6).withOpacity(0.78),
-                    const Color(0xFFF6F6F6).withOpacity(0.3),
-                    const Color(0xFFF6F6F6).withOpacity(0.1),
-                    const Color(0xFFF6F6F6).withOpacity(0.0),
-                  ],
-                  stops: const [0.0, 0.2, 0.45, 0.52, 0.80, 0.88, 0.95]
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFFF6F6F6),
+                      const Color(0xFFF6F6F6),
+                      const Color(0xFFF6F6F6).withOpacity(0.98),
+                      const Color(0xFFF6F6F6).withOpacity(0.78),
+                      const Color(0xFFF6F6F6).withOpacity(0.3),
+                      const Color(0xFFF6F6F6).withOpacity(0.1),
+                      const Color(0xFFF6F6F6).withOpacity(0.0),
+                    ],
+                    stops: const [0.0, 0.2, 0.45, 0.52, 0.80, 0.88, 0.95]
                 ),
               ),
             ),
@@ -163,77 +162,80 @@ class _CategoryHeader extends StatelessWidget {
                 ),
 
               if (!isExpanded)
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: 140,
-                  child: Stack(
-                    children: [
-                      ShaderMask(
-                        shaderCallback: (Rect bounds) {
-                          return const LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [Colors.white, Colors.transparent],
-                            stops: [0.0, 0.8],
-                          ).createShader(bounds);
-                        },
-                        blendMode: BlendMode.dstIn,
-                        child: ImageFiltered(
-                          imageFilter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                          child: Image.asset(
-                            "assets/images/categories/workout_1.png",
-                            fit: BoxFit.cover,
-                            alignment: Alignment.bottomCenter,
-                          ),
-                        ),
+                Positioned.fill(
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return const LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Colors.black, Colors.transparent],
+                        stops: [0.2, 0.5],
+                      ).createShader(bounds);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: ImageFiltered(
+                      imageFilter: ui.ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Image.asset(
+                        "assets/images/categories/workout_1.png",
+                        fit: BoxFit.cover,
+                        alignment: Alignment.topCenter,
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black87,
-                              Colors.black45,
-                              Colors.transparent,
-                            ],
-                            stops: [0.0, 0.4, 0.9],
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
 
-              Padding(
-                padding: EdgeInsets.only(
-                    top: isExpanded ? 15 : 0,
-                    left: 20,
-                    right: 20,
-                    bottom: isExpanded ? 0 : 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: isExpanded
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.end,
-                  children: [
-                    if (!isExpanded)
-                      const Text(
-                        '10 программ',
-                        style: TextStyle(color: Color(0xFFF6F6F6), fontSize: 14),
-                      ),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: const Color(0xFFF6F6F6),
-                        fontSize: isExpanded ? 20 : 28,
-                        fontWeight:
-                        isExpanded ? FontWeight.bold : FontWeight.normal,
+              if (!isExpanded)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.65),
+                          Colors.black.withOpacity(0.25),
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 0.45, 0.75],
                       ),
                     ),
-                  ],
+                  ),
+                ),
+
+              SizedBox(
+                height: isExpanded ? 50 : 180,
+                width: double.infinity,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: isExpanded ? 0 : 10),
+                  child: Column(
+                    crossAxisAlignment: isExpanded ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                    mainAxisAlignment: isExpanded
+                        ? MainAxisAlignment.center
+                        : MainAxisAlignment.end,
+                    children: [
+                      if (!isExpanded)
+                        const Text(
+                          '10 программ',
+                          style: TextStyle(
+                              color: Color(0xFFF6F6F6),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: const Color(0xFFF6F6F6),
+                          fontSize: isExpanded ? 24 : 40,
+                          fontWeight:
+                          isExpanded ? FontWeight.normal : FontWeight.w700,
+                        ),
+                        textAlign: isExpanded ? TextAlign.center : TextAlign.left,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

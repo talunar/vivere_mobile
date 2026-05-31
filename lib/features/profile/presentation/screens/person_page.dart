@@ -39,7 +39,7 @@ class PersonPage extends ConsumerWidget {
                   top: 0,
                   left: 0,
                   right: 0,
-                  height: headerHeight + 45,
+                  height: headerHeight + 30,
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -48,14 +48,13 @@ class PersonPage extends ConsumerWidget {
                         colors: [
                           const Color(0xFFF6F6F6),
                           const Color(0xFFF6F6F6),
-                          const Color(0xFFF6F6F6),
                           const Color(0xFFF6F6F6).withOpacity(0.98),
                           const Color(0xFFF6F6F6).withOpacity(0.78),
                           const Color(0xFFF6F6F6).withOpacity(0.45),
                           const Color(0xFFF6F6F6).withOpacity(0.16),
                           const Color(0xFFF6F6F6).withOpacity(0.0),
                         ],
-                        stops: const [0.0, 0.4, 0.65, 0.72, 0.80, 0.88, 0.95, 1.0],
+                        stops: const [0.0, 0.4, 0.65, 0.72, 0.80, 0.88, 0.95],
                       ),
                     ),
                   ),
@@ -117,12 +116,13 @@ class _ProfileDashboard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final programsAsync = ref.watch(userProgramsProvider(profile.id.value));
+    final allProgramsAsync = ref.watch(allUserProgramsProvider(profile.id.value));
+    final plannedProgramsAsync = ref.watch(plannedProgramsProvider(profile.id.value));
     final double topPadding = MediaQuery.of(context).padding.top;
     final now = DateTime.now();
     final monthName = DateFormat('MMMM', 'ru_RU').format(now);
     final capitalizedMonth = monthName[0].toUpperCase() + monthName.substring(1);
-    
+
     final double itemWidth = (MediaQuery.of(context).size.width - 32 - 24 - 8 - 16) / 2;
 
     return SingleChildScrollView(
@@ -199,6 +199,7 @@ class _ProfileDashboard extends ConsumerWidget {
           _DashboardCard(
             title: "Калории на сегодня",
             showArrow: true,
+            bottomPadding: 24,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
@@ -213,10 +214,11 @@ class _ProfileDashboard extends ConsumerWidget {
           _DashboardCard(
             title: capitalizedMonth,
             showArrow: true,
+            bottomPadding: 24,
             onArrowTap: () {
               ref.read(navigationNotifierProvider.notifier).setIndex(1);
             },
-            child: programsAsync.maybeWhen(
+            child: plannedProgramsAsync.maybeWhen(
               data: (programs) => _WeekCalendar(hasWorkouts: programs.isNotEmpty),
               orElse: () => const _WeekCalendar(hasWorkouts: false),
             ),
@@ -226,10 +228,14 @@ class _ProfileDashboard extends ConsumerWidget {
           _DashboardCard(
             title: "Мои тренировки",
             showArrow: true,
+            bottomPadding: 24,
+            onArrowTap: () {
+              ref.read(navigationNotifierProvider.notifier).setIndex(2);
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                programsAsync.maybeWhen(
+                allProgramsAsync.maybeWhen(
                   data: (programs) => Text(
                     "${programs.length} штук",
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
@@ -245,7 +251,7 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
 
-          programsAsync.when(
+          plannedProgramsAsync.when(
             data: (programs) {
               if (programs.isEmpty) return const SizedBox.shrink();
               return _DashboardCard(
@@ -404,6 +410,7 @@ class _DashboardCard extends StatelessWidget {
   final bool showAdd;
   final bool showArrow;
   final VoidCallback? onArrowTap;
+  final double? bottomPadding;
 
   const _DashboardCard({
     required this.title,
@@ -411,13 +418,14 @@ class _DashboardCard extends StatelessWidget {
     this.showAdd = false,
     this.showArrow = false,
     this.onArrowTap,
+    this.bottomPadding,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 16, bottom: 14),
+      padding: EdgeInsets.only(left: 10, right: 10, top: 16, bottom: bottomPadding ?? 14),
       decoration: BoxDecoration(color: const Color(0xFFE2E2E2), borderRadius: BorderRadius.circular(32)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),

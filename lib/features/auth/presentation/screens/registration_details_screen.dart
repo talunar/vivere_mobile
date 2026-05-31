@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import '../../../../core/presentation/utils/app_validators.dart';
 import '../providers/auth_provider.dart';
 
@@ -94,27 +95,10 @@ class _RegistrationDetailsScreenState extends ConsumerState<RegistrationDetailsS
                               validator: AppValidators.email,
                             ),
                             const SizedBox(height: 32),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                onPressed: _onContinue,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFF5900),
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Продолжить',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                            AppButton(
+                              text: 'Продолжить',
+                              onPressed: _onContinue,
+                              variant: AppButtonVariant.primary,
                             ),
                             const Spacer(flex: 3),
                           ],

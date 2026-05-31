@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import '../../domain/entities/workout_program.dart';
 import '../providers/workout_providers.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -16,8 +17,6 @@ class ProgramDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
-  bool? _isBookmarkedLocal;
-
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -30,16 +29,24 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
       orElse: () => null,
     );
 
-    final userProgramsAsync = userId != null
-        ? ref.watch(userProgramsProvider(userId))
+    final plannedProgramsAsync = userId != null
+        ? ref.watch(plannedProgramsProvider(userId))
         : const AsyncValue<List<WorkoutProgram>>.data([]);
 
-    final bool isAlreadyAdded = userProgramsAsync.maybeWhen(
+
+    final bool isPlanned = plannedProgramsAsync.maybeWhen(
       data: (programs) => programs.any((p) => p.id == widget.program.id),
       orElse: () => false,
     );
 
-    final bool isBookmarked = _isBookmarkedLocal ?? isAlreadyAdded;
+    final favoriteProgramsAsync = userId != null
+        ? ref.watch(favoriteProgramsProvider(userId))
+        : const AsyncValue<List<WorkoutProgram>>.data([]);
+
+    final bool isFavorite = favoriteProgramsAsync.maybeWhen(
+      data: (programs) => programs.any((p) => p.id == widget.program.id),
+      orElse: () => false,
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
@@ -103,33 +110,17 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                                 ),
                               ),
                             ),
-                            // Иконка Избранного (СПРАВА)
                             GestureDetector(
                               onTap: () async {
-                                setState(() {
-                                  _isBookmarkedLocal = !isBookmarked;
-                                });
-
                                 if (userId != null) {
-                                  final notifier = ref.read(userProgramsProvider(userId).notifier);
-                                  try {
-                                    if (isBookmarked) {
-                                      await notifier.deleteProgram(widget.program.id);
-                                    } else {
-                                      await notifier.addProgram(widget.program);
-                                    }
-                                  } catch (e) {
-                                    setState(() {
-                                      _isBookmarkedLocal = isBookmarked;
-                                    });
-                                  }
+                                  await ref.read(favoriteProgramsProvider(userId).notifier).toggleFavorite(widget.program);
                                 }
                               },
                               child: SizedBox(
                                 width: 44,
                                 height: 44,
                                 child: SvgPicture.asset(
-                                  isBookmarked
+                                  isFavorite
                                       ? 'assets/icons/bookmark_filled.svg'
                                       : 'assets/icons/bookmark.svg',
                                   fit: BoxFit.contain,
@@ -206,58 +197,63 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 32),
-                  ...widget.program.exercises.map((exercise) => _ExerciseTile(exercise: exercise)).toList(),
+
+                  // Список упражнений
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE2E2E2),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    child: Column(
+                      children: widget.program.exercises.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final exercise = entry.value;
+                        final isLast = index == widget.program.exercises.length - 1;
+
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
+                          child: _ExerciseTile(exercise: exercise),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
                   const SizedBox(height: 32),
 
                   // Блок кнопок действий
                   Center(
-                    child: Container(
-                      constraints: const BoxConstraints(maxWidth: 352),
-                      child: Column(
-                        children: [
-                          if (userId != null)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: SizedBox(
-                                width: double.infinity,
-                                height: 50,
-                                child: OutlinedButton(
-                                  onPressed: () async {
-                                    final notifier = ref.read(userProgramsProvider(userId).notifier);
-                                    if (isAlreadyAdded) {
-                                      await notifier.deleteProgram(widget.program.id);
-                                    } else {
-                                      await notifier.addProgram(widget.program);
-                                    }
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900),
-                                    side: BorderSide(color: isAlreadyAdded ? Colors.red : const Color(0xFFFF5900)),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                                  ),
-                                  child: Text(
-                                      isAlreadyAdded ? 'Удалить из планов' : 'Добавить в мои планы',
-                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
-                                  ),
-                                ),
-                              ),
-                            ),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => WorkoutExecutionScreen(exercises: widget.program.exercises))),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF5900),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                                elevation: 0,
-                              ),
-                              child: const Text('Начать тренировку', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                    child: Column(
+                      children: [
+                        if (userId != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: AppButton(
+                              text: isPlanned ? 'Удалить из планов' : 'Добавить в мои планы',
+                              variant: isPlanned ? AppButtonVariant.secondary : AppButtonVariant.outline,
+                              onPressed: () async {
+                                final notifier = ref.read(plannedProgramsProvider(userId).notifier);
+                                if (isPlanned) {
+                                  await notifier.deleteProgram(widget.program.id);
+                                } else {
+                                  await notifier.addProgram(widget.program);
+                                }
+                              },
                             ),
                           ),
-                        ],
-                      ),
+                        AppButton(
+                          text: 'Начать тренировку',
+                          variant: AppButtonVariant.primary,
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WorkoutExecutionScreen(
+                                exercises: widget.program.exercises,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 100),
@@ -299,27 +295,61 @@ class _ExerciseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final repeat = exercise.repeats.first;
     final String subtitle = repeat.seconds != null ? '${repeat.seconds} секунд' : '${repeat.reps} повторений';
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+      width: double.infinity,
+      height: 100,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F6F6),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.asset("assets/images/exercises/workout_3.png", width: 64, height: 64, fit: BoxFit.cover),
+            borderRadius: BorderRadius.circular(30),
+            child: Image.asset(
+              "assets/images/exercises/workout_3.png",
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(exercise.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Color(0xFF141414))),
+                Text(
+                  exercise.name,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Color(0xFF141414)
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(color: Color(0xFFFF5900), fontSize: 14, fontWeight: FontWeight.w500)),
+                Text(
+                    subtitle,
+                    style: const TextStyle(
+                        color: Color(0xFFFF5900),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500
+                    )
+                ),
               ],
             ),
           ),
+          const SizedBox(width: 16),
         ],
       ),
     );

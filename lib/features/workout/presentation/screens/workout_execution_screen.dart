@@ -118,7 +118,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     );
 
     if (userId != null) {
-      await ref.read(userProgramsProvider(userId).notifier).saveAllProgress(_modifiedExercises);
+      await ref.read(plannedProgramsProvider(userId).notifier).saveAllProgress(_modifiedExercises);
     }
 
     if (mounted) {

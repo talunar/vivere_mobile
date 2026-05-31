@@ -37,6 +37,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(paginatedWorkoutCategoriesProvider);
+    final expandedCategoryId = ref.watch(expandedCategoryProvider);
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     final double headerHeight = statusBarHeight + 40;
 
@@ -70,9 +71,9 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
                         imageUrl: category.image,
                         isExpanded: isExpanded,
                         onTap: () {
-                          setState(() {
-                            expandedCategoryId = isExpanded ? null : category.id;
-                          });
+                          final current = ref.read(expandedCategoryProvider);
+                          ref.read(expandedCategoryProvider.notifier).state =
+                          current == category.id ? null : category.id;
                         },
                       ),
                       if (isExpanded)
@@ -97,7 +98,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
             top: 0,
             left: 0,
             right: 0,
-            height: headerHeight + 28,
+            height: headerHeight + 30,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

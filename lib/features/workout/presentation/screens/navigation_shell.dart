@@ -5,6 +5,7 @@ import '../../../profile/presentation/screens/person_page.dart';
 import '../providers/navigation_provider.dart';
 import 'workout_catalog_screen.dart';
 import 'calendar_screen.dart';
+import 'my_workouts_screen.dart';
 
 class MainNavigationScreen extends ConsumerStatefulWidget {
   const MainNavigationScreen({super.key});
@@ -16,6 +17,7 @@ class MainNavigationScreen extends ConsumerStatefulWidget {
 class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   final GlobalKey<NavigatorState> _workoutNavigatorKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> _calendarNavigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _myWorkoutsNavigatorKey = GlobalKey<NavigatorState>();
 
   void _onItemTapped(int index) {
     final selectedIndex = ref.read(navigationNotifierProvider);
@@ -24,6 +26,8 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
         _workoutNavigatorKey.currentState?.popUntil((route) => route.isFirst);
       } else if (index == 1) {
         _calendarNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+      } else if (index == 2) {
+        _myWorkoutsNavigatorKey.currentState?.popUntil((route) => route.isFirst);
       }
     } else {
       ref.read(navigationNotifierProvider.notifier).setIndex(index);
@@ -51,7 +55,12 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
               builder: (context) => const CalendarScreen(),
             ),
           ),
-          const Center(child: Text('Тренировки')),
+          Navigator(
+            key: _myWorkoutsNavigatorKey,
+            onGenerateRoute: (settings) => MaterialPageRoute(
+              builder: (context) => const MyWorkoutsScreen(),
+            ),
+          ),
           const PersonPage(),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vivere_mobile/features/workout/data/repositories/user_exercises_repository_impl.dart';
 import 'package:vivere_mobile/features/workout/data/repositories/mock_workout_repository.dart';
 import 'package:vivere_mobile/features/workout/data/sources/user_exercises_mock_data_source.dart';
@@ -8,6 +9,8 @@ import 'package:vivere_mobile/features/workout/domain/repositories/i_workout_rep
 import 'package:vivere_mobile/features/workout/domain/repositories/i_user_exercises_repository.dart';
 
 part 'workout_providers.g.dart';
+
+final expandedCategoryProvider = StateProvider<int?>((ref) => null);
 
 @riverpod
 IWorkoutRepository workoutRepository(WorkoutRepositoryRef ref) {
@@ -41,9 +44,9 @@ class PaginatedWorkoutCategories extends _$PaginatedWorkoutCategories {
 
     final previousState = state.value ?? [];
     state = const AsyncLoading<List<WorkoutCategory>>().copyWithPrevious(state);
-    
+
     _offset += _limit;
-    
+
     state = await AsyncValue.guard(() async {
       final newItems = await _fetch();
       if (newItems.isEmpty) {
@@ -70,9 +73,9 @@ Future<WorkoutProgram> workoutProgramDetails(WorkoutProgramDetailsRef ref, int i
   return ref.watch(workoutRepositoryProvider).getProgramDetails(id);
 }
 
-/// Управление программами пользователя
+/// Текущие программы (Планы)
 @riverpod
-class UserPrograms extends _$UserPrograms {
+class PlannedPrograms extends _$PlannedPrograms {
   @override
   Future<List<WorkoutProgram>> build(int userId) async {
     final repository = ref.watch(userExercisesRepositoryProvider);
@@ -94,9 +97,7 @@ class UserPrograms extends _$UserPrograms {
       final repository = ref.read(userExercisesRepositoryProvider);
       await repository.addExercise(userId, program.exercises.first);
       ref.invalidateSelf();
-    } catch (e) {
-      // Обработка ошибки
-    }
+    } catch (e) {}
   }
 
   Future<void> deleteProgram(int programId) async {
@@ -104,12 +105,9 @@ class UserPrograms extends _$UserPrograms {
       final repository = ref.read(userExercisesRepositoryProvider);
       await repository.deleteExercise(programId);
       ref.invalidateSelf();
-    } catch (e) {
-      // Обработка ошибки
-    }
+    } catch (e) {}
   }
 
-  // Групповое сохранение прогресса после тренировки
   Future<void> saveAllProgress(List<ExerciserInProgram> exercises) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
@@ -117,7 +115,6 @@ class UserPrograms extends _$UserPrograms {
       for (var exercise in exercises) {
         await repository.updateExercise(exercise);
       }
-      // Перезапрашиваем данные, чтобы UI обновился
       final updatedExercises = await repository.getUserExercises(userId);
       return updatedExercises.map((e) => WorkoutProgram(
         id: e.id,
@@ -130,4 +127,35 @@ class UserPrograms extends _$UserPrograms {
       )).toList();
     });
   }
+}
+
+/// Избранное
+@riverpod
+class FavoritePrograms extends _$FavoritePrograms {
+  @override
+  Future<List<WorkoutProgram>> build(int userId) async {
+    return [];
+  }
+
+  Future<void> toggleFavorite(WorkoutProgram program) async {
+    final current = state.value ?? [];
+    if (current.any((p) => p.id == program.id)) {
+      state = AsyncValue.data(current.where((p) => p.id != program.id).toList());
+    } else {
+      state = AsyncValue.data([...current, program]);
+    }
+  }
+}
+
+/// Мои тренировки (Планы + Избранное)
+@riverpod
+Future<List<WorkoutProgram>> allUserPrograms(AllUserProgramsRef ref, int userId) async {
+  final planned = ref.watch(plannedProgramsProvider(userId)).value ?? [];
+  final favorites = ref.watch(favoriteProgramsProvider(userId)).value ?? [];
+
+  final Map<int, WorkoutProgram> all = {};
+  for (var p in favorites) { all[p.id] = p; }
+  for (var p in planned) { all[p.id] = p; }
+
+  return all.values.toList();
 }

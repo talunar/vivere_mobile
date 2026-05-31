@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/core/presentation/utils/app_validators.dart';
 import 'package:vivere_mobile/features/auth/presentation/providers/auth_provider.dart';
@@ -40,7 +41,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
                   top: 0,
                   left: 0,
                   right: 0,
-                  height: appBarHeight + 45,
+                  height: appBarHeight + 30,
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -103,21 +104,7 @@ class ProfileSettingsScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            /* Мне кажется уведомления не должны быть в настройках
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFE2E2E2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  hasNotifications ? 'assets/icons/notify_on.svg' : 'assets/icons/notify.svg',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ), */
+                            const SizedBox(width: 44),
                           ],
                         ),
                       ),
@@ -433,61 +420,38 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 
           const SizedBox(height: 24),
 
-          Center(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 352),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          await ref.read(profileNotifierProvider(_editedProfile.id).notifier).saveProfile(_editedProfile);
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Изменения сохранены'),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-                            );
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF5900),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                      ),
-                      child: const Text('Сохранить', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _showDeleteConfirmationDialog,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF727272),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                      ),
-                      child: const Text('Удалить профиль', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
+          Column(
+            children: [
+              AppButton(
+                text: 'Сохранить',
+                onPressed: () async {
+                  try {
+                    await ref.read(profileNotifierProvider(_editedProfile.id).notifier).saveProfile(_editedProfile);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Изменения сохранены'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                      );
+                    }
+                  }
+                },
+                variant: AppButtonVariant.primary,
               ),
-            ),
+              const SizedBox(height: 12),
+              AppButton(
+                text: 'Удалить профиль',
+                onPressed: _showDeleteConfirmationDialog,
+                variant: AppButtonVariant.secondary,
+              ),
+            ],
           ),
         ],
       ),

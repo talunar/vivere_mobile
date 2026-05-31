@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import '../../../../core/presentation/utils/app_validators.dart';
 import '../providers/auth_provider.dart';
 import '../state/auth_state.dart';
@@ -146,27 +147,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                               loading: (_) => const Center(
                                 child: CircularProgressIndicator(color: Color(0xFFFF5900)),
                               ),
-                              orElse: () => SizedBox(
-                                width: double.infinity,
-                                height: 50,
-                                child: ElevatedButton(
-                                  onPressed: _onComplete,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFF5900),
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Зарегистрироваться',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                              orElse: () => AppButton(
+                                text: 'Зарегистрироваться',
+                                onPressed: _onComplete,
+                                variant: AppButtonVariant.primary,
                               ),
                             ),
                             const Spacer(flex: 3),

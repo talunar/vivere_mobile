@@ -37,7 +37,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
 
     final programsAsync = userId != null
-        ? ref.watch(userProgramsProvider(userId))
+        ? ref.watch(plannedProgramsProvider(userId))
         : const AsyncValue.data([]);
 
     final String formattedDate = DateFormat('EEEE,\nd MMMM', 'ru_RU').format(_selectedDate);
@@ -63,6 +63,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   _DashboardCard(
                     title: "Калории сегодня",
                     showArrow: true,
+                    bottomPadding: 24,
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: const [
@@ -126,7 +127,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             top: 0,
             left: 0,
             right: 0,
-            height: headerHeight + 45,
+            height: headerHeight + 40,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -289,14 +290,21 @@ class _DashboardCard extends StatelessWidget {
   final Widget child;
   final bool showAdd;
   final bool showArrow;
+  final double? bottomPadding;
 
-  const _DashboardCard({required this.title, required this.child, this.showAdd = false, this.showArrow = false});
+  const _DashboardCard({
+    required this.title,
+    required this.child,
+    this.showAdd = false,
+    this.showArrow = false,
+    this.bottomPadding,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 16, bottom: 14),
+      padding: EdgeInsets.only(left: 10, right: 10, top: 16, bottom: bottomPadding ?? 14),
       decoration: BoxDecoration(color: const Color(0xFFE2E2E2), borderRadius: BorderRadius.circular(32)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),

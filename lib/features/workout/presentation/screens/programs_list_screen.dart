@@ -8,16 +8,23 @@ import 'package:vivere_mobile/features/workout/presentation/screens/program_deta
 class ProgramsListScreen extends ConsumerWidget {
   final String categoryName;
   final int categoryId;
+  final List<WorkoutProgram>? programs;
 
   const ProgramsListScreen({
     super.key,
     required this.categoryName,
     required this.categoryId,
+    this.programs,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final programsAsync = ref.watch(programsByCategoryProvider(categoryId));
+    // Если список программ передан явно (например, только избранные), используем его.
+    // Иначе загружаем все программы категории из провайдера.
+    final programsAsync = programs != null
+        ? AsyncValue.data(programs!)
+        : ref.watch(programsByCategoryProvider(categoryId));
+
     final double topPadding = MediaQuery.of(context).padding.top;
     final double headerHeight = topPadding + 56;
 
@@ -27,33 +34,48 @@ class ProgramsListScreen extends ConsumerWidget {
         children: [
           Positioned.fill(
             child: programsAsync.when(
-              data: (programs) => ListView.separated(
-                padding: EdgeInsets.fromLTRB(16, headerHeight + 40, 16, 100),
-                itemCount: programs.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 10),
-                itemBuilder: (context, index) {
-                  final program = programs[index];
-                  return ProgramCard(
-                    program: program,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProgramDetailsScreen(program: program),
-                      ),
-                    ),
-                  );
-                },
+              data: (programs) => SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(16, headerHeight + 20, 16, 100),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE2E2E2),
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Column(
+                    children: programs.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final program = entry.value;
+                      final isLast = index == programs.length - 1;
+
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
+                        child: ProgramCard(
+                          program: program,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProgramDetailsScreen(program: program),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ),
-              loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+              loading: () => const Center(
+                  child: CircularProgressIndicator(color: Color(0xFFFF5900))),
               error: (err, st) => Center(child: Text('Ошибка: $err')),
             ),
           ),
 
+          // Градиент сверху
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            height: headerHeight + 45,
+            height: headerHeight + 30,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -75,6 +97,7 @@ class ProgramsListScreen extends ConsumerWidget {
             ),
           ),
 
+          // Заголовок и кнопка назад
           Positioned(
             top: topPadding,
             left: 16,
@@ -107,7 +130,7 @@ class ProgramsListScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 44 + 16),
+                const SizedBox(width: 44),
               ],
             ),
           ),
@@ -118,16 +141,17 @@ class ProgramsListScreen extends ConsumerWidget {
 }
 
 class ProgramCard extends StatelessWidget {
-  final WorkoutProgram? program;
+  final WorkoutProgram program;
   final VoidCallback? onTap;
 
-  const ProgramCard({super.key, this.program, this.onTap});
+  const ProgramCard({super.key, required this.program, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: double.infinity,
         height: 160,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -137,7 +161,12 @@ class ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset("assets/images/programs/workout_1.png", width: 160, height: 160, fit: BoxFit.cover),
+              child: Image.asset(
+                "assets/images/programs/workout_1.png",
+                width: 160,
+                height: 160,
+                fit: BoxFit.cover,
+              ),
             ),
             Expanded(
               child: Padding(
@@ -145,21 +174,50 @@ class ProgramCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(program?.title ?? "Программа тренировки", style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF141414)), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text(
+                      program.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF141414),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 10),
                     Row(
                       children: [
                         const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
                         const SizedBox(width: 5),
-                        Text(program?.rating?.toString() ?? "4,8", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF141414))),
+                        Text(
+                          program.rating?.toString() ?? "4.8",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF141414),
+                          ),
+                        ),
                       ],
                     ),
                     const Spacer(),
                     Row(
                       children: [
-                        const CircleAvatar(radius: 12, backgroundImage: AssetImage("assets/images/programs/workout_1.png")),
+                        const CircleAvatar(
+                          radius: 12,
+                          backgroundImage:
+                              AssetImage("assets/images/programs/workout_1.png"),
+                        ),
                         const SizedBox(width: 8),
-                        Expanded(child: Text(program?.trainerName ?? "Super train 3000", style: const TextStyle(fontSize: 14, color: Colors.black54), overflow: TextOverflow.ellipsis)),
+                        Expanded(
+                          child: Text(
+                            program.trainerName ?? "Super train 3000",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(0.5),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ],
                     )
                   ],

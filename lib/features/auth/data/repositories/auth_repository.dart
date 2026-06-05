@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../../domain/entities/auth_user.dart';
-import '../models/auth_dto.dart';
-import '../mappers/auth_mapper.dart';
+import '../../../../core/domain/entities/user_id.dart';
 
 class AuthRepository implements IAuthRepository {
   final Dio _dio;
@@ -17,18 +16,16 @@ class AuthRepository implements IAuthRepository {
         'password': password,
       });
 
-      // Если статус ответа 200 и в теле сообщения "auth: ok"
       if (response.data['auth'] == 'ok') {
-        return const AuthDto(nickName: '', password: '').toDomain(
-          nickName: nickName,
+        return AuthUser(
+          id: const UserId(0),
           email: '',
+          nickName: nickName,
         );
       } else {
-        // Если бэк прислал 200, но в теле сообщения ошибка валидации
         throw Exception(response.data['auth'] ?? 'Ошибка входа');
       }
     } on DioException catch (e) {
-      // Ловим ошибки 4хх, 500 и проблемы с сетью
       final message = e.response?.data['auth'] ?? 'Ошибка авторизации';
       throw Exception(message);
     } catch (e) {
@@ -37,25 +34,20 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  Future<AuthUser> signUp(String nickName, String password, String email) async {
+  Future<void> signUp({
+    required String nickName,
+    required String password,
+    required String confirmPassword,
+  }) async {
     try {
       final response = await _dio.post('/register', data: {
         'nick_name': nickName,
         'password': password,
-        'password2': password,
-        'email': email,
+        'password2': confirmPassword,
       });
 
-      final data = response.data;
-
-      // Проверяем успешный ответ с бэка (register: ok)
-      if (data['register'] == 'ok') {
-        return const AuthDto().toDomain(
-          nickName: nickName,
-          email: email,
-        );
-      } else {
-        throw Exception(data['register'] ?? 'Ошибка при регистрации');
+      if (response.data['register'] != 'ok') {
+        throw Exception(response.data['register'] ?? 'Ошибка регистрации');
       }
     } on DioException catch (e) {
       final message = e.response?.data['register'] ?? 'Ошибка при регистрации';
@@ -66,13 +58,50 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
+  Future<AuthUser> createProfile({
+    required String nickName,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required int age,
+    required int weight,
+    required int height,
+    required String birthDate,
+  }) async {
+    try {
+      final response = await _dio.post('/create-user', data: {
+        'nick_name': nickName,
+        'email': email,
+        'first_name': firstName,
+        'last_name': lastName,
+        'age': age,
+        'weight': weight,
+        'height': height,
+        'birth_date': birthDate,
+      });
+
+      final userId = response.data['userId'];
+      if (userId != null) {
+        return AuthUser(
+          id: UserId(userId is int ? userId : int.parse(userId.toString())),
+          email: email,
+          nickName: nickName,
+        );
+      } else {
+        throw Exception('Не удалось получить ID пользователя');
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data['error'] ?? 'Ошибка создания профиля';
+      throw Exception(message);
+    } catch (e) {
+      throw Exception('Ошибка при создании профиля');
+    }
+  }
+
+  @override
   Future<void> signOut() async {
     try {
-      // Вызываем метод logout на бэкенде, чтобы он удалил куки
       await _dio.get('/logout');
-    } catch (e) {
-      // Даже если запрос не прошел, считаем, что ok, чтобы пройти
-    }
-    print('Выход из системы: сессия завершена');
+    } catch (_) {}
   }
 }

@@ -6,7 +6,24 @@ part of 'dio_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dioHash() => r'cb3201e81a95d1a9c10fd191c472678b0469cf33';
+String _$cookieJarHash() => r'1217e729c462db2ff475b348a8c4165a712c47cb';
+
+/// See also [cookieJar].
+@ProviderFor(cookieJar)
+final cookieJarProvider = FutureProvider<CookieJar>.internal(
+  cookieJar,
+  name: r'cookieJarProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$cookieJarHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CookieJarRef = FutureProviderRef<CookieJar>;
+String _$dioHash() => r'9ae183c605a4284186c95eb57e279b33b44c2231';
 
 /// See also [dio].
 @ProviderFor(dio)

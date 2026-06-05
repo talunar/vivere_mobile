@@ -1,9 +1,28 @@
 import '../entities/auth_user.dart';
 
 abstract class IAuthRepository {
+  /// Вход в систему (POST /login)
   Future<AuthUser> signIn(String nickName, String password);
 
-  Future<AuthUser> signUp(String nickName, String password, String confirmPassword);
+  /// Регистрация аккаунта (POST /register)
+  Future<void> signUp({
+    required String nickName, 
+    required String password, 
+    required String confirmPassword,
+  });
 
+  /// Создание профиля пользователя (POST /create-user)
+  Future<AuthUser> createProfile({
+    required String nickName,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required int age,
+    required int weight,
+    required int height,
+    required String birthDate,
+  });
+
+  /// Выход из системы (GET /logout)
   Future<void> signOut();
 }

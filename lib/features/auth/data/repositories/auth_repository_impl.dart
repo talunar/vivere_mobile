@@ -2,26 +2,12 @@ import 'package:dio/dio.dart';
 import '../../../../core/domain/entities/user_id.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../../domain/entities/auth_user.dart';
-import '../models/auth_dto.dart';
-import '../mappers/auth_mapper.dart';
 
-class AuthRepository implements IAuthRepository {
+class AuthRepositoryImpl implements IAuthRepository {
   final Dio _dio;
 
-  AuthRepository(this._dio);
+  AuthRepositoryImpl(this._dio);
 
-  @override
-  Future<AuthUser> signIn(String nickName, String password) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return const AuthUser(
-      id: UserId(1),
-      nickName: 'Ёжик',
-      email: 'test@vivere.com',
-      token: 'fake-jwt-token',
-    );
-  }
-
-/* Используем Заглушку. После подключения к бэку - раскомментировать
   @override
   Future<AuthUser> signIn(String nickName, String password) async {
     try {
@@ -30,17 +16,14 @@ class AuthRepository implements IAuthRepository {
         'password': password,
       });
 
-      // Бэк возвращает {"auth": "ok"}
       if (response.data['auth'] == 'ok') {
-        // Создаем пользователя, используя введенные данные
-        return const AuthDto().toDomain(
+        return AuthUser(
+          id: const UserId(0),
+          email: '',
           nickName: nickName,
-          email: '', // В логине нет email, ставим пустую строку
         );
       } else {
-        // Если в JSON пришла ошибка (например, из ErrDescription на Go)
-        final errorMsg = response.data['auth'] ?? 'Неверный логин или пароль';
-        throw Exception(errorMsg);
+        throw Exception(response.data['auth'] ?? 'Ошибка входа');
       }
     } on DioException catch (e) {
       final message = e.response?.data['auth'] ?? 'Ошибка авторизации';
@@ -49,28 +32,69 @@ class AuthRepository implements IAuthRepository {
       throw Exception('Произошла непредвиденная ошибка');
     }
   }
- */
 
   @override
-  Future<AuthUser> signUp(String nickName, String password, String email) async {
+  Future<void> signUp({
+    required String nickName,
+    required String password,
+    required String confirmPassword,
+  }) async {
     try {
       final response = await _dio.post('/register', data: {
         'nick_name': nickName,
         'password': password,
-        'password2': password,
+        'password2': confirmPassword,
       });
 
-      if (response.data['register'] == 'ok') {
-        return const AuthDto().toDomain(
-          nickName: nickName,
-          email: email,
-        );
-      } else {
-        final errorMsg = response.data['register'] ?? 'Ошибка при регистрации';
-        throw Exception(errorMsg);
+      if (response.data['register'] != 'ok') {
+        throw Exception(response.data['register'] ?? 'Ошибка регистрации');
       }
+    } on DioException catch (e) {
+      final message = e.response?.data['register'] ?? 'Ошибка при регистрации';
+      throw Exception(message);
     } catch (e) {
       throw Exception('Ошибка при регистрации');
+    }
+  }
+
+  @override
+  Future<AuthUser> createProfile({
+    required String nickName,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required int age,
+    required int weight,
+    required int height,
+    required String birthDate,
+  }) async {
+    try {
+      final response = await _dio.post('/create-user', data: {
+        'nick_name': nickName,
+        'email': email,
+        'first_name': firstName,
+        'last_name': lastName,
+        'age': age,
+        'weight': weight,
+        'height': height,
+        'birth_date': birthDate,
+      });
+
+      final userId = response.data['userId'];
+      if (userId != null) {
+        return AuthUser(
+          id: UserId(userId is int ? userId : int.parse(userId.toString())),
+          email: email,
+          nickName: nickName,
+        );
+      } else {
+        throw Exception('Не удалось получить ID пользователя');
+      }
+    } on DioException catch (e) {
+      final message = e.response?.data['error'] ?? 'Ошибка создания профиля';
+      throw Exception(message);
+    } catch (e) {
+      throw Exception('Ошибка при создании профиля');
     }
   }
 
@@ -78,8 +102,6 @@ class AuthRepository implements IAuthRepository {
   Future<void> signOut() async {
     try {
       await _dio.get('/logout');
-    } catch (e) {
-    }
-    print('Выход из системы: куки будут удалены бэкендом');
+    } catch (_) {}
   }
 }

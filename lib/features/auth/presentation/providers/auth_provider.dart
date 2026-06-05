@@ -17,7 +17,6 @@ class AuthController extends _$AuthController {
   /// Вход
   Future<void> continueToNextStep(String nick, String pass) async {
     state = const AuthState.loading();
-    // Имитация задержки сети
     await Future.delayed(const Duration(milliseconds: 500));
 
     // ВРЕМЕННО: вход сразу минуя регистрацию
@@ -26,22 +25,6 @@ class AuthController extends _$AuthController {
       email: '${nick.isEmpty ? "user" : nick}@vivere.app',
       nickName: nick.isEmpty ? "TestUser" : nick,
     ));
-
-    /* ВЕРНУТЬ
-    // Оригинальная логика регистрации:
-    if (nick == 'admin') {
-      state = AuthState.authenticated(AuthUser(
-        id: UserId(1),
-        email: 'admin@vivere.app',
-        nickName: nick,
-      ));
-    } else {
-      state = AuthState.registrationStepName(
-        nickName: nick,
-        password: pass,
-      );
-    }
-    */
   }
 
   void submitNameAndEmail({
@@ -67,17 +50,38 @@ class AuthController extends _$AuthController {
     required int age,
     required int weight,
     required int height,
+    required String birthDate,
+    Gender? gender,
   }) async {
+    final currentState = state;
     state = const AuthState.loading();
-    await Future.delayed(const Duration(milliseconds: 800));
 
+    currentState.maybeMap(
+      registrationStepPhysical: (step) {
+        final registrationData = {
+          'nick_name': step.nickName,
+          'email': step.email,
+          'first_name': step.firstName,
+          'last_name': step.lastName,
+          'password': step.password,
+          'age': age,
+          'weight': weight,
+          'height': height,
+          'birth_date': birthDate,
+          'gender': gender?.name,
+        };
+        print('Финальные данные для бэкенда: $registrationData');
+      },
+      orElse: () {},
+    );
+
+    await Future.delayed(const Duration(milliseconds: 800));
     state = AuthState.authenticated(AuthUser(
       id: UserId(1),
-      email: 'new_user@vivere.app',
-      nickName: 'NewUser',
+      email: currentState is RegistrationStepPhysical ? currentState.email : 'user@vivere.app',
+      nickName: currentState is RegistrationStepPhysical ? currentState.nickName : 'User',
     ));
   }
-
   Future<void> logout() async {
     state = const AuthState.unauthenticated();
   }

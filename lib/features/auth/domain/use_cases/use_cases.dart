@@ -1,4 +1,3 @@
-// sign_in_use_case.dart
 import '../entities/auth_user.dart';
 import '../repositories/i_auth_repository.dart';
 
@@ -11,12 +10,46 @@ class SignInUseCase {
   }
 }
 
-// sign_up_use_case.dart
 class SignUpUseCase {
   final IAuthRepository repository;
   SignUpUseCase(this.repository);
 
-  Future<AuthUser> execute(String nickName, String password, String confirmPassword) {
-    return repository.signUp(nickName, password, confirmPassword);
+  Future<void> execute({
+    required String nickName,
+    required String password,
+    required String confirmPassword,
+  }) {
+    return repository.signUp(
+      nickName: nickName,
+      password: password,
+      confirmPassword: confirmPassword,
+    );
+  }
+}
+
+class CreateProfileUseCase {
+  final IAuthRepository repository;
+  CreateProfileUseCase(this.repository);
+
+  Future<AuthUser> execute({
+    required String nickName,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required int age,
+    required int weight,
+    required int height,
+    required String birthDate,
+  }) {
+    return repository.createProfile(
+      nickName: nickName,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      age: age,
+      weight: weight,
+      height: height,
+      birthDate: birthDate,
+    );
   }
 }

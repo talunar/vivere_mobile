@@ -65,8 +65,8 @@ class AuthController extends _$AuthController {
 
   Future<void> completeRegistration({
     required int age,
-    required double weight,
-    required double height,
+    required int weight,
+    required int height,
   }) async {
     state = const AuthState.loading();
     await Future.delayed(const Duration(milliseconds: 800));

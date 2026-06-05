@@ -28,15 +28,15 @@ String _$authControllerHash() => r'01e6d24e6eeebdef13d6a204f3d0afcacddbfdd2';
 /// See also [AuthController].
 @ProviderFor(AuthController)
 final authControllerProvider =
-    NotifierProvider<AuthController, AuthState>.internal(
-      AuthController.new,
-      name: r'authControllerProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$authControllerHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+NotifierProvider<AuthController, AuthState>.internal(
+  AuthController.new,
+  name: r'authControllerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$authControllerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$AuthController = Notifier<AuthState>;
 // ignore_for_file: type=lint

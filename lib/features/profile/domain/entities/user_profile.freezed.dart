@@ -15,17 +15,37 @@ final _privateConstructorUsedError = UnsupportedError(
   'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
 );
 
+UserProfile _$UserProfileFromJson(Map<String, dynamic> json) {
+  return _UserProfile.fromJson(json);
+}
+
 /// @nodoc
 mixin _$UserProfile {
+  @UserIdConverter()
   UserId get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'nick_name')
+  @NickNameConverter()
   NickName get nickName => throw _privateConstructorUsedError;
+  @EmailConverter()
   Email get email => throw _privateConstructorUsedError;
+  @JsonKey(name: 'first_name')
+  @NameConverter()
   Name get firstName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_name')
+  @NameConverter()
   Name get lastName => throw _privateConstructorUsedError;
+  @AgeConverter()
   Age get age => throw _privateConstructorUsedError;
+  @WeightConverter()
   Weight get weight => throw _privateConstructorUsedError;
+  @HeightConverter()
   Height get height => throw _privateConstructorUsedError;
+  @JsonKey(name: 'birth_date')
+  @_DateTimeConverter()
   DateTime get birthDate => throw _privateConstructorUsedError;
+
+  /// Serializes this UserProfile to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.
@@ -42,15 +62,15 @@ abstract class $UserProfileCopyWith<$Res> {
   ) = _$UserProfileCopyWithImpl<$Res, UserProfile>;
   @useResult
   $Res call({
-    UserId id,
-    NickName nickName,
-    Email email,
-    Name firstName,
-    Name lastName,
-    Age age,
-    Weight weight,
-    Height height,
-    DateTime birthDate,
+    @UserIdConverter() UserId id,
+    @JsonKey(name: 'nick_name') @NickNameConverter() NickName nickName,
+    @EmailConverter() Email email,
+    @JsonKey(name: 'first_name') @NameConverter() Name firstName,
+    @JsonKey(name: 'last_name') @NameConverter() Name lastName,
+    @AgeConverter() Age age,
+    @WeightConverter() Weight weight,
+    @HeightConverter() Height height,
+    @JsonKey(name: 'birth_date') @_DateTimeConverter() DateTime birthDate,
   });
 }
 
@@ -133,15 +153,15 @@ abstract class _$$UserProfileImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    UserId id,
-    NickName nickName,
-    Email email,
-    Name firstName,
-    Name lastName,
-    Age age,
-    Weight weight,
-    Height height,
-    DateTime birthDate,
+    @UserIdConverter() UserId id,
+    @JsonKey(name: 'nick_name') @NickNameConverter() NickName nickName,
+    @EmailConverter() Email email,
+    @JsonKey(name: 'first_name') @NameConverter() Name firstName,
+    @JsonKey(name: 'last_name') @NameConverter() Name lastName,
+    @AgeConverter() Age age,
+    @WeightConverter() Weight weight,
+    @HeightConverter() Height height,
+    @JsonKey(name: 'birth_date') @_DateTimeConverter() DateTime birthDate,
   });
 }
 
@@ -213,37 +233,53 @@ class __$$UserProfileImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$UserProfileImpl implements _UserProfile {
   const _$UserProfileImpl({
-    required this.id,
-    required this.nickName,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.age,
-    required this.weight,
-    required this.height,
-    required this.birthDate,
+    @UserIdConverter() required this.id,
+    @JsonKey(name: 'nick_name') @NickNameConverter() required this.nickName,
+    @EmailConverter() required this.email,
+    @JsonKey(name: 'first_name') @NameConverter() required this.firstName,
+    @JsonKey(name: 'last_name') @NameConverter() required this.lastName,
+    @AgeConverter() required this.age,
+    @WeightConverter() required this.weight,
+    @HeightConverter() required this.height,
+    @JsonKey(name: 'birth_date') @_DateTimeConverter() required this.birthDate,
   });
 
+  factory _$UserProfileImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UserProfileImplFromJson(json);
+
   @override
+  @UserIdConverter()
   final UserId id;
   @override
+  @JsonKey(name: 'nick_name')
+  @NickNameConverter()
   final NickName nickName;
   @override
+  @EmailConverter()
   final Email email;
   @override
+  @JsonKey(name: 'first_name')
+  @NameConverter()
   final Name firstName;
   @override
+  @JsonKey(name: 'last_name')
+  @NameConverter()
   final Name lastName;
   @override
+  @AgeConverter()
   final Age age;
   @override
+  @WeightConverter()
   final Weight weight;
   @override
+  @HeightConverter()
   final Height height;
   @override
+  @JsonKey(name: 'birth_date')
+  @_DateTimeConverter()
   final DateTime birthDate;
 
   @override
@@ -271,6 +307,7 @@ class _$UserProfileImpl implements _UserProfile {
                 other.birthDate == birthDate));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
@@ -292,38 +329,63 @@ class _$UserProfileImpl implements _UserProfile {
   @pragma('vm:prefer-inline')
   _$$UserProfileImplCopyWith<_$UserProfileImpl> get copyWith =>
       __$$UserProfileImplCopyWithImpl<_$UserProfileImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UserProfileImplToJson(this);
+  }
 }
 
 abstract class _UserProfile implements UserProfile {
   const factory _UserProfile({
-    required final UserId id,
+    @UserIdConverter() required final UserId id,
+    @JsonKey(name: 'nick_name')
+    @NickNameConverter()
     required final NickName nickName,
-    required final Email email,
-    required final Name firstName,
-    required final Name lastName,
-    required final Age age,
-    required final Weight weight,
-    required final Height height,
+    @EmailConverter() required final Email email,
+    @JsonKey(name: 'first_name') @NameConverter() required final Name firstName,
+    @JsonKey(name: 'last_name') @NameConverter() required final Name lastName,
+    @AgeConverter() required final Age age,
+    @WeightConverter() required final Weight weight,
+    @HeightConverter() required final Height height,
+    @JsonKey(name: 'birth_date')
+    @_DateTimeConverter()
     required final DateTime birthDate,
   }) = _$UserProfileImpl;
 
+  factory _UserProfile.fromJson(Map<String, dynamic> json) =
+      _$UserProfileImpl.fromJson;
+
   @override
+  @UserIdConverter()
   UserId get id;
   @override
+  @JsonKey(name: 'nick_name')
+  @NickNameConverter()
   NickName get nickName;
   @override
+  @EmailConverter()
   Email get email;
   @override
+  @JsonKey(name: 'first_name')
+  @NameConverter()
   Name get firstName;
   @override
+  @JsonKey(name: 'last_name')
+  @NameConverter()
   Name get lastName;
   @override
+  @AgeConverter()
   Age get age;
   @override
+  @WeightConverter()
   Weight get weight;
   @override
+  @HeightConverter()
   Height get height;
   @override
+  @JsonKey(name: 'birth_date')
+  @_DateTimeConverter()
   DateTime get birthDate;
 
   /// Create a copy of UserProfile

@@ -56,11 +56,14 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   void _onComplete() {
     if (_formKey.currentState?.validate() ?? false) {
+      final weightDouble = double.tryParse(weightController.text.replaceAll(',', '.')) ?? 0.0;
+      final heightDouble = double.tryParse(heightController.text.replaceAll(',', '.')) ?? 0.0;
+
       ref.read(authControllerProvider.notifier).completeRegistration(
-            age: _calculateAge(dobController.text),
-            weight: double.tryParse(weightController.text.replaceAll(',', '.')) ?? 0.0,
-            height: double.tryParse(heightController.text.replaceAll(',', '.')) ?? 0.0,
-          );
+        age: _calculateAge(dobController.text),
+        weight: weightDouble.round(), // Округляем до ближайшего целого
+        height: heightDouble.round(), // Округляем до ближайшего целого
+      );
     }
   }
 
@@ -133,7 +136,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                               controller: weightController,
                               hintText: 'Вес',
                               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                              validator: (v) => AppValidators.number(v, min: 20, max: 300),
+                              validator: (v) => AppValidators.number(v, min: 20, max: 255),
                             ),
                             const SizedBox(height: 16),
                             _CustomTextField(

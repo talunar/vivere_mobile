@@ -4,14 +4,16 @@ enum AppButtonVariant { primary, secondary, outline }
 
 class AppButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final AppButtonVariant variant;
+  final bool isLoading;
 
   const AppButton({
     super.key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,
     this.variant = AppButtonVariant.primary,
+    this.isLoading = false,
   });
 
   @override
@@ -22,9 +24,24 @@ class AppButton extends StatelessWidget {
         width: double.infinity,
         height: 50,
         child: ElevatedButton(
-          onPressed: onPressed,
+          onPressed: isLoading ? null : onPressed,
           style: _getStyle(),
-          child: Text(text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          child: isLoading
+              ? const SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
         ),
       ),
     );
@@ -38,6 +55,13 @@ class AppButton extends StatelessWidget {
           foregroundColor: Colors.black,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           elevation: 0,
+        ).copyWith(
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return const Color(0xFFE2E2E2).withOpacity(0.5);
+            }
+            return const Color(0xFFE2E2E2);
+          }),
         );
       case AppButtonVariant.outline:
         return ElevatedButton.styleFrom(
@@ -54,6 +78,13 @@ class AppButton extends StatelessWidget {
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
           elevation: 0,
+        ).copyWith(
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return const Color(0xFFFF5900).withOpacity(0.5);
+            }
+            return const Color(0xFFFF5900);
+          }),
         );
     }
   }

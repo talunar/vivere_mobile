@@ -436,22 +436,22 @@ class _WorkoutProgramDetailsProviderElement
 
 String _$allUserProgramsHash() => r'92c421a088af227e0665503a3b7a089d7849027f';
 
-/// МОИ ТРЕНИРОВКИ (Планы + Избранное)
+/// Мои тренировки (Планы + Избранное)
 ///
 /// Copied from [allUserPrograms].
 @ProviderFor(allUserPrograms)
 const allUserProgramsProvider = AllUserProgramsFamily();
 
-/// МОИ ТРЕНИРОВКИ (Планы + Избранное)
+/// Мои тренировки (Планы + Избранное)
 ///
 /// Copied from [allUserPrograms].
 class AllUserProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// МОИ ТРЕНИРОВКИ (Планы + Избранное)
+  /// Мои тренировки (Планы + Избранное)
   ///
   /// Copied from [allUserPrograms].
   const AllUserProgramsFamily();
 
-  /// МОИ ТРЕНИРОВКИ (Планы + Избранное)
+  /// Мои тренировки (Планы + Избранное)
   ///
   /// Copied from [allUserPrograms].
   AllUserProgramsProvider call(int userId) {
@@ -480,12 +480,12 @@ class AllUserProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
   String? get name => r'allUserProgramsProvider';
 }
 
-/// МОИ ТРЕНИРОВКИ (Планы + Избранное)
+/// Мои тренировки (Планы + Избранное)
 ///
 /// Copied from [allUserPrograms].
 class AllUserProgramsProvider
     extends AutoDisposeFutureProvider<List<WorkoutProgram>> {
-  /// МОИ ТРЕНИРОВКИ (Планы + Избранное)
+  /// Мои тренировки (Планы + Избранное)
   ///
   /// Copied from [allUserPrograms].
   AllUserProgramsProvider(int userId)
@@ -599,22 +599,22 @@ abstract class _$PlannedPrograms
   FutureOr<List<WorkoutProgram>> build(int userId);
 }
 
-/// ПЛАНЫ (Текущие программы) — взаимодействие с бэкендом
+/// Текущие программы (Планы)
 ///
 /// Copied from [PlannedPrograms].
 @ProviderFor(PlannedPrograms)
 const plannedProgramsProvider = PlannedProgramsFamily();
 
-/// ПЛАНЫ (Текущие программы) — взаимодействие с бэкендом
+/// Текущие программы (Планы)
 ///
 /// Copied from [PlannedPrograms].
 class PlannedProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// ПЛАНЫ (Текущие программы) — взаимодействие с бэкендом
+  /// Текущие программы (Планы)
   ///
   /// Copied from [PlannedPrograms].
   const PlannedProgramsFamily();
 
-  /// ПЛАНЫ (Текущие программы) — взаимодействие с бэкендом
+  /// Текущие программы (Планы)
   ///
   /// Copied from [PlannedPrograms].
   PlannedProgramsProvider call(int userId) {
@@ -643,7 +643,7 @@ class PlannedProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
   String? get name => r'plannedProgramsProvider';
 }
 
-/// ПЛАНЫ (Текущие программы) — взаимодействие с бэкендом
+/// Текущие программы (Планы)
 ///
 /// Copied from [PlannedPrograms].
 class PlannedProgramsProvider
@@ -652,7 +652,7 @@ class PlannedProgramsProvider
           PlannedPrograms,
           List<WorkoutProgram>
         > {
-  /// ПЛАНЫ (Текущие программы) — взаимодействие с бэкендом
+  /// Текущие программы (Планы)
   ///
   /// Copied from [PlannedPrograms].
   PlannedProgramsProvider(int userId)
@@ -754,22 +754,22 @@ abstract class _$FavoritePrograms
   FutureOr<List<WorkoutProgram>> build(int userId);
 }
 
-/// ИЗБРАННОЕ
+/// Избранное
 ///
 /// Copied from [FavoritePrograms].
 @ProviderFor(FavoritePrograms)
 const favoriteProgramsProvider = FavoriteProgramsFamily();
 
-/// ИЗБРАННОЕ
+/// Избранное
 ///
 /// Copied from [FavoritePrograms].
 class FavoriteProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// ИЗБРАННОЕ
+  /// Избранное
   ///
   /// Copied from [FavoritePrograms].
   const FavoriteProgramsFamily();
 
-  /// ИЗБРАННОЕ
+  /// Избранное
   ///
   /// Copied from [FavoritePrograms].
   FavoriteProgramsProvider call(int userId) {
@@ -798,7 +798,7 @@ class FavoriteProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
   String? get name => r'favoriteProgramsProvider';
 }
 
-/// ИЗБРАННОЕ
+/// Избранное
 ///
 /// Copied from [FavoritePrograms].
 class FavoriteProgramsProvider
@@ -807,7 +807,7 @@ class FavoriteProgramsProvider
           FavoritePrograms,
           List<WorkoutProgram>
         > {
-  /// ИЗБРАННОЕ
+  /// Избранное
   ///
   /// Copied from [FavoritePrograms].
   FavoriteProgramsProvider(int userId)

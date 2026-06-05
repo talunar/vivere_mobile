@@ -18,10 +18,16 @@ class ProfileNotifier extends _$ProfileNotifier {
   Future<void> saveProfile(UserProfile updatedProfile) async {
     state = const AsyncLoading<UserProfile>().copyWithPrevious(state);
 
-    state = await AsyncValue.guard(() async {
+    final result = await AsyncValue.guard(() async {
       final repository = ref.read(profileRepositoryProvider);
       return await repository.updateProfile(updatedProfile);
     });
+
+    state = result;
+
+    if (result.hasError) {
+      throw result.error!;
+    }
   }
 
   /// Удаления аккаунта

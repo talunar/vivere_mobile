@@ -14,6 +14,52 @@ import '../../domain/entities/user_profile.dart';
 class ProfileSettingsScreen extends ConsumerWidget {
   const ProfileSettingsScreen({super.key});
 
+  void _showLogoutConfirmationDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width - 48,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Выход", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                const Text("Вы уверены, что хотите выйти из приложения?"),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        ref.read(authControllerProvider.notifier).logout();
+                      },
+                      child: const Text(
+                        "Выйти",
+                        style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
@@ -23,7 +69,6 @@ class ProfileSettingsScreen extends ConsumerWidget {
     return authState.maybeWhen(
       authenticated: (user) {
         final profileAsync = ref.watch(profileNotifierProvider(user.id));
-        const bool hasNotifications = false;
 
         return Scaffold(
           backgroundColor: const Color(0xFFF6F6F6),
@@ -50,14 +95,13 @@ class ProfileSettingsScreen extends ConsumerWidget {
                         colors: [
                           const Color(0xFFF6F6F6),
                           const Color(0xFFF6F6F6),
-                          const Color(0xFFF6F6F6),
                           const Color(0xFFF6F6F6).withOpacity(0.98),
                           const Color(0xFFF6F6F6).withOpacity(0.78),
                           const Color(0xFFF6F6F6).withOpacity(0.45),
                           const Color(0xFFF6F6F6).withOpacity(0.16),
                           const Color(0xFFF6F6F6).withOpacity(0.0),
                         ],
-                        stops: const [0.0, 0.4, 0.65, 0.72, 0.80, 0.88, 0.95, 1.0],
+                        stops: const [0.0, 0.4, 0.65, 0.72, 0.80, 0.88, 0.95],
                       ),
                     ),
                   ),
@@ -104,7 +148,23 @@ class ProfileSettingsScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 44),
+                            GestureDetector(
+                              onTap: () => _showLogoutConfirmationDialog(context, ref),
+                              child: Container(
+                                width: 44,
+                                height: 44,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFE2E2E2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/icons/next.svg',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -179,31 +239,50 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
   void _showDeleteConfirmationDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text("Удаление аккаунта"),
-        content: const Text("Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя будет отменить."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width - 48,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Удаление", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                const Text("Вы уверены, что хотите удалить аккаунт? Это действие нельзя будет отменить."),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        try {
+                          await ref.read(profileNotifierProvider(widget.profile.id).notifier).deleteAccount();
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
+                            );
+                          }
+                        }
+                      },
+                      child: const Text("Удалить", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                await ref.read(profileNotifierProvider(widget.profile.id).notifier).deleteAccount();
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Ошибка при удалении: $e'), backgroundColor: Colors.red),
-                  );
-                }
-              }
-            },
-            child: const Text("Удалить", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -221,64 +300,92 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            keyboardType: keyboardType,
-            inputFormatters: inputFormatters,
-            autofocus: true,
-            validator: validator,
-            style: const TextStyle(fontSize: 18),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color(0xFFE2E2E2),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              errorStyle: const TextStyle(color: Color(0xFFFF5900)),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1.5),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(50),
-                borderSide: const BorderSide(color: Color(0xFFFF5900), width: 2),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width - 48,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: controller,
+                    keyboardType: keyboardType,
+                    inputFormatters: inputFormatters,
+                    autofocus: true,
+                    validator: validator,
+                    style: const TextStyle(fontSize: 18),
+                    decoration: InputDecoration(
+                      hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                      filled: true,
+                      fillColor: const Color(0xFFE2E2E2),
+                      constraints: const BoxConstraints(minHeight: 50, maxHeight: 75),
+                      errorStyle: const TextStyle(color: Color(0xFFFF5900)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            onConfirm(controller.text);
+                            Navigator.pop(context);
+                            setState(() {});
+                          }
+                        },
+                        child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                onConfirm(controller.text);
-                Navigator.pop(context);
-                setState(() {});
-              }
-            },
-            child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
-          ),
-        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final profileState = ref.watch(profileNotifierProvider(widget.profile.id));
+    final isLoading = profileState.isLoading;
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(24, widget.headerHeight + 24, 24, 60),
       child: Column(
@@ -348,7 +455,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               title: "Изменить вес",
               initialValue: _editedProfile.weight.value.toInt().toString(),
               keyboardType: TextInputType.number,
-              validator: (val) => AppValidators.number(val, min: 30, max: 300),
+              validator: (val) => AppValidators.number(val, min: 30, max: 255),
               onConfirm: (val) {
                 final normalized = val.replaceAll(',', '.');
                 final weightVal = double.tryParse(normalized) ?? _editedProfile.weight.value;
@@ -418,13 +525,14 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
           ),
           _InfoBlock(label: "Пароль", value: "**********"),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
           Column(
             children: [
               AppButton(
                 text: 'Сохранить',
-                onPressed: () async {
+                isLoading: isLoading,
+                onPressed: isLoading ? null : () async {
                   try {
                     await ref.read(profileNotifierProvider(_editedProfile.id).notifier).saveProfile(_editedProfile);
                     if (mounted) {
@@ -438,7 +546,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                        SnackBar(content: Text('Ошибка: ${e.toString()}'), backgroundColor: Colors.red),
                       );
                     }
                   }
@@ -446,10 +554,12 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                 variant: AppButtonVariant.primary,
               ),
               const SizedBox(height: 12),
-              AppButton(
-                text: 'Удалить профиль',
-                onPressed: _showDeleteConfirmationDialog,
-                variant: AppButtonVariant.secondary,
+              TextButton(
+                onPressed: isLoading ? null : _showDeleteConfirmationDialog,
+                child: const Text(
+                  'Удалить профиль',
+                  style: TextStyle(color: Colors.redAccent, fontSize: 16),
+                ),
               ),
             ],
           ),

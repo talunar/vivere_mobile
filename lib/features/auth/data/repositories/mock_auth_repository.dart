@@ -8,6 +8,7 @@ class MockAuthRepository extends AuthRepository {
 
   @override
   Future<AuthUser> signIn(String nickName, String password) async {
+    await Future.delayed(const Duration(milliseconds: 500));
     return const AuthUser(
       id: UserId(1),
       email: 'mock@vivere.app',
@@ -17,12 +18,30 @@ class MockAuthRepository extends AuthRepository {
   }
 
   @override
-  Future<AuthUser> signUp(String nickName, String password, String email) async {
+  Future<void> signUp({
+    required String nickName,
+    required String password,
+    required String confirmPassword,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  @override
+  Future<AuthUser> createProfile({
+    required String nickName,
+    required String email,
+    required String firstName,
+    required String lastName,
+    required int age,
+    required int weight,
+    required int height,
+    required String birthDate,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 500));
     return AuthUser(
       id: const UserId(1),
       email: email,
       nickName: nickName,
-      token: 'fake_token',
     );
   }
 

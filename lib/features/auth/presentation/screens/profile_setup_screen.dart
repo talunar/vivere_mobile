@@ -61,8 +61,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
       ref.read(authControllerProvider.notifier).completeRegistration(
         age: _calculateAge(dobController.text),
-        weight: weightDouble.round(), // Округляем до ближайшего целого
-        height: heightDouble.round(), // Округляем до ближайшего целого
+        weight: weightDouble.round(),
+        height: heightDouble.round(),
+        birthDate: dobController.text,
+        gender: selectedGender,
       );
     }
   }

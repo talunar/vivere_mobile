@@ -23,20 +23,20 @@ final authRepositoryProvider = Provider<AuthRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthRepositoryRef = ProviderRef<AuthRepository>;
-String _$authControllerHash() => r'01e6d24e6eeebdef13d6a204f3d0afcacddbfdd2';
+String _$authControllerHash() => r'41e26e5d51598a727162c1e43092e57015d86db7';
 
 /// See also [AuthController].
 @ProviderFor(AuthController)
 final authControllerProvider =
-NotifierProvider<AuthController, AuthState>.internal(
-  AuthController.new,
-  name: r'authControllerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$authControllerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+    NotifierProvider<AuthController, AuthState>.internal(
+      AuthController.new,
+      name: r'authControllerProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$authControllerHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$AuthController = Notifier<AuthState>;
 // ignore_for_file: type=lint

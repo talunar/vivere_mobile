@@ -1,8 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vivere_mobile/core/network/dio_provider.dart';
 import 'package:vivere_mobile/features/workout/data/repositories/user_exercises_repository_impl.dart';
 import 'package:vivere_mobile/features/workout/data/repositories/mock_workout_repository.dart';
-import 'package:vivere_mobile/features/workout/data/sources/user_exercises_mock_data_source.dart';
+import 'package:vivere_mobile/features/workout/data/sources/user_exercises_remote_data_source.dart';
 import 'package:vivere_mobile/features/workout/domain/entities/workout_category.dart';
 import 'package:vivere_mobile/features/workout/domain/entities/workout_program.dart';
 import 'package:vivere_mobile/features/workout/domain/repositories/i_workout_repository.dart';
@@ -19,7 +20,8 @@ IWorkoutRepository workoutRepository(WorkoutRepositoryRef ref) {
 
 @riverpod
 IUserExercisesRepository userExercisesRepository(UserExercisesRepositoryRef ref) {
-  return UserExercisesRepositoryImpl(UserExercisesMockDataSource());
+  final dio = ref.watch(dioProvider);
+  return UserExercisesRepositoryImpl(UserExercisesRemoteDataSource(dio));
 }
 
 /// ПАГИНАЦИЯ КАТЕГОРИЙ
@@ -71,6 +73,42 @@ Future<List<WorkoutProgram>> programsByCategory(ProgramsByCategoryRef ref, int c
 @riverpod
 Future<WorkoutProgram> workoutProgramDetails(WorkoutProgramDetailsRef ref, int id) {
   return ref.watch(workoutRepositoryProvider).getProgramDetails(id);
+}
+
+/// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+@riverpod
+class PaginatedProgramsByCategory extends _$PaginatedProgramsByCategory {
+  int _offset = 0;
+  final int _limit = 10;
+  bool _hasReachedMax = false;
+
+  @override
+  Future<List<WorkoutProgram>> build(int categoryId) async {
+    return _fetch(categoryId);
+  }
+
+  Future<List<WorkoutProgram>> _fetch(int id) async {
+    final repo = ref.read(workoutRepositoryProvider);
+    return repo.getProgramsByCategory(id, limit: _limit, offset: _offset);
+  }
+
+  Future<void> fetchNextPage() async {
+    if (_hasReachedMax || state.isLoading) return;
+
+    final previousState = state.value ?? [];
+    state = const AsyncLoading<List<WorkoutProgram>>().copyWithPrevious(state);
+
+    _offset += _limit;
+
+    state = await AsyncValue.guard(() async {
+      final newItems = await _fetch(categoryId);
+      if (newItems.isEmpty) {
+        _hasReachedMax = true;
+        return previousState;
+      }
+      return [...previousState, ...newItems];
+    });
+  }
 }
 
 /// Текущие программы (Планы)

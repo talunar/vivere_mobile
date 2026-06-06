@@ -11,7 +11,31 @@ part 'auth_provider.g.dart';
 class AuthController extends _$AuthController {
   @override
   AuthState build() {
-    return const AuthState.unauthenticated();
+    _restoreSession();
+    return const AuthState.initial();
+  }
+
+  Future<void> _restoreSession() async {
+    state = const AuthState.loading();
+    
+    try {
+      final jar = await ref.read(cookieJarProvider.future);
+      final uri = Uri.parse('http://localhost:8080');
+      final cookies = await jar.loadForRequest(uri);
+      final hasSession = cookies.any((c) => c.name == 'Authorization-XXX');
+
+      if (hasSession) {
+        state = AuthState.authenticated(AuthUser(
+          id: const UserId(1),
+          email: 'user@vivere.app',
+          nickName: 'User',
+        ));
+      } else {
+        state = const AuthState.unauthenticated();
+      }
+    } catch (e) {
+      state = const AuthState.unauthenticated();
+    }
   }
 
   /// Вход
@@ -70,19 +94,23 @@ class AuthController extends _$AuthController {
           'birth_date': birthDate,
           'gender': gender?.name,
         };
-        print('Финальные данные для бэкенда: $registrationData');
+        print('Данные для отправки на бэкенд (/create-user): $registrationData');
       },
       orElse: () {},
     );
 
     await Future.delayed(const Duration(milliseconds: 800));
+
     state = AuthState.authenticated(AuthUser(
       id: UserId(1),
       email: currentState is RegistrationStepPhysical ? currentState.email : 'user@vivere.app',
       nickName: currentState is RegistrationStepPhysical ? currentState.nickName : 'User',
     ));
   }
+
   Future<void> logout() async {
+    final jar = await ref.read(cookieJarProvider.future);
+    await jar.deleteAll();
     state = const AuthState.unauthenticated();
   }
 }

@@ -590,6 +590,168 @@ final paginatedWorkoutCategoriesProvider =
 
 typedef _$PaginatedWorkoutCategories =
     AutoDisposeAsyncNotifier<List<WorkoutCategory>>;
+String _$paginatedProgramsByCategoryHash() =>
+    r'ead212292ccfca143df5ee828b55144b1067c1d6';
+
+abstract class _$PaginatedProgramsByCategory
+    extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {
+  late final int categoryId;
+
+  FutureOr<List<WorkoutProgram>> build(int categoryId);
+}
+
+/// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+///
+/// Copied from [PaginatedProgramsByCategory].
+@ProviderFor(PaginatedProgramsByCategory)
+const paginatedProgramsByCategoryProvider = PaginatedProgramsByCategoryFamily();
+
+/// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+///
+/// Copied from [PaginatedProgramsByCategory].
+class PaginatedProgramsByCategoryFamily
+    extends Family<AsyncValue<List<WorkoutProgram>>> {
+  /// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+  ///
+  /// Copied from [PaginatedProgramsByCategory].
+  const PaginatedProgramsByCategoryFamily();
+
+  /// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+  ///
+  /// Copied from [PaginatedProgramsByCategory].
+  PaginatedProgramsByCategoryProvider call(int categoryId) {
+    return PaginatedProgramsByCategoryProvider(categoryId);
+  }
+
+  @override
+  PaginatedProgramsByCategoryProvider getProviderOverride(
+    covariant PaginatedProgramsByCategoryProvider provider,
+  ) {
+    return call(provider.categoryId);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'paginatedProgramsByCategoryProvider';
+}
+
+/// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+///
+/// Copied from [PaginatedProgramsByCategory].
+class PaginatedProgramsByCategoryProvider
+    extends
+        AutoDisposeAsyncNotifierProviderImpl<
+          PaginatedProgramsByCategory,
+          List<WorkoutProgram>
+        > {
+  /// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+  ///
+  /// Copied from [PaginatedProgramsByCategory].
+  PaginatedProgramsByCategoryProvider(int categoryId)
+    : this._internal(
+        () => PaginatedProgramsByCategory()..categoryId = categoryId,
+        from: paginatedProgramsByCategoryProvider,
+        name: r'paginatedProgramsByCategoryProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$paginatedProgramsByCategoryHash,
+        dependencies: PaginatedProgramsByCategoryFamily._dependencies,
+        allTransitiveDependencies:
+            PaginatedProgramsByCategoryFamily._allTransitiveDependencies,
+        categoryId: categoryId,
+      );
+
+  PaginatedProgramsByCategoryProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.categoryId,
+  }) : super.internal();
+
+  final int categoryId;
+
+  @override
+  FutureOr<List<WorkoutProgram>> runNotifierBuild(
+    covariant PaginatedProgramsByCategory notifier,
+  ) {
+    return notifier.build(categoryId);
+  }
+
+  @override
+  Override overrideWith(PaginatedProgramsByCategory Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: PaginatedProgramsByCategoryProvider._internal(
+        () => create()..categoryId = categoryId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        categoryId: categoryId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeAsyncNotifierProviderElement<
+    PaginatedProgramsByCategory,
+    List<WorkoutProgram>
+  >
+  createElement() {
+    return _PaginatedProgramsByCategoryProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is PaginatedProgramsByCategoryProvider &&
+        other.categoryId == categoryId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, categoryId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin PaginatedProgramsByCategoryRef
+    on AutoDisposeAsyncNotifierProviderRef<List<WorkoutProgram>> {
+  /// The parameter `categoryId` of this provider.
+  int get categoryId;
+}
+
+class _PaginatedProgramsByCategoryProviderElement
+    extends
+        AutoDisposeAsyncNotifierProviderElement<
+          PaginatedProgramsByCategory,
+          List<WorkoutProgram>
+        >
+    with PaginatedProgramsByCategoryRef {
+  _PaginatedProgramsByCategoryProviderElement(super.provider);
+
+  @override
+  int get categoryId =>
+      (origin as PaginatedProgramsByCategoryProvider).categoryId;
+}
+
 String _$plannedProgramsHash() => r'7238ea0e079ed9ee3802c8da15f6d98455c50e35';
 
 abstract class _$PlannedPrograms

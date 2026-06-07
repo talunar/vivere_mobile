@@ -1,6 +1,7 @@
 import '../models/profile_dto.dart';
+import 'i_profile_data_source.dart';
 
-class ProfileMockDataSource {
+class ProfileMockDataSource implements IProfileDataSource {
   Future<void> _delay() => Future.delayed(const Duration(milliseconds: 600));
 
   final ProfileDto _mockProfile = const ProfileDto(
@@ -15,21 +16,25 @@ class ProfileMockDataSource {
     birthDate: '1996-02-29',
   );
 
+  @override
   Future<ProfileDto> getProfile(int id) async {
     await _delay();
     return _mockProfile.copyWith(id: id);
   }
 
-  Future<int> createProfile(ProfileDto data) async {
+  @override
+  Future<int> createProfile(ProfileDto profile) async {
     await _delay();
     return 123;
   }
 
-  Future<ProfileDto> updateProfile(ProfileDto data) async {
+  @override
+  Future<ProfileDto> updateProfile(ProfileDto profile) async {
     await _delay();
-    return data;
+    return profile;
   }
 
+  @override
   Future<bool> deleteProfile(int id) async {
     await _delay();
     return true;

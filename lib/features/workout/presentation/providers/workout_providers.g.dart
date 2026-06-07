@@ -24,8 +24,28 @@ final workoutRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef WorkoutRepositoryRef = AutoDisposeProviderRef<IWorkoutRepository>;
+String _$userExercisesDataSourceHash() =>
+    r'6c261daafce39ca23653958cfd2e1392a66ddecf';
+
+/// See also [userExercisesDataSource].
+@ProviderFor(userExercisesDataSource)
+final userExercisesDataSourceProvider =
+    AutoDisposeProvider<IUserExercisesDataSource>.internal(
+      userExercisesDataSource,
+      name: r'userExercisesDataSourceProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$userExercisesDataSourceHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UserExercisesDataSourceRef =
+    AutoDisposeProviderRef<IUserExercisesDataSource>;
 String _$userExercisesRepositoryHash() =>
-    r'8452265dce628fe8e941fff2ea145194800a1f02';
+    r'cf2d6c25da37e6a2d4e1dfd6ec6e68d1769569d3';
 
 /// See also [userExercisesRepository].
 @ProviderFor(userExercisesRepository)
@@ -591,7 +611,7 @@ final paginatedWorkoutCategoriesProvider =
 typedef _$PaginatedWorkoutCategories =
     AutoDisposeAsyncNotifier<List<WorkoutCategory>>;
 String _$paginatedProgramsByCategoryHash() =>
-    r'ead212292ccfca143df5ee828b55144b1067c1d6';
+    r'b1fa39d8acf99b99eeb51febd20148c7571a67a2';
 
 abstract class _$PaginatedProgramsByCategory
     extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {

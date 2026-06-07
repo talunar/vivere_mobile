@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vivere_mobile/core/network/dio_provider.dart';
 import 'package:vivere_mobile/features/workout/data/repositories/user_exercises_repository_impl.dart';
 import 'package:vivere_mobile/features/workout/data/repositories/mock_workout_repository.dart';
+import 'package:vivere_mobile/features/workout/data/sources/i_user_exercises_data_source.dart';
+import 'package:vivere_mobile/features/workout/data/sources/user_exercises_mock_data_source.dart';
 import 'package:vivere_mobile/features/workout/data/sources/user_exercises_remote_data_source.dart';
 import 'package:vivere_mobile/features/workout/domain/entities/workout_category.dart';
 import 'package:vivere_mobile/features/workout/domain/entities/workout_program.dart';
@@ -13,18 +15,30 @@ part 'workout_providers.g.dart';
 
 final expandedCategoryProvider = StateProvider<int?>((ref) => null);
 
+// Сменить на true после подключения
+const bool _useRemoteDataSource = false;
+
 @riverpod
 IWorkoutRepository workoutRepository(WorkoutRepositoryRef ref) {
   return MockWorkoutRepository();
 }
 
 @riverpod
-IUserExercisesRepository userExercisesRepository(UserExercisesRepositoryRef ref) {
-  final dio = ref.watch(dioProvider);
-  return UserExercisesRepositoryImpl(UserExercisesRemoteDataSource(dio));
+IUserExercisesDataSource userExercisesDataSource(UserExercisesDataSourceRef ref) {
+  if (_useRemoteDataSource) {
+    final dio = ref.watch(dioProvider);
+    return UserExercisesRemoteDataSource(dio);
+  }
+  return UserExercisesMockDataSource();
 }
 
-/// ПАГИНАЦИЯ КАТЕГОРИЙ
+@riverpod
+IUserExercisesRepository userExercisesRepository(UserExercisesRepositoryRef ref) {
+  final dataSource = ref.watch(userExercisesDataSourceProvider);
+  return UserExercisesRepositoryImpl(dataSource);
+}
+
+/// Пагинация категорий
 @riverpod
 class PaginatedWorkoutCategories extends _$PaginatedWorkoutCategories {
   int _offset = 0;
@@ -75,7 +89,7 @@ Future<WorkoutProgram> workoutProgramDetails(WorkoutProgramDetailsRef ref, int i
   return ref.watch(workoutRepositoryProvider).getProgramDetails(id);
 }
 
-/// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+/// Пагинация программ
 @riverpod
 class PaginatedProgramsByCategory extends _$PaginatedProgramsByCategory {
   int _offset = 0;
@@ -185,7 +199,7 @@ class FavoritePrograms extends _$FavoritePrograms {
   }
 }
 
-/// Мои тренировки (Планы + Избранное)
+/// Мои тренировки
 @riverpod
 Future<List<WorkoutProgram>> allUserPrograms(AllUserProgramsRef ref, int userId) async {
   final planned = ref.watch(plannedProgramsProvider(userId)).value ?? [];

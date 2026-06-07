@@ -1,12 +1,12 @@
 import '../../domain/entities/workout_program.dart';
 import '../../domain/repositories/i_user_exercises_repository.dart';
-import '../sources/user_exercises_remote_data_source.dart'; // Поменяли импорт
+import '../sources/i_user_exercises_data_source.dart';
 import '../mappers/workout_mapper.dart';
 import '../models/workout_dto.dart';
 import '../mappers/repeated_mapper.dart';
 
 class UserExercisesRepositoryImpl implements IUserExercisesRepository {
-  final UserExercisesRemoteDataSource _dataSource; // Поменяли тип
+  final IUserExercisesDataSource _dataSource;
 
   UserExercisesRepositoryImpl(this._dataSource);
 

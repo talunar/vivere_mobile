@@ -2,10 +2,10 @@ import '../../../../core/domain/entities/user_id.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/i_profile_repository.dart';
 import '../models/profile_dto.dart';
-import '../sources/profile_mock_data_source.dart';
+import '../sources/i_profile_data_source.dart'; // Используем интерфейс
 
 class ProfileRepositoryImpl implements IProfileRepository {
-  final ProfileMockDataSource _dataSource;
+  final IProfileDataSource _dataSource;
 
   ProfileRepositoryImpl(this._dataSource);
 

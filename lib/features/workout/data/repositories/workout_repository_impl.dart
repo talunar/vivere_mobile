@@ -1,40 +1,24 @@
-import 'package:dio/dio.dart';
 import '../../domain/repositories/i_workout_repository.dart';
 import '../../domain/entities/workout_category.dart';
 import '../../domain/entities/workout_program.dart';
-import '../models/workout_dto.dart';
+import '../sources/i_workout_data_source.dart';
 import '../mappers/workout_mapper.dart';
 
 class WorkoutRepositoryImpl implements IWorkoutRepository {
-  final Dio _dio;
+  final IWorkoutDataSource _dataSource;
 
-  WorkoutRepositoryImpl(this._dio);
+  WorkoutRepositoryImpl(this._dataSource);
 
   @override
   Future<List<WorkoutCategory>> getCategories({int limit = 10, int offset = 0}) async {
-    try {
-      final response = await _dio.get('/categories', queryParameters: {
-        'limit': limit,
-        'offset': offset,
-      });
-      final List<dynamic> data = response.data;
-      return data
-          .map((json) => CategoryDto.fromJson(json).toDomain())
-          .toList();
-    } catch (e) {
-      throw Exception('Ошибка при получении категорий: $e');
-    }
+    final dtos = await _dataSource.getCategories(limit: limit, offset: offset);
+    return dtos.map((dto) => dto.toDomain()).toList();
   }
 
   @override
   Future<WorkoutCategory> getCategory(int id) async {
-    try {
-      final response = await _dio.get('/categories/$id');
-      final dto = CategoryDto.fromJson(response.data);
-      return dto.toDomain();
-    } catch (e) {
-      throw Exception('Не удалось загрузить категорию: $e');
-    }
+    final dto = await _dataSource.getCategory(id);
+    return dto.toDomain();
   }
 
   @override
@@ -43,28 +27,13 @@ class WorkoutRepositoryImpl implements IWorkoutRepository {
     int limit = 10,
     int offset = 0,
   }) async {
-    try {
-      final response = await _dio.get('/categories/$categoryId/programs', queryParameters: {
-        'limit': limit,
-        'offset': offset,
-      });
-      final List<dynamic> data = response.data;
-      return data
-          .map((json) => ProgramDto.fromJson(json).toDomain())
-          .toList();
-    } catch (e) {
-      throw Exception('Ошибка при получении программ категории: $e');
-    }
+    final dto = await _dataSource.getCategory(categoryId);
+    return dto.programs?.map((p) => p.toDomain()).toList() ?? [];
   }
 
   @override
   Future<WorkoutProgram> getProgramDetails(int programId) async {
-    try {
-      final response = await _dio.get('/programs/$programId');
-      final dto = ProgramDto.fromJson(response.data);
-      return dto.toDomain();
-    } catch (e) {
-      throw Exception('Не удалось загрузить детали программы: $e');
-    }
+    final dto = await _dataSource.getWorkout(programId);
+    return dto.toDomain();
   }
 }

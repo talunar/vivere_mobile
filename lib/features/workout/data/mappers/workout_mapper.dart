@@ -4,7 +4,7 @@ import '../models/workout_dto.dart';
 import 'repeated_mapper.dart';
 
 extension CategoryDtoX on CategoryDto {
-  /// Маппинг категории и 5 программ
+  /// Маппинг категории и программ
   WorkoutCategory toDomain() {
     return WorkoutCategory(
       id: id,
@@ -17,15 +17,27 @@ extension CategoryDtoX on CategoryDto {
 }
 
 extension ProgramDtoX on ProgramDto {
-  /// Маппинг экрана всех программ и программы тренировки
+  /// Маппинг программы. Собирает все упражнения из вложенных воркаутов в один плоский список.
   WorkoutProgram toDomain() {
+    final allExercises = <ExerciserInProgram>[];
+    
+    if (workouts != null) {
+      for (var workout in workouts!) {
+        if (workout.exercises != null) {
+          allExercises.addAll(
+            workout.exercises!.map((e) => e.toInProgramEntity()),
+          );
+        }
+      }
+    }
+
     return WorkoutProgram(
       id: id,
-      title: name, // Мапим name из Go в title во Flutter
+      title: name,
       description: description,
       rating: null,
       trainerName: null,
-      exercises: exercises?.map((e) => e.toInProgramEntity()).toList() ?? [],
+      exercises: allExercises,
     );
   }
 }

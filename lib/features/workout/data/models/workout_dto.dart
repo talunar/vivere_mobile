@@ -30,13 +30,26 @@ class ExerciserDto with _$ExerciserDto {
 }
 
 @freezed
+class WorkoutDto with _$WorkoutDto {
+  @JsonSerializable(explicitToJson: true)
+  const factory WorkoutDto({
+    required int id,
+    required String name,
+    required String description,
+    @JsonKey(name: 'exercises') List<ExerciserDto>? exercises,
+  }) = _WorkoutDto;
+
+  factory WorkoutDto.fromJson(Map<String, dynamic> json) => _$WorkoutDtoFromJson(json);
+}
+
+@freezed
 class ProgramDto with _$ProgramDto {
   @JsonSerializable(explicitToJson: true)
   const factory ProgramDto({
     required int id,
     required String name,
     required String description,
-    List<ExerciserDto>? exercises,
+    @JsonKey(name: 'workouts') List<WorkoutDto>? workouts,
   }) = _ProgramDto;
 
   factory ProgramDto.fromJson(Map<String, dynamic> json) => _$ProgramDtoFromJson(json);
@@ -49,7 +62,7 @@ class CategoryDto with _$CategoryDto {
     required int id,
     required String name,
     required String image,
-    List<ProgramDto>? programs,
+    @JsonKey(name: 'exercises') List<ProgramDto>? programs,
   }) = _CategoryDto;
 
   factory CategoryDto.fromJson(Map<String, dynamic> json) => _$CategoryDtoFromJson(json);

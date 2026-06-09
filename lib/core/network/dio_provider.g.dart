@@ -23,7 +23,7 @@ final cookieJarProvider = FutureProvider<CookieJar>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CookieJarRef = FutureProviderRef<CookieJar>;
-String _$dioHash() => r'9ae183c605a4284186c95eb57e279b33b44c2231';
+String _$dioHash() => r'46da454fe2c5d5aa502abf3c459a44f96b305c9c';
 
 /// See also [dio].
 @ProviderFor(dio)

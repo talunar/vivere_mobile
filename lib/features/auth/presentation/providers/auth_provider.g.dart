@@ -6,11 +6,28 @@ part of 'auth_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authRepositoryHash() => r'13b01e711385a0a2dc6d90a4d410ed5a2bc2e863';
+String _$authDataSourceHash() => r'2a1ee7bbda92532aaa30c8810e94ebebadc86f17';
+
+/// See also [authDataSource].
+@ProviderFor(authDataSource)
+final authDataSourceProvider = Provider<IAuthDataSource>.internal(
+  authDataSource,
+  name: r'authDataSourceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$authDataSourceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AuthDataSourceRef = ProviderRef<IAuthDataSource>;
+String _$authRepositoryHash() => r'b73027d4ed90ffa1ba04235904e5819df9e0ccaf';
 
 /// See also [authRepository].
 @ProviderFor(authRepository)
-final authRepositoryProvider = Provider<AuthRepository>.internal(
+final authRepositoryProvider = Provider<IAuthRepository>.internal(
   authRepository,
   name: r'authRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,8 +39,8 @@ final authRepositoryProvider = Provider<AuthRepository>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AuthRepositoryRef = ProviderRef<AuthRepository>;
-String _$authControllerHash() => r'41e26e5d51598a727162c1e43092e57015d86db7';
+typedef AuthRepositoryRef = ProviderRef<IAuthRepository>;
+String _$authControllerHash() => r'cc4a3c568d2a215b4fad0f20322b438cb27f5c8a';
 
 /// See also [AuthController].
 @ProviderFor(AuthController)

@@ -1,11 +1,33 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../state/auth_state.dart';
-import '../../data/repositories/auth_repository.dart';
+import '../../data/repositories/auth_repository_impl.dart';
+import '../../data/sources/i_auth_data_source.dart';
+import '../../data/sources/auth_mock_data_source.dart';
+import '../../data/sources/auth_remote_data_source.dart';
+import '../../domain/repositories/i_auth_repository.dart';
 import '../../domain/entities/auth_user.dart';
 import '../../../../core/domain/entities/user_id.dart';
 import 'package:vivere_mobile/core/network/dio_provider.dart';
+import 'package:vivere_mobile/core/network/network_config.dart';
 
 part 'auth_provider.g.dart';
+
+const bool _useRemoteDataSource = false;
+
+@Riverpod(keepAlive: true)
+IAuthDataSource authDataSource(AuthDataSourceRef ref) {
+  if (_useRemoteDataSource) {
+    final dio = ref.watch(dioProvider);
+    return AuthRemoteDataSource(dio);
+  }
+  return AuthMockDataSource();
+}
+
+@Riverpod(keepAlive: true)
+IAuthRepository authRepository(AuthRepositoryRef ref) {
+  final dataSource = ref.watch(authDataSourceProvider);
+  return AuthRepositoryImpl(dataSource);
+}
 
 @Riverpod(keepAlive: true)
 class AuthController extends _$AuthController {
@@ -20,7 +42,7 @@ class AuthController extends _$AuthController {
     
     try {
       final jar = await ref.read(cookieJarProvider.future);
-      final uri = Uri.parse('http://localhost:8080');
+      final uri = Uri.parse(NetworkConfig.baseUrl);
       final cookies = await jar.loadForRequest(uri);
       final hasSession = cookies.any((c) => c.name == 'Authorization-XXX');
 
@@ -41,14 +63,14 @@ class AuthController extends _$AuthController {
   /// Вход
   Future<void> continueToNextStep(String nick, String pass) async {
     state = const AuthState.loading();
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    // ВРЕМЕННО: вход сразу минуя регистрацию
-    state = AuthState.authenticated(AuthUser(
-      id: UserId(1),
-      email: '${nick.isEmpty ? "user" : nick}@vivere.app',
-      nickName: nick.isEmpty ? "TestUser" : nick,
-    ));
+    
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      final user = await repository.signIn(nick, pass);
+      state = AuthState.authenticated(user);
+    } catch (e) {
+      state = const AuthState.unauthenticated();
+    }
   }
 
   void submitNameAndEmail({
@@ -80,43 +102,47 @@ class AuthController extends _$AuthController {
     final currentState = state;
     state = const AuthState.loading();
 
-    currentState.maybeMap(
-      registrationStepPhysical: (step) {
-        final registrationData = {
-          'nick_name': step.nickName,
-          'email': step.email,
-          'first_name': step.firstName,
-          'last_name': step.lastName,
-          'password': step.password,
-          'age': age,
-          'weight': weight,
-          'height': height,
-          'birth_date': birthDate,
-          'gender': gender?.name,
-        };
-        print('Данные для отправки на бэкенд (/create-user): $registrationData');
-      },
-      orElse: () {},
-    );
+    try {
+      await currentState.maybeMap(
+        registrationStepPhysical: (step) async {
+          final repository = ref.read(authRepositoryProvider);
+          
+          await repository.signUp(
+            nickName: step.nickName,
+            password: step.password,
+            confirmPassword: step.password,
+          );
 
-    await Future.delayed(const Duration(milliseconds: 800));
+          final user = await repository.createProfile(
+            nickName: step.nickName,
+            email: step.email,
+            firstName: step.firstName,
+            lastName: step.lastName,
+            age: age,
+            weight: weight,
+            height: height,
+            birthDate: birthDate,
+          );
 
-    state = AuthState.authenticated(AuthUser(
-      id: UserId(1),
-      email: currentState is RegistrationStepPhysical ? currentState.email : 'user@vivere.app',
-      nickName: currentState is RegistrationStepPhysical ? currentState.nickName : 'User',
-    ));
+          state = AuthState.authenticated(user);
+        },
+        orElse: () async {
+          state = const AuthState.unauthenticated();
+        },
+      );
+    } catch (e) {
+      state = const AuthState.unauthenticated();
+    }
   }
 
   Future<void> logout() async {
-    final jar = await ref.read(cookieJarProvider.future);
-    await jar.deleteAll();
-    state = const AuthState.unauthenticated();
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      await repository.signOut();
+      final jar = await ref.read(cookieJarProvider.future);
+      await jar.deleteAll();
+    } finally {
+      state = const AuthState.unauthenticated();
+    }
   }
-}
-
-@Riverpod(keepAlive: true)
-AuthRepository authRepository(AuthRepositoryRef ref) {
-  final dio = ref.watch(dioProvider);
-  return AuthRepository(dio);
 }

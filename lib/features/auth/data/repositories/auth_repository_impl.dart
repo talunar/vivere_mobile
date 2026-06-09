@@ -1,35 +1,26 @@
-import 'package:dio/dio.dart';
 import '../../../../core/domain/entities/user_id.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../../domain/entities/auth_user.dart';
+import '../models/auth_dto.dart';
+import '../sources/i_auth_data_source.dart';
 
 class AuthRepositoryImpl implements IAuthRepository {
-  final Dio _dio;
+  final IAuthDataSource _dataSource;
 
-  AuthRepositoryImpl(this._dio);
+  AuthRepositoryImpl(this._dataSource);
 
   @override
   Future<AuthUser> signIn(String nickName, String password) async {
-    try {
-      final response = await _dio.post('/login', data: {
-        'nick_name': nickName,
-        'password': password,
-      });
+    final result = await _dataSource.login(nickName, password);
 
-      if (response.data['auth'] == 'ok') {
-        return AuthUser(
-          id: const UserId(0),
-          email: '',
-          nickName: nickName,
-        );
-      } else {
-        throw Exception(response.data['auth'] ?? 'Ошибка входа');
-      }
-    } on DioException catch (e) {
-      final message = e.response?.data['auth'] ?? 'Ошибка авторизации';
-      throw Exception(message);
-    } catch (e) {
-      throw Exception('Произошла непредвиденная ошибка');
+    if (result == 'ok' || result.isNotEmpty) {
+      return AuthUser(
+        id: const UserId(0),
+        email: '',
+        nickName: nickName,
+      );
+    } else {
+      throw Exception('Ошибка авторизации');
     }
   }
 
@@ -39,21 +30,15 @@ class AuthRepositoryImpl implements IAuthRepository {
     required String password,
     required String confirmPassword,
   }) async {
-    try {
-      final response = await _dio.post('/register', data: {
-        'nick_name': nickName,
-        'password': password,
-        'password2': confirmPassword,
-      });
-
-      if (response.data['register'] != 'ok') {
-        throw Exception(response.data['register'] ?? 'Ошибка регистрации');
-      }
-    } on DioException catch (e) {
-      final message = e.response?.data['register'] ?? 'Ошибка при регистрации';
-      throw Exception(message);
-    } catch (e) {
-      throw Exception('Ошибка при регистрации');
+    final dto = AuthDto(
+      nickName: nickName,
+      password: password,
+      confirmPassword: confirmPassword,
+    );
+    
+    final result = await _dataSource.register(dto);
+    if (result != 'ok') {
+      throw Exception(result);
     }
   }
 
@@ -68,40 +53,28 @@ class AuthRepositoryImpl implements IAuthRepository {
     required int height,
     required String birthDate,
   }) async {
-    try {
-      final response = await _dio.post('/create-user', data: {
-        'nick_name': nickName,
-        'email': email,
-        'first_name': firstName,
-        'last_name': lastName,
-        'age': age,
-        'weight': weight,
-        'height': height,
-        'birth_date': birthDate,
-      });
+    final data = {
+      'nick_name': nickName,
+      'email': email,
+      'first_name': firstName,
+      'last_name': lastName,
+      'age': age,
+      'weight': weight,
+      'height': height,
+      'birth_date': birthDate,
+    };
 
-      final userId = response.data['userId'];
-      if (userId != null) {
-        return AuthUser(
-          id: UserId(userId is int ? userId : int.parse(userId.toString())),
-          email: email,
-          nickName: nickName,
-        );
-      } else {
-        throw Exception('Не удалось получить ID пользователя');
-      }
-    } on DioException catch (e) {
-      final message = e.response?.data['error'] ?? 'Ошибка создания профиля';
-      throw Exception(message);
-    } catch (e) {
-      throw Exception('Ошибка при создании профиля');
-    }
+    final userId = await _dataSource.createProfile(data);
+
+    return AuthUser(
+      id: UserId(userId),
+      email: email,
+      nickName: nickName,
+    );
   }
 
   @override
   Future<void> signOut() async {
-    try {
-      await _dio.get('/logout');
-    } catch (_) {}
+    await _dataSource.logout();
   }
 }

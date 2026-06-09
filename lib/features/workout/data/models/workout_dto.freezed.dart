@@ -487,53 +487,54 @@ abstract class _ExerciserDto implements ExerciserDto {
       throw _privateConstructorUsedError;
 }
 
-ProgramDto _$ProgramDtoFromJson(Map<String, dynamic> json) {
-  return _ProgramDto.fromJson(json);
+WorkoutDto _$WorkoutDtoFromJson(Map<String, dynamic> json) {
+  return _WorkoutDto.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ProgramDto {
+mixin _$WorkoutDto {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'exercises')
   List<ExerciserDto>? get exercises => throw _privateConstructorUsedError;
 
-  /// Serializes this ProgramDto to a JSON map.
+  /// Serializes this WorkoutDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of ProgramDto
+  /// Create a copy of WorkoutDto
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ProgramDtoCopyWith<ProgramDto> get copyWith =>
+  $WorkoutDtoCopyWith<WorkoutDto> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ProgramDtoCopyWith<$Res> {
-  factory $ProgramDtoCopyWith(
-    ProgramDto value,
-    $Res Function(ProgramDto) then,
-  ) = _$ProgramDtoCopyWithImpl<$Res, ProgramDto>;
+abstract class $WorkoutDtoCopyWith<$Res> {
+  factory $WorkoutDtoCopyWith(
+    WorkoutDto value,
+    $Res Function(WorkoutDto) then,
+  ) = _$WorkoutDtoCopyWithImpl<$Res, WorkoutDto>;
   @useResult
   $Res call({
     int id,
     String name,
     String description,
-    List<ExerciserDto>? exercises,
+    @JsonKey(name: 'exercises') List<ExerciserDto>? exercises,
   });
 }
 
 /// @nodoc
-class _$ProgramDtoCopyWithImpl<$Res, $Val extends ProgramDto>
-    implements $ProgramDtoCopyWith<$Res> {
-  _$ProgramDtoCopyWithImpl(this._value, this._then);
+class _$WorkoutDtoCopyWithImpl<$Res, $Val extends WorkoutDto>
+    implements $WorkoutDtoCopyWith<$Res> {
+  _$WorkoutDtoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ProgramDto
+  /// Create a copy of WorkoutDto
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -568,32 +569,32 @@ class _$ProgramDtoCopyWithImpl<$Res, $Val extends ProgramDto>
 }
 
 /// @nodoc
-abstract class _$$ProgramDtoImplCopyWith<$Res>
-    implements $ProgramDtoCopyWith<$Res> {
-  factory _$$ProgramDtoImplCopyWith(
-    _$ProgramDtoImpl value,
-    $Res Function(_$ProgramDtoImpl) then,
-  ) = __$$ProgramDtoImplCopyWithImpl<$Res>;
+abstract class _$$WorkoutDtoImplCopyWith<$Res>
+    implements $WorkoutDtoCopyWith<$Res> {
+  factory _$$WorkoutDtoImplCopyWith(
+    _$WorkoutDtoImpl value,
+    $Res Function(_$WorkoutDtoImpl) then,
+  ) = __$$WorkoutDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({
     int id,
     String name,
     String description,
-    List<ExerciserDto>? exercises,
+    @JsonKey(name: 'exercises') List<ExerciserDto>? exercises,
   });
 }
 
 /// @nodoc
-class __$$ProgramDtoImplCopyWithImpl<$Res>
-    extends _$ProgramDtoCopyWithImpl<$Res, _$ProgramDtoImpl>
-    implements _$$ProgramDtoImplCopyWith<$Res> {
-  __$$ProgramDtoImplCopyWithImpl(
-    _$ProgramDtoImpl _value,
-    $Res Function(_$ProgramDtoImpl) _then,
+class __$$WorkoutDtoImplCopyWithImpl<$Res>
+    extends _$WorkoutDtoCopyWithImpl<$Res, _$WorkoutDtoImpl>
+    implements _$$WorkoutDtoImplCopyWith<$Res> {
+  __$$WorkoutDtoImplCopyWithImpl(
+    _$WorkoutDtoImpl _value,
+    $Res Function(_$WorkoutDtoImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of ProgramDto
+  /// Create a copy of WorkoutDto
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -604,7 +605,7 @@ class __$$ProgramDtoImplCopyWithImpl<$Res>
     Object? exercises = freezed,
   }) {
     return _then(
-      _$ProgramDtoImpl(
+      _$WorkoutDtoImpl(
         id: null == id
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
@@ -629,16 +630,16 @@ class __$$ProgramDtoImplCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true)
-class _$ProgramDtoImpl implements _ProgramDto {
-  const _$ProgramDtoImpl({
+class _$WorkoutDtoImpl implements _WorkoutDto {
+  const _$WorkoutDtoImpl({
     required this.id,
     required this.name,
     required this.description,
-    final List<ExerciserDto>? exercises,
+    @JsonKey(name: 'exercises') final List<ExerciserDto>? exercises,
   }) : _exercises = exercises;
 
-  factory _$ProgramDtoImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ProgramDtoImplFromJson(json);
+  factory _$WorkoutDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WorkoutDtoImplFromJson(json);
 
   @override
   final int id;
@@ -648,6 +649,7 @@ class _$ProgramDtoImpl implements _ProgramDto {
   final String description;
   final List<ExerciserDto>? _exercises;
   @override
+  @JsonKey(name: 'exercises')
   List<ExerciserDto>? get exercises {
     final value = _exercises;
     if (value == null) return null;
@@ -658,14 +660,14 @@ class _$ProgramDtoImpl implements _ProgramDto {
 
   @override
   String toString() {
-    return 'ProgramDto(id: $id, name: $name, description: $description, exercises: $exercises)';
+    return 'WorkoutDto(id: $id, name: $name, description: $description, exercises: $exercises)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ProgramDtoImpl &&
+            other is _$WorkoutDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
@@ -684,6 +686,247 @@ class _$ProgramDtoImpl implements _ProgramDto {
     name,
     description,
     const DeepCollectionEquality().hash(_exercises),
+  );
+
+  /// Create a copy of WorkoutDto
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WorkoutDtoImplCopyWith<_$WorkoutDtoImpl> get copyWith =>
+      __$$WorkoutDtoImplCopyWithImpl<_$WorkoutDtoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WorkoutDtoImplToJson(this);
+  }
+}
+
+abstract class _WorkoutDto implements WorkoutDto {
+  const factory _WorkoutDto({
+    required final int id,
+    required final String name,
+    required final String description,
+    @JsonKey(name: 'exercises') final List<ExerciserDto>? exercises,
+  }) = _$WorkoutDtoImpl;
+
+  factory _WorkoutDto.fromJson(Map<String, dynamic> json) =
+      _$WorkoutDtoImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  String get name;
+  @override
+  String get description;
+  @override
+  @JsonKey(name: 'exercises')
+  List<ExerciserDto>? get exercises;
+
+  /// Create a copy of WorkoutDto
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$WorkoutDtoImplCopyWith<_$WorkoutDtoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ProgramDto _$ProgramDtoFromJson(Map<String, dynamic> json) {
+  return _ProgramDto.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ProgramDto {
+  int get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'workouts')
+  List<WorkoutDto>? get workouts => throw _privateConstructorUsedError;
+
+  /// Serializes this ProgramDto to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ProgramDto
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ProgramDtoCopyWith<ProgramDto> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ProgramDtoCopyWith<$Res> {
+  factory $ProgramDtoCopyWith(
+    ProgramDto value,
+    $Res Function(ProgramDto) then,
+  ) = _$ProgramDtoCopyWithImpl<$Res, ProgramDto>;
+  @useResult
+  $Res call({
+    int id,
+    String name,
+    String description,
+    @JsonKey(name: 'workouts') List<WorkoutDto>? workouts,
+  });
+}
+
+/// @nodoc
+class _$ProgramDtoCopyWithImpl<$Res, $Val extends ProgramDto>
+    implements $ProgramDtoCopyWith<$Res> {
+  _$ProgramDtoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ProgramDto
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? description = null,
+    Object? workouts = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as int,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: null == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String,
+            workouts: freezed == workouts
+                ? _value.workouts
+                : workouts // ignore: cast_nullable_to_non_nullable
+                      as List<WorkoutDto>?,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$ProgramDtoImplCopyWith<$Res>
+    implements $ProgramDtoCopyWith<$Res> {
+  factory _$$ProgramDtoImplCopyWith(
+    _$ProgramDtoImpl value,
+    $Res Function(_$ProgramDtoImpl) then,
+  ) = __$$ProgramDtoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    int id,
+    String name,
+    String description,
+    @JsonKey(name: 'workouts') List<WorkoutDto>? workouts,
+  });
+}
+
+/// @nodoc
+class __$$ProgramDtoImplCopyWithImpl<$Res>
+    extends _$ProgramDtoCopyWithImpl<$Res, _$ProgramDtoImpl>
+    implements _$$ProgramDtoImplCopyWith<$Res> {
+  __$$ProgramDtoImplCopyWithImpl(
+    _$ProgramDtoImpl _value,
+    $Res Function(_$ProgramDtoImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of ProgramDto
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? description = null,
+    Object? workouts = freezed,
+  }) {
+    return _then(
+      _$ProgramDtoImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as int,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: null == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String,
+        workouts: freezed == workouts
+            ? _value._workouts
+            : workouts // ignore: cast_nullable_to_non_nullable
+                  as List<WorkoutDto>?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true)
+class _$ProgramDtoImpl implements _ProgramDto {
+  const _$ProgramDtoImpl({
+    required this.id,
+    required this.name,
+    required this.description,
+    @JsonKey(name: 'workouts') final List<WorkoutDto>? workouts,
+  }) : _workouts = workouts;
+
+  factory _$ProgramDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ProgramDtoImplFromJson(json);
+
+  @override
+  final int id;
+  @override
+  final String name;
+  @override
+  final String description;
+  final List<WorkoutDto>? _workouts;
+  @override
+  @JsonKey(name: 'workouts')
+  List<WorkoutDto>? get workouts {
+    final value = _workouts;
+    if (value == null) return null;
+    if (_workouts is EqualUnmodifiableListView) return _workouts;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'ProgramDto(id: $id, name: $name, description: $description, workouts: $workouts)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ProgramDtoImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            const DeepCollectionEquality().equals(other._workouts, _workouts));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    name,
+    description,
+    const DeepCollectionEquality().hash(_workouts),
   );
 
   /// Create a copy of ProgramDto
@@ -705,7 +948,7 @@ abstract class _ProgramDto implements ProgramDto {
     required final int id,
     required final String name,
     required final String description,
-    final List<ExerciserDto>? exercises,
+    @JsonKey(name: 'workouts') final List<WorkoutDto>? workouts,
   }) = _$ProgramDtoImpl;
 
   factory _ProgramDto.fromJson(Map<String, dynamic> json) =
@@ -718,7 +961,8 @@ abstract class _ProgramDto implements ProgramDto {
   @override
   String get description;
   @override
-  List<ExerciserDto>? get exercises;
+  @JsonKey(name: 'workouts')
+  List<WorkoutDto>? get workouts;
 
   /// Create a copy of ProgramDto
   /// with the given fields replaced by the non-null parameter values.
@@ -737,6 +981,7 @@ mixin _$CategoryDto {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
+  @JsonKey(name: 'exercises')
   List<ProgramDto>? get programs => throw _privateConstructorUsedError;
 
   /// Serializes this CategoryDto to a JSON map.
@@ -756,7 +1001,12 @@ abstract class $CategoryDtoCopyWith<$Res> {
     $Res Function(CategoryDto) then,
   ) = _$CategoryDtoCopyWithImpl<$Res, CategoryDto>;
   @useResult
-  $Res call({int id, String name, String image, List<ProgramDto>? programs});
+  $Res call({
+    int id,
+    String name,
+    String image,
+    @JsonKey(name: 'exercises') List<ProgramDto>? programs,
+  });
 }
 
 /// @nodoc
@@ -812,7 +1062,12 @@ abstract class _$$CategoryDtoImplCopyWith<$Res>
   ) = __$$CategoryDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, String image, List<ProgramDto>? programs});
+  $Res call({
+    int id,
+    String name,
+    String image,
+    @JsonKey(name: 'exercises') List<ProgramDto>? programs,
+  });
 }
 
 /// @nodoc
@@ -865,7 +1120,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
     required this.id,
     required this.name,
     required this.image,
-    final List<ProgramDto>? programs,
+    @JsonKey(name: 'exercises') final List<ProgramDto>? programs,
   }) : _programs = programs;
 
   factory _$CategoryDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -879,6 +1134,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
   final String image;
   final List<ProgramDto>? _programs;
   @override
+  @JsonKey(name: 'exercises')
   List<ProgramDto>? get programs {
     final value = _programs;
     if (value == null) return null;
@@ -932,7 +1188,7 @@ abstract class _CategoryDto implements CategoryDto {
     required final int id,
     required final String name,
     required final String image,
-    final List<ProgramDto>? programs,
+    @JsonKey(name: 'exercises') final List<ProgramDto>? programs,
   }) = _$CategoryDtoImpl;
 
   factory _CategoryDto.fromJson(Map<String, dynamic> json) =
@@ -945,6 +1201,7 @@ abstract class _CategoryDto implements CategoryDto {
   @override
   String get image;
   @override
+  @JsonKey(name: 'exercises')
   List<ProgramDto>? get programs;
 
   /// Create a copy of CategoryDto

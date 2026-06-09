@@ -51,11 +51,22 @@ class UserExercisesRepositoryImpl implements IUserExercisesRepository {
     final dto = await _dataSource.getCurrentExercise(userId);
     if (dto == null) return null;
 
+    final allExercises = <ExerciserInProgram>[];
+    if (dto.workouts != null) {
+      for (var workout in dto.workouts!) {
+        if (workout.exercises != null) {
+          allExercises.addAll(
+            workout.exercises!.map((e) => e.toInProgramEntity()),
+          );
+        }
+      }
+    }
+
     return WorkoutProgram(
       id: dto.id,
       title: dto.name,
       description: dto.description,
-      exercises: dto.exercises?.map((e) => e.toInProgramEntity()).toList() ?? [],
+      exercises: allExercises,
     );
   }
 

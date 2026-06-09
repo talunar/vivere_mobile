@@ -6,7 +6,25 @@ part of 'profile_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$profileRepositoryHash() => r'4a5c9cda3a54de69970871bf64b7d494f2a09fa5';
+String _$profileDataSourceHash() => r'9c42582666fd53dd363987935013ba5f7c336f6e';
+
+/// See also [profileDataSource].
+@ProviderFor(profileDataSource)
+final profileDataSourceProvider =
+    AutoDisposeProvider<IProfileDataSource>.internal(
+      profileDataSource,
+      name: r'profileDataSourceProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$profileDataSourceHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ProfileDataSourceRef = AutoDisposeProviderRef<IProfileDataSource>;
+String _$profileRepositoryHash() => r'23d33f9ab456d85b132bdfc5c8470ad0acb982ad';
 
 /// See also [profileRepository].
 @ProviderFor(profileRepository)

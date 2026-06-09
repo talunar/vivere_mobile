@@ -42,8 +42,8 @@ Map<String, dynamic> _$$ExerciserDtoImplToJson(_$ExerciserDtoImpl instance) =>
       'repeats': instance.repeats?.map((e) => e.toJson()).toList(),
     };
 
-_$ProgramDtoImpl _$$ProgramDtoImplFromJson(Map<String, dynamic> json) =>
-    _$ProgramDtoImpl(
+_$WorkoutDtoImpl _$$WorkoutDtoImplFromJson(Map<String, dynamic> json) =>
+    _$WorkoutDtoImpl(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       description: json['description'] as String,
@@ -52,7 +52,7 @@ _$ProgramDtoImpl _$$ProgramDtoImplFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$ProgramDtoImplToJson(_$ProgramDtoImpl instance) =>
+Map<String, dynamic> _$$WorkoutDtoImplToJson(_$WorkoutDtoImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -60,12 +60,30 @@ Map<String, dynamic> _$$ProgramDtoImplToJson(_$ProgramDtoImpl instance) =>
       'exercises': instance.exercises?.map((e) => e.toJson()).toList(),
     };
 
+_$ProgramDtoImpl _$$ProgramDtoImplFromJson(Map<String, dynamic> json) =>
+    _$ProgramDtoImpl(
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+      description: json['description'] as String,
+      workouts: (json['workouts'] as List<dynamic>?)
+          ?.map((e) => WorkoutDto.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$ProgramDtoImplToJson(_$ProgramDtoImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'workouts': instance.workouts?.map((e) => e.toJson()).toList(),
+    };
+
 _$CategoryDtoImpl _$$CategoryDtoImplFromJson(Map<String, dynamic> json) =>
     _$CategoryDtoImpl(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       image: json['image'] as String,
-      programs: (json['programs'] as List<dynamic>?)
+      programs: (json['exercises'] as List<dynamic>?)
           ?.map((e) => ProgramDto.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
@@ -75,5 +93,5 @@ Map<String, dynamic> _$$CategoryDtoImplToJson(_$CategoryDtoImpl instance) =>
       'id': instance.id,
       'name': instance.name,
       'image': instance.image,
-      'programs': instance.programs?.map((e) => e.toJson()).toList(),
+      'exercises': instance.programs?.map((e) => e.toJson()).toList(),
     };

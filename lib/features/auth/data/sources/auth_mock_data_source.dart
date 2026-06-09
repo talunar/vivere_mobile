@@ -1,21 +1,35 @@
-import '/core/network/dio_provider.dart';
 import '../models/auth_dto.dart';
+import 'i_auth_data_source.dart';
 
-class AuthMockDataSource {
+class AuthMockDataSource implements IAuthDataSource {
   Future<void> _delay() => Future.delayed(const Duration(milliseconds: 800));
 
-  Future<String> login(String nickName, String password) async {
+  @override
+  Future<String> login(String username, String password) async {
     await _delay();
-    // в Go это res из service.Login
-    if (nickName == 'error') throw Exception('Invalid credentials');
+    if (username == 'error') throw Exception('Некорректный логин или пароль');
     return 'mock_token_123';
   }
 
-  Future<String> register(AuthDto data) async {
+  @override
+  Future<String> register(AuthDto authData) async {
     await _delay();
     return 'mock_token_new_user';
   }
 
+  @override
+  Future<String> refreshToken(String username) async {
+    await _delay();
+    return 'mock_new_token_456';
+  }
+
+  @override
+  Future<int> createProfile(Map<String, dynamic> data) async {
+    await _delay();
+    return 1;
+  }
+
+  @override
   Future<void> logout() async {
     await _delay();
   }

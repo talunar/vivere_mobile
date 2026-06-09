@@ -4,6 +4,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'network_config.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 
 part 'dio_provider.g.dart';
@@ -22,7 +23,7 @@ Future<CookieJar> cookieJar(CookieJarRef ref) async {
 @riverpod
 Dio dio(DioRef ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://localhost:8080',
+    baseUrl: NetworkConfig.baseUrl,
     connectTimeout: const Duration(seconds: 5),
     receiveTimeout: const Duration(seconds: 3),
   ));
@@ -62,7 +63,7 @@ Dio dio(DioRef ref) {
             );
 
             if (nickName != null) {
-              await dio.post('/refresh-token', data: {'nick_name': nickName});
+              await dio.post(NetworkConfig.refreshToken, data: {'nick_name': nickName});
 
               final response = await dio.fetch(e.requestOptions);
               return handler.resolve(response);

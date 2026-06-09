@@ -456,22 +456,22 @@ class _WorkoutProgramDetailsProviderElement
 
 String _$allUserProgramsHash() => r'92c421a088af227e0665503a3b7a089d7849027f';
 
-/// Мои тренировки (Планы + Избранное)
+/// Мои тренировки
 ///
 /// Copied from [allUserPrograms].
 @ProviderFor(allUserPrograms)
 const allUserProgramsProvider = AllUserProgramsFamily();
 
-/// Мои тренировки (Планы + Избранное)
+/// Мои тренировки
 ///
 /// Copied from [allUserPrograms].
 class AllUserProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// Мои тренировки (Планы + Избранное)
+  /// Мои тренировки
   ///
   /// Copied from [allUserPrograms].
   const AllUserProgramsFamily();
 
-  /// Мои тренировки (Планы + Избранное)
+  /// Мои тренировки
   ///
   /// Copied from [allUserPrograms].
   AllUserProgramsProvider call(int userId) {
@@ -500,12 +500,12 @@ class AllUserProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
   String? get name => r'allUserProgramsProvider';
 }
 
-/// Мои тренировки (Планы + Избранное)
+/// Мои тренировки
 ///
 /// Copied from [allUserPrograms].
 class AllUserProgramsProvider
     extends AutoDisposeFutureProvider<List<WorkoutProgram>> {
-  /// Мои тренировки (Планы + Избранное)
+  /// Мои тренировки
   ///
   /// Copied from [allUserPrograms].
   AllUserProgramsProvider(int userId)
@@ -590,7 +590,7 @@ class _AllUserProgramsProviderElement
 String _$paginatedWorkoutCategoriesHash() =>
     r'4d9d37c6c33f4fd36eb0aa76cd93fda718b80ebc';
 
-/// ПАГИНАЦИЯ КАТЕГОРИЙ
+/// Пагинация категорий
 ///
 /// Copied from [PaginatedWorkoutCategories].
 @ProviderFor(PaginatedWorkoutCategories)
@@ -620,23 +620,23 @@ abstract class _$PaginatedProgramsByCategory
   FutureOr<List<WorkoutProgram>> build(int categoryId);
 }
 
-/// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+/// Пагинация программ
 ///
 /// Copied from [PaginatedProgramsByCategory].
 @ProviderFor(PaginatedProgramsByCategory)
 const paginatedProgramsByCategoryProvider = PaginatedProgramsByCategoryFamily();
 
-/// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+/// Пагинация программ
 ///
 /// Copied from [PaginatedProgramsByCategory].
 class PaginatedProgramsByCategoryFamily
     extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+  /// Пагинация программ
   ///
   /// Copied from [PaginatedProgramsByCategory].
   const PaginatedProgramsByCategoryFamily();
 
-  /// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+  /// Пагинация программ
   ///
   /// Copied from [PaginatedProgramsByCategory].
   PaginatedProgramsByCategoryProvider call(int categoryId) {
@@ -665,7 +665,7 @@ class PaginatedProgramsByCategoryFamily
   String? get name => r'paginatedProgramsByCategoryProvider';
 }
 
-/// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+/// Пагинация программ
 ///
 /// Copied from [PaginatedProgramsByCategory].
 class PaginatedProgramsByCategoryProvider
@@ -674,7 +674,7 @@ class PaginatedProgramsByCategoryProvider
           PaginatedProgramsByCategory,
           List<WorkoutProgram>
         > {
-  /// ПАГИНАЦИЯ ПРОГРАММ ВНУТРИ КАТЕГОРИИ
+  /// Пагинация программ
   ///
   /// Copied from [PaginatedProgramsByCategory].
   PaginatedProgramsByCategoryProvider(int categoryId)

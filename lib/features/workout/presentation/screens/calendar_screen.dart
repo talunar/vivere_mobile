@@ -37,7 +37,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
 
     final programsAsync = userId != null
-        ? ref.watch(plannedProgramsProvider(userId))
+        ? ref.watch(favoriteProgramsProvider(userId))
         : const AsyncValue.data([]);
 
     final String formattedDate = DateFormat('EEEE,\nd MMMM', 'ru_RU').format(_selectedDate);

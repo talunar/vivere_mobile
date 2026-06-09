@@ -39,7 +39,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
     final categoriesAsync = ref.watch(paginatedWorkoutCategoriesProvider);
     final expandedCategoryId = ref.watch(expandedCategoryProvider);
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final double headerHeight = statusBarHeight + 40;
+    final double headerHeight = statusBarHeight + 24;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
@@ -98,7 +98,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
             top: 0,
             left: 0,
             right: 0,
-            height: headerHeight + 30,
+            height: headerHeight + 28,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -113,7 +113,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
                       const Color(0xFFF6F6F6).withOpacity(0.1),
                       const Color(0xFFF6F6F6).withOpacity(0.0),
                     ],
-                    stops: const [0.0, 0.2, 0.45, 0.52, 0.80, 0.88, 0.95]
+                    stops: const [0.0, 0.2, 0.45, 0.6, 0.80, 0.88, 0.95]
                 ),
               ),
             ),

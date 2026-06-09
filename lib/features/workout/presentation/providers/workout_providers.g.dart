@@ -454,139 +454,6 @@ class _WorkoutProgramDetailsProviderElement
   int get id => (origin as WorkoutProgramDetailsProvider).id;
 }
 
-String _$allUserProgramsHash() => r'92c421a088af227e0665503a3b7a089d7849027f';
-
-/// Мои тренировки
-///
-/// Copied from [allUserPrograms].
-@ProviderFor(allUserPrograms)
-const allUserProgramsProvider = AllUserProgramsFamily();
-
-/// Мои тренировки
-///
-/// Copied from [allUserPrograms].
-class AllUserProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// Мои тренировки
-  ///
-  /// Copied from [allUserPrograms].
-  const AllUserProgramsFamily();
-
-  /// Мои тренировки
-  ///
-  /// Copied from [allUserPrograms].
-  AllUserProgramsProvider call(int userId) {
-    return AllUserProgramsProvider(userId);
-  }
-
-  @override
-  AllUserProgramsProvider getProviderOverride(
-    covariant AllUserProgramsProvider provider,
-  ) {
-    return call(provider.userId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'allUserProgramsProvider';
-}
-
-/// Мои тренировки
-///
-/// Copied from [allUserPrograms].
-class AllUserProgramsProvider
-    extends AutoDisposeFutureProvider<List<WorkoutProgram>> {
-  /// Мои тренировки
-  ///
-  /// Copied from [allUserPrograms].
-  AllUserProgramsProvider(int userId)
-    : this._internal(
-        (ref) => allUserPrograms(ref as AllUserProgramsRef, userId),
-        from: allUserProgramsProvider,
-        name: r'allUserProgramsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$allUserProgramsHash,
-        dependencies: AllUserProgramsFamily._dependencies,
-        allTransitiveDependencies:
-            AllUserProgramsFamily._allTransitiveDependencies,
-        userId: userId,
-      );
-
-  AllUserProgramsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.userId,
-  }) : super.internal();
-
-  final int userId;
-
-  @override
-  Override overrideWith(
-    FutureOr<List<WorkoutProgram>> Function(AllUserProgramsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: AllUserProgramsProvider._internal(
-        (ref) => create(ref as AllUserProgramsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        userId: userId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<List<WorkoutProgram>> createElement() {
-    return _AllUserProgramsProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is AllUserProgramsProvider && other.userId == userId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, userId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin AllUserProgramsRef on AutoDisposeFutureProviderRef<List<WorkoutProgram>> {
-  /// The parameter `userId` of this provider.
-  int get userId;
-}
-
-class _AllUserProgramsProviderElement
-    extends AutoDisposeFutureProviderElement<List<WorkoutProgram>>
-    with AllUserProgramsRef {
-  _AllUserProgramsProviderElement(super.provider);
-
-  @override
-  int get userId => (origin as AllUserProgramsProvider).userId;
-}
-
 String _$paginatedWorkoutCategoriesHash() =>
     r'4d9d37c6c33f4fd36eb0aa76cd93fda718b80ebc';
 
@@ -772,162 +639,7 @@ class _PaginatedProgramsByCategoryProviderElement
       (origin as PaginatedProgramsByCategoryProvider).categoryId;
 }
 
-String _$plannedProgramsHash() => r'7238ea0e079ed9ee3802c8da15f6d98455c50e35';
-
-abstract class _$PlannedPrograms
-    extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {
-  late final int userId;
-
-  FutureOr<List<WorkoutProgram>> build(int userId);
-}
-
-/// Текущие программы (Планы)
-///
-/// Copied from [PlannedPrograms].
-@ProviderFor(PlannedPrograms)
-const plannedProgramsProvider = PlannedProgramsFamily();
-
-/// Текущие программы (Планы)
-///
-/// Copied from [PlannedPrograms].
-class PlannedProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// Текущие программы (Планы)
-  ///
-  /// Copied from [PlannedPrograms].
-  const PlannedProgramsFamily();
-
-  /// Текущие программы (Планы)
-  ///
-  /// Copied from [PlannedPrograms].
-  PlannedProgramsProvider call(int userId) {
-    return PlannedProgramsProvider(userId);
-  }
-
-  @override
-  PlannedProgramsProvider getProviderOverride(
-    covariant PlannedProgramsProvider provider,
-  ) {
-    return call(provider.userId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'plannedProgramsProvider';
-}
-
-/// Текущие программы (Планы)
-///
-/// Copied from [PlannedPrograms].
-class PlannedProgramsProvider
-    extends
-        AutoDisposeAsyncNotifierProviderImpl<
-          PlannedPrograms,
-          List<WorkoutProgram>
-        > {
-  /// Текущие программы (Планы)
-  ///
-  /// Copied from [PlannedPrograms].
-  PlannedProgramsProvider(int userId)
-    : this._internal(
-        () => PlannedPrograms()..userId = userId,
-        from: plannedProgramsProvider,
-        name: r'plannedProgramsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$plannedProgramsHash,
-        dependencies: PlannedProgramsFamily._dependencies,
-        allTransitiveDependencies:
-            PlannedProgramsFamily._allTransitiveDependencies,
-        userId: userId,
-      );
-
-  PlannedProgramsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.userId,
-  }) : super.internal();
-
-  final int userId;
-
-  @override
-  FutureOr<List<WorkoutProgram>> runNotifierBuild(
-    covariant PlannedPrograms notifier,
-  ) {
-    return notifier.build(userId);
-  }
-
-  @override
-  Override overrideWith(PlannedPrograms Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: PlannedProgramsProvider._internal(
-        () => create()..userId = userId,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        userId: userId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeAsyncNotifierProviderElement<PlannedPrograms, List<WorkoutProgram>>
-  createElement() {
-    return _PlannedProgramsProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is PlannedProgramsProvider && other.userId == userId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, userId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin PlannedProgramsRef
-    on AutoDisposeAsyncNotifierProviderRef<List<WorkoutProgram>> {
-  /// The parameter `userId` of this provider.
-  int get userId;
-}
-
-class _PlannedProgramsProviderElement
-    extends
-        AutoDisposeAsyncNotifierProviderElement<
-          PlannedPrograms,
-          List<WorkoutProgram>
-        >
-    with PlannedProgramsRef {
-  _PlannedProgramsProviderElement(super.provider);
-
-  @override
-  int get userId => (origin as PlannedProgramsProvider).userId;
-}
-
-String _$favoriteProgramsHash() => r'4def4509433bbccf594ab5354c30361a86307c6a';
+String _$favoriteProgramsHash() => r'5663fd35e13fcbdfad3398e54434dd4a8a5f3667';
 
 abstract class _$FavoritePrograms
     extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {
@@ -936,22 +648,22 @@ abstract class _$FavoritePrograms
   FutureOr<List<WorkoutProgram>> build(int userId);
 }
 
-/// Избранное
+/// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
 ///
 /// Copied from [FavoritePrograms].
 @ProviderFor(FavoritePrograms)
 const favoriteProgramsProvider = FavoriteProgramsFamily();
 
-/// Избранное
+/// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
 ///
 /// Copied from [FavoritePrograms].
 class FavoriteProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// Избранное
+  /// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
   ///
   /// Copied from [FavoritePrograms].
   const FavoriteProgramsFamily();
 
-  /// Избранное
+  /// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
   ///
   /// Copied from [FavoritePrograms].
   FavoriteProgramsProvider call(int userId) {
@@ -980,7 +692,7 @@ class FavoriteProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
   String? get name => r'favoriteProgramsProvider';
 }
 
-/// Избранное
+/// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
 ///
 /// Copied from [FavoritePrograms].
 class FavoriteProgramsProvider
@@ -989,7 +701,7 @@ class FavoriteProgramsProvider
           FavoritePrograms,
           List<WorkoutProgram>
         > {
-  /// Избранное
+  /// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
   ///
   /// Copied from [FavoritePrograms].
   FavoriteProgramsProvider(int userId)

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../profile/presentation/screens/person_page.dart';
 import '../providers/navigation_provider.dart';
+import '../providers/workout_providers.dart';
 import 'workout_catalog_screen.dart';
 import 'calendar_screen.dart';
 import 'my_workouts_screen.dart';
@@ -15,28 +16,42 @@ class MainNavigationScreen extends ConsumerStatefulWidget {
 }
 
 class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
-  final GlobalKey<NavigatorState> _workoutNavigatorKey = GlobalKey<NavigatorState>();
-  final GlobalKey<NavigatorState> _calendarNavigatorKey = GlobalKey<NavigatorState>();
-  final GlobalKey<NavigatorState> _myWorkoutsNavigatorKey = GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState> _workoutNavigatorKey = GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState> _calendarNavigatorKey = GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState> _myWorkoutsNavigatorKey = GlobalKey<NavigatorState>();
 
   void _onItemTapped(int index) {
-    final selectedIndex = ref.read(navigationNotifierProvider);
-    if (selectedIndex == index) {
-      if (index == 0) {
-        _workoutNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-      } else if (index == 1) {
-        _calendarNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-      } else if (index == 2) {
-        _myWorkoutsNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-      }
-    } else {
+    final currentIndex = ref.read(navigationNotifierProvider);
+    if (index == 0 || currentIndex == index) {
+      _resetNavigator(index);
+    }
+
+    if (currentIndex != index) {
       ref.read(navigationNotifierProvider.notifier).setIndex(index);
     }
+  }
+
+  void _resetNavigator(int index) {
+    setState(() {
+      if (index == 0) {
+        _workoutNavigatorKey = GlobalKey<NavigatorState>();
+        ref.read(expandedCategoryProvider.notifier).state = null;
+      } else if (index == 1) {
+        _calendarNavigatorKey = GlobalKey<NavigatorState>();
+      } else if (index == 2) {
+        _myWorkoutsNavigatorKey = GlobalKey<NavigatorState>();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final selectedIndex = ref.watch(navigationNotifierProvider);
+    ref.listen(navigationResetProvider, (previous, next) {
+      if (next != previous) {
+        _resetNavigator(0);
+      }
+    });
 
     return Scaffold(
       extendBody: true,

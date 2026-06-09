@@ -125,16 +125,16 @@ class PaginatedProgramsByCategory extends _$PaginatedProgramsByCategory {
   }
 }
 
-/// Текущие программы (Планы)
+/// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
 @riverpod
-class PlannedPrograms extends _$PlannedPrograms {
+class FavoritePrograms extends _$FavoritePrograms {
   @override
   Future<List<WorkoutProgram>> build(int userId) async {
     final repository = ref.watch(userExercisesRepositoryProvider);
     final exercises = await repository.getUserExercises(userId);
 
     return exercises.map((e) => WorkoutProgram(
-      id: e.id,
+      id: e.id, 
       title: e.name,
       description: e.description,
       exercises: [e],
@@ -144,20 +144,32 @@ class PlannedPrograms extends _$PlannedPrograms {
     )).toList();
   }
 
-  Future<void> addProgram(WorkoutProgram program) async {
-    try {
-      final repository = ref.read(userExercisesRepositoryProvider);
-      await repository.addExercise(userId, program.exercises.first);
-      ref.invalidateSelf();
-    } catch (e) {}
-  }
+  Future<void> toggleFavorite(WorkoutProgram program) async {
+    final previousState = state;
+    final currentPrograms = state.value ?? [];
+    final isFavorite = currentPrograms.any((p) => p.id == program.id);
 
-  Future<void> deleteProgram(int programId) async {
+    // Оптимистичное обновление: меняем UI мгновенно
+    if (isFavorite) {
+      state = AsyncData(currentPrograms.where((p) => p.id != program.id).toList());
+    } else {
+      state = AsyncData([...currentPrograms, program]);
+    }
+    
     try {
       final repository = ref.read(userExercisesRepositoryProvider);
-      await repository.deleteExercise(programId);
-      ref.invalidateSelf();
-    } catch (e) {}
+      if (isFavorite) {
+        await repository.deleteExercise(program.id);
+      } else {
+        final exerciseToSave = program.exercises.first.copyWith(id: program.id);
+        await repository.addExercise(userId, exerciseToSave);
+      }
+      // Не вызываем invalidateSelf, чтобы избежать мерцания, 
+      // так как локальное состояние уже актуально.
+    } catch (e) {
+      // При ошибке откатываем UI к предыдущему состоянию
+      state = previousState;
+    }
   }
 
   Future<void> saveAllProgress(List<ExerciserInProgram> exercises) async {
@@ -179,35 +191,4 @@ class PlannedPrograms extends _$PlannedPrograms {
       )).toList();
     });
   }
-}
-
-/// Избранное
-@riverpod
-class FavoritePrograms extends _$FavoritePrograms {
-  @override
-  Future<List<WorkoutProgram>> build(int userId) async {
-    return [];
-  }
-
-  Future<void> toggleFavorite(WorkoutProgram program) async {
-    final current = state.value ?? [];
-    if (current.any((p) => p.id == program.id)) {
-      state = AsyncValue.data(current.where((p) => p.id != program.id).toList());
-    } else {
-      state = AsyncValue.data([...current, program]);
-    }
-  }
-}
-
-/// Мои тренировки
-@riverpod
-Future<List<WorkoutProgram>> allUserPrograms(AllUserProgramsRef ref, int userId) async {
-  final planned = ref.watch(plannedProgramsProvider(userId)).value ?? [];
-  final favorites = ref.watch(favoriteProgramsProvider(userId)).value ?? [];
-
-  final Map<int, WorkoutProgram> all = {};
-  for (var p in favorites) { all[p.id] = p; }
-  for (var p in planned) { all[p.id] = p; }
-
-  return all.values.toList();
 }

@@ -23,27 +23,16 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
     final double imageHeight = screenWidth * (240 / 402);
 
     final authState = ref.watch(authControllerProvider);
-
     final userId = authState.maybeWhen(
       authenticated: (user) => user.id.value,
       orElse: () => null,
     );
 
-    final plannedProgramsAsync = userId != null
-        ? ref.watch(plannedProgramsProvider(userId))
-        : const AsyncValue<List<WorkoutProgram>>.data([]);
-
-
-    final bool isPlanned = plannedProgramsAsync.maybeWhen(
-      data: (programs) => programs.any((p) => p.id == widget.program.id),
-      orElse: () => false,
-    );
-
-    final favoriteProgramsAsync = userId != null
+    final favoritesAsync = userId != null
         ? ref.watch(favoriteProgramsProvider(userId))
         : const AsyncValue<List<WorkoutProgram>>.data([]);
 
-    final bool isFavorite = favoriteProgramsAsync.maybeWhen(
+    final bool isFavorite = favoritesAsync.maybeWhen(
       data: (programs) => programs.any((p) => p.id == widget.program.id),
       orElse: () => false,
     );
@@ -221,39 +210,18 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
 
                   const SizedBox(height: 32),
 
-                  // Блок кнопок действий
                   Center(
-                    child: Column(
-                      children: [
-                        if (userId != null)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: AppButton(
-                              text: isPlanned ? 'Удалить из планов' : 'Добавить в мои планы',
-                              variant: isPlanned ? AppButtonVariant.secondary : AppButtonVariant.outline,
-                              onPressed: () async {
-                                final notifier = ref.read(plannedProgramsProvider(userId).notifier);
-                                if (isPlanned) {
-                                  await notifier.deleteProgram(widget.program.id);
-                                } else {
-                                  await notifier.addProgram(widget.program);
-                                }
-                              },
-                            ),
-                          ),
-                        AppButton(
-                          text: 'Начать тренировку',
-                          variant: AppButtonVariant.primary,
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WorkoutExecutionScreen(
-                                exercises: widget.program.exercises,
-                              ),
-                            ),
+                    child: AppButton(
+                      text: 'Начать тренировку',
+                      variant: AppButtonVariant.primary,
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WorkoutExecutionScreen(
+                            exercises: widget.program.exercises,
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 100),

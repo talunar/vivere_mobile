@@ -9,6 +9,19 @@ class AuthRemoteDataSource implements IAuthDataSource {
   AuthRemoteDataSource(this._dio);
 
   @override
+  Future<void> changePassword(String nickName, String newPassword, String confirmPassword) async {
+    try {
+      await _dio.post('/change-password', data: {
+        'nick_name': nickName,
+        'password': newPassword,
+        'confirm_password': confirmPassword,
+      });
+    } on DioException catch (e) {
+      throw ApiError.fromDioException(e);
+    }
+  }
+
+  @override
   Future<String> login(String username, String password) async {
     try {
       final response = await _dio.post('/login', data: {

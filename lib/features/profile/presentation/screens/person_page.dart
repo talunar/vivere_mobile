@@ -116,8 +116,7 @@ class _ProfileDashboard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final allProgramsAsync = ref.watch(allUserProgramsProvider(profile.id.value));
-    final plannedProgramsAsync = ref.watch(plannedProgramsProvider(profile.id.value));
+    final favoriteProgramsAsync = ref.watch(favoriteProgramsProvider(profile.id.value));
     final double topPadding = MediaQuery.of(context).padding.top;
     final now = DateTime.now();
     final monthName = DateFormat('MMMM', 'ru_RU').format(now);
@@ -218,7 +217,7 @@ class _ProfileDashboard extends ConsumerWidget {
             onArrowTap: () {
               ref.read(navigationNotifierProvider.notifier).setIndex(1);
             },
-            child: plannedProgramsAsync.maybeWhen(
+            child: favoriteProgramsAsync.maybeWhen(
               data: (programs) => _WeekCalendar(hasWorkouts: programs.isNotEmpty),
               orElse: () => const _WeekCalendar(hasWorkouts: false),
             ),
@@ -235,7 +234,7 @@ class _ProfileDashboard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                allProgramsAsync.maybeWhen(
+                favoriteProgramsAsync.maybeWhen(
                   data: (programs) => Text(
                     "${programs.length} штук",
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
@@ -251,7 +250,7 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
 
-          plannedProgramsAsync.when(
+          favoriteProgramsAsync.when(
             data: (programs) {
               if (programs.isEmpty) return const SizedBox.shrink();
               return _DashboardCard(

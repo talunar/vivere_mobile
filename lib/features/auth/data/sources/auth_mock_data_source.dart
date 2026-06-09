@@ -5,6 +5,11 @@ class AuthMockDataSource implements IAuthDataSource {
   Future<void> _delay() => Future.delayed(const Duration(milliseconds: 800));
 
   @override
+  Future<void> changePassword(String nickName, String newPassword, String confirmPassword) async {
+    await _delay();
+  }
+
+  @override
   Future<String> login(String username, String password) async {
     await _delay();
     if (username == 'error') throw Exception('Некорректный логин или пароль');

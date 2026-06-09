@@ -9,6 +9,27 @@ class AuthRepository implements IAuthRepository {
   AuthRepository(this._dio);
 
   @override
+  Future<void> changePassword({
+    required String nickName,
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      await _dio.post('/change-password', data: {
+        'nick_name': nickName,
+        'old_password': oldPassword,
+        'new_password': newPassword,
+        'password2': confirmPassword,
+      });
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['error'] ?? 'Ошибка смены пароля');
+    } catch (e) {
+      throw Exception('Ошибка при смене пароля');
+    }
+  }
+
+  @override
   Future<AuthUser> signIn(String nickName, String password) async {
     try {
       final response = await _dio.post('/login', data: {

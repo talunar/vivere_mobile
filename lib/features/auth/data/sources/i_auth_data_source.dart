@@ -6,4 +6,5 @@ abstract class IAuthDataSource {
   Future<String> refreshToken(String username);
   Future<int> createProfile(Map<String, dynamic> data);
   Future<void> logout();
+  Future<void> changePassword(String nickName, String newPassword, String confirmPassword);
 }

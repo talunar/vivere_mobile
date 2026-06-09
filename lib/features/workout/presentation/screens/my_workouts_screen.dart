@@ -14,6 +14,7 @@ class MyWorkoutsScreen extends ConsumerWidget {
   void _navigateToCatalog(WidgetRef ref) {
     ref.read(expandedCategoryProvider.notifier).state = null;
     ref.invalidate(paginatedWorkoutCategoriesProvider);
+    ref.read(navigationResetProvider.notifier).update((state) => state + 1);
     ref.read(navigationNotifierProvider.notifier).setIndex(0);
   }
 
@@ -29,7 +30,8 @@ class MyWorkoutsScreen extends ConsumerWidget {
       return const Scaffold(body: Center(child: Text('Пожалуйста, войдите в систему')));
     }
 
-    final favoriteProgramsAsync = ref.watch(favoriteProgramsProvider(userId));
+    //  UserExercises
+    final favoritesAsync = ref.watch(favoriteProgramsProvider(userId));
     final categoriesAsync = ref.watch(paginatedWorkoutCategoriesProvider);
 
     final double topPadding = MediaQuery.of(context).padding.top;
@@ -39,7 +41,7 @@ class MyWorkoutsScreen extends ConsumerWidget {
       backgroundColor: const Color(0xFFF6F6F6),
       body: Stack(
         children: [
-          favoriteProgramsAsync.when(
+          favoritesAsync.when(
             data: (favorites) {
               return categoriesAsync.when(
                 data: (categories) {
@@ -136,7 +138,6 @@ class MyWorkoutsScreen extends ConsumerWidget {
             ),
           ),
 
-          // Заголовок
           Positioned(
             top: topPadding,
             left: 16,

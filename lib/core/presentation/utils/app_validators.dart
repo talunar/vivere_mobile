@@ -40,7 +40,8 @@ class AppValidators {
 
   static String? password(String? value) {
     if (value == null || value.isEmpty) return 'Введите пароль';
-    if (value.length < 6) return 'Минимум 6 символов';
+    if (value.length < 8) return 'Минимум 8 символов';
+    if (value.length > 32) return 'Максимум 32 символа';
     return null;
   }
 

@@ -10,6 +10,16 @@ class AuthRepositoryImpl implements IAuthRepository {
   AuthRepositoryImpl(this._dataSource);
 
   @override
+  Future<void> changePassword({
+    required String nickName,
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    await _dataSource.changePassword(nickName, newPassword, confirmPassword);
+  }
+
+  @override
   Future<AuthUser> signIn(String nickName, String password) async {
     final result = await _dataSource.login(nickName, password);
 

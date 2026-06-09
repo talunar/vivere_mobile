@@ -11,6 +11,14 @@ abstract class IAuthRepository {
     required String confirmPassword,
   });
 
+  /// Смена пароля (на основе AuthModel в Go)
+  Future<void> changePassword({
+    required String nickName,
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  });
+
   /// Создание профиля пользователя (POST /create-user)
   Future<AuthUser> createProfile({
     required String nickName,

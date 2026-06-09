@@ -107,12 +107,14 @@ class AuthController extends _$AuthController {
         registrationStepPhysical: (step) async {
           final repository = ref.read(authRepositoryProvider);
           
+          // 1. Регистрируем
           await repository.signUp(
             nickName: step.nickName,
             password: step.password,
             confirmPassword: step.password,
           );
 
+          // 2. Создаем профиль
           final user = await repository.createProfile(
             nickName: step.nickName,
             email: step.email,
@@ -132,6 +134,26 @@ class AuthController extends _$AuthController {
       );
     } catch (e) {
       state = const AuthState.unauthenticated();
+    }
+  }
+
+  /// Смена пароля
+  Future<void> changePassword({
+    required String nickName,
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      final repository = ref.read(authRepositoryProvider);
+      await repository.changePassword(
+        nickName: nickName,
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+    } catch (e) {
+      rethrow;
     }
   }
 

@@ -287,6 +287,203 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     );
   }
 
+  void _showChangePasswordDialog() {
+    final formKey = GlobalKey<FormState>();
+    final oldPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width - 48,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Смена пароля", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
+                  _buildPasswordField(
+                    controller: oldPasswordController,
+                    hint: "Текущий пароль",
+                    validator: (v) => AppValidators.required(v, "Введите текущий пароль"),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildPasswordField(
+                    controller: newPasswordController,
+                    hint: "Новый пароль",
+                    validator: AppValidators.password,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildPasswordField(
+                    controller: confirmPasswordController,
+                    hint: "Повторите новый пароль",
+                    validator: (v) {
+                      if (v != newPasswordController.text) return "Пароли не совпадают";
+                      return AppValidators.password(v);
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            try {
+                              await ref.read(authControllerProvider.notifier).changePassword(
+                                    nickName: widget.profile.nickName.value,
+                                    oldPassword: oldPasswordController.text,
+                                    newPassword: newPasswordController.text,
+                                    confirmPassword: confirmPasswordController.text,
+                                  );
+                              if (mounted) {
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Пароль успешно изменен"), backgroundColor: Colors.green),
+                                );
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Ошибка: $e"), backgroundColor: Colors.red),
+                                );
+                              }
+                            }
+                          }
+                        },
+                        child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showEditNameDialog() {
+    final formKey = GlobalKey<FormState>();
+    final firstNameController = TextEditingController(text: _editedProfile.firstName.value);
+    final lastNameController = TextEditingController(text: _editedProfile.lastName.value);
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width - 48,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Изменить имя и фамилию", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
+                  _buildSimpleEditField(
+                    controller: firstNameController,
+                    hint: "Имя",
+                    validator: AppValidators.name,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSimpleEditField(
+                    controller: lastNameController,
+                    hint: "Фамилия",
+                    validator: AppValidators.lastName,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            _editedProfile = _editedProfile.copyWith(
+                              firstName: Name(firstNameController.text.trim()),
+                              lastName: Name(lastNameController.text.trim()),
+                            );
+                            Navigator.pop(context);
+                            setState(() {});
+                          }
+                        },
+                        child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSimpleEditField({
+    required TextEditingController controller,
+    required String hint,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      validator: validator,
+      style: const TextStyle(fontSize: 18),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+        filled: true,
+        fillColor: const Color(0xFFE2E2E2),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(50), borderSide: BorderSide.none),
+        errorStyle: const TextStyle(color: Color(0xFFFF5900)),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String hint,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: true,
+      validator: validator,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+        filled: true,
+        fillColor: const Color(0xFFE2E2E2),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(50), borderSide: BorderSide.none),
+      ),
+    );
+  }
+
   void _showEditDialog({
     required String title,
     required String initialValue,
@@ -426,27 +623,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
           _InfoBlock(
             label: "Имя",
             value: "${_editedProfile.firstName.value} ${_editedProfile.lastName.value}",
-            onTap: () => _showEditDialog(
-              title: "Изменить имя и фамилию",
-              initialValue: "${_editedProfile.firstName.value} ${_editedProfile.lastName.value}",
-              validator: (val) {
-                if (val == null || val.isEmpty) return 'Введите имя и фамилию';
-                final names = val.trim().split(' ');
-                if (names.length < 2) return 'Введите фамилию через пробел';
-                final nameError = AppValidators.name(names[0]);
-                if (nameError != null) return nameError;
-                final lastNameError = AppValidators.lastName(names.sublist(1).join(' '));
-                if (lastNameError != null) return lastNameError;
-                return null;
-              },
-              onConfirm: (val) {
-                final names = val.trim().split(' ');
-                _editedProfile = _editedProfile.copyWith(
-                  firstName: Name(names.first),
-                  lastName: Name(names.length > 1 ? names.sublist(1).join(' ') : ''),
-                );
-              },
-            ),
+            onTap: _showEditNameDialog,
           ),
           _InfoBlock(
             label: "Вес",
@@ -501,29 +678,23 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               },
             ),
           ),
+          /// Информация статичная, на бэке нет поле "Статус"
           _InfoBlock(label: "Статус", value: "Участник сообщества"),
           _InfoBlock(
             label: "Почта",
             value: _editedProfile.email.value,
-            onTap: () => _showEditDialog(
-              title: "Изменить почту",
-              initialValue: _editedProfile.email.value,
-              keyboardType: TextInputType.emailAddress,
-              validator: AppValidators.email,
-              onConfirm: (val) => _editedProfile = _editedProfile.copyWith(email: Email(val)),
-            ),
           ),
           _InfoBlock(
             label: "Логин",
             value: _editedProfile.nickName.value,
-            onTap: () => _showEditDialog(
-              title: "Изменить логин",
-              initialValue: _editedProfile.nickName.value,
-              validator: AppValidators.nickName,
-              onConfirm: (val) => _editedProfile = _editedProfile.copyWith(nickName: NickName(val)),
-            ),
           ),
-          _InfoBlock(label: "Пароль", value: "**********"),
+          _InfoBlock(
+            label: "Пароль",
+            value: "**********",
+            /// На бэке не реализована смена пароля, поэтому функция скрыта
+            /// Но в случае реализации в будущем - раскомментировать
+            //onTap: _showChangePasswordDialog,
+          ),
 
           const SizedBox(height: 32),
 

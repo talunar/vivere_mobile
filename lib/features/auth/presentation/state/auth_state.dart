@@ -1,10 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/auth_user.dart';
+import '../../../../core/domain/entities/gender.dart'; // Импортируем из core
 
 part 'auth_state.freezed.dart';
-
-/// Перечисление для выбора пола
-enum Gender { male, female, other}
 
 @freezed
 sealed class AuthState with _$AuthState {

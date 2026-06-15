@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:vivere_mobile/core/presentation/widgets/dashboard_card.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../workout/domain/entities/workout_program.dart';
 import '../../../workout/presentation/screens/program_details_screen.dart';
+import '../../../workout/presentation/screens/my_workouts_screen.dart';
 import '../../../workout/presentation/providers/workout_providers.dart';
-import '../../../workout/presentation/screens/calendar_screen.dart';
 import '../../../workout/presentation/providers/navigation_provider.dart';
 import '../providers/profile_notifier.dart';
 import '../../domain/entities/user_profile.dart';
@@ -116,7 +117,12 @@ class _ProfileDashboard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favoriteProgramsAsync = ref.watch(favoriteProgramsProvider(profile.id.value));
+    final favoritesAsync = ref.watch(favoriteProgramsProvider(profile.id.value));
+    final schedule = ref.watch(workoutScheduleProvider);
+    
+    final todayWeekday = DateTime.now().weekday;
+    final todayWorkouts = schedule[todayWeekday] ?? [];
+
     final double topPadding = MediaQuery.of(context).padding.top;
     final now = DateTime.now();
     final monthName = DateFormat('MMMM', 'ru_RU').format(now);
@@ -125,7 +131,7 @@ class _ProfileDashboard extends ConsumerWidget {
     final double itemWidth = (MediaQuery.of(context).size.width - 32 - 24 - 8 - 16) / 2;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(16, topPadding + 56 + 30, 16, 120),
+      padding: EdgeInsets.fromLTRB(16, topPadding + 56 + 10, 16, 120),
       child: Column(
         children: [
           const CircleAvatar(
@@ -171,7 +177,7 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 22),
 
-          _DashboardCard(
+          DashboardCard(
             title: "Цели на сегодня",
             showAdd: true,
             child: Wrap(
@@ -195,36 +201,18 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
 
-          _DashboardCard(
-            title: "Калории на сегодня",
-            showArrow: true,
-            bottomPadding: 24,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                _CalorieItem(label: "Завтрак", value: "320 kkal"),
-                _CalorieItem(label: "Обед", value: "220 kkal"),
-                _CalorieItem(label: "Ужин", value: "220 kkal"),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          _DashboardCard(
+          DashboardCard(
             title: capitalizedMonth,
             showArrow: true,
             bottomPadding: 24,
             onArrowTap: () {
               ref.read(navigationNotifierProvider.notifier).setIndex(1);
             },
-            child: favoriteProgramsAsync.maybeWhen(
-              data: (programs) => _WeekCalendar(hasWorkouts: programs.isNotEmpty),
-              orElse: () => const _WeekCalendar(hasWorkouts: false),
-            ),
+            child: _WeekCalendar(schedule: schedule),
           ),
           const SizedBox(height: 16),
 
-          _DashboardCard(
+          DashboardCard(
             title: "Мои тренировки",
             showArrow: true,
             bottomPadding: 24,
@@ -234,15 +222,15 @@ class _ProfileDashboard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                favoriteProgramsAsync.maybeWhen(
+                favoritesAsync.maybeWhen(
                   data: (programs) => Text(
-                    "${programs.length} штук",
+                    "${programs.length} тренировок в избранном",
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
-                  orElse: () => const Text("0 штук", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  orElse: () => const Text("Вы ещё не добавили в избранное", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                 ),
                 const Text(
-                  "4 приобретено",
+                  "0 приобретено",
                   style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
                 ),
               ],
@@ -250,41 +238,57 @@ class _ProfileDashboard extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
 
-          favoriteProgramsAsync.when(
-            data: (programs) {
-              if (programs.isEmpty) return const SizedBox.shrink();
-              return _DashboardCard(
-                title: "Текущие программы",
-                showAdd: true,
-                child: Column(
-                  children: programs.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final program = entry.value;
-                    final isLast = index == programs.length - 1;
-
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
-                      child: _ProgramCard(
-                        program: program,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProgramDetailsScreen(program: program),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  }).toList(),
+          DashboardCard(
+            title: "Тренировки сегодня",
+            showAdd: true,
+            onAddTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyWorkoutsScreen(
+                    onSelect: (selectedProgram) {
+                      ref.read(workoutScheduleProvider.notifier).update((state) {
+                        final newState = Map<int, List<WorkoutProgram>>.from(state);
+                        final dayPrograms = List<WorkoutProgram>.from(newState[todayWeekday] ?? []);
+                        
+                        if (!dayPrograms.any((p) => p.id == selectedProgram.id)) {
+                          dayPrograms.add(selectedProgram);
+                          newState[todayWeekday] = dayPrograms;
+                        }
+                        return newState;
+                      });
+                    },
+                  ),
                 ),
               );
             },
-            loading: () => const _DashboardCard(
-              title: "Текущие программы",
-              child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
-            ),
-            error: (err, _) => Text('Ошибка загрузки программ: $err'),
+            child: todayWorkouts.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: Center(
+                    child: Text(
+                      "На сегодня тренировок не запланировано",
+                      style: TextStyle(color: Colors.grey, fontSize: 15),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              : Column(
+                  children: todayWorkouts.map((program) => Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _ProgramCard(
+                      program: program,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProgramDetailsScreen(program: program),
+                          ),
+                        );
+                      },
+                    ),
+                  )).toList(),
+                ),
           ),
         ],
       ),
@@ -293,8 +297,8 @@ class _ProfileDashboard extends ConsumerWidget {
 }
 
 class _WeekCalendar extends StatelessWidget {
-  final bool hasWorkouts;
-  const _WeekCalendar({required this.hasWorkouts});
+  final Map<int, List<WorkoutProgram>> schedule;
+  const _WeekCalendar({required this.schedule});
 
   @override
   Widget build(BuildContext context) {
@@ -306,9 +310,10 @@ class _WeekCalendar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(7, (index) {
         final date = startOfWeek.add(Duration(days: index));
+        final weekday = index + 1;
         final isToday = date.day == now.day && date.month == now.month;
 
-        final bool shouldUnderline = hasWorkouts && (date.weekday == DateTime.tuesday || date.weekday == DateTime.thursday);
+        final bool shouldUnderline = (schedule[weekday] ?? []).isNotEmpty;
 
         return Column(
           children: [
@@ -399,70 +404,6 @@ class _StatItem extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class _DashboardCard extends StatelessWidget {
-  final String title;
-  final Widget child;
-  final bool showAdd;
-  final bool showArrow;
-  final VoidCallback? onArrowTap;
-  final double? bottomPadding;
-
-  const _DashboardCard({
-    required this.title,
-    required this.child,
-    this.showAdd = false,
-    this.showArrow = false,
-    this.onArrowTap,
-    this.bottomPadding,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(left: 10, right: 10, top: 16, bottom: bottomPadding ?? 14),
-      decoration: BoxDecoration(color: const Color(0xFFE2E2E2), borderRadius: BorderRadius.circular(32)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (showAdd) const Icon(Icons.add_circle, size: 36, color: Colors.black),
-                    if (showArrow) ...[
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: onArrowTap,
-                        behavior: HitTestBehavior.opaque,
-                        child: const Icon(Icons.arrow_circle_right, size: 36, color: Colors.black),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            child,
-          ],
-        ),
-      ),
     );
   }
 }

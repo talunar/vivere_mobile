@@ -1,4 +1,5 @@
 import '../entities/auth_user.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 
 abstract class IAuthRepository {
   /// Вход в систему (POST /login)
@@ -29,6 +30,7 @@ abstract class IAuthRepository {
     required int weight,
     required int height,
     required String birthDate,
+    required Gender gender,
   });
 
   /// Выход из системы (GET /logout)

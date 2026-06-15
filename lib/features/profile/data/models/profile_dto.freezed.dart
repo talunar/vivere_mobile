@@ -32,6 +32,8 @@ mixin _$ProfileDto {
   int get age => throw _privateConstructorUsedError;
   double get weight => throw _privateConstructorUsedError;
   double get height => throw _privateConstructorUsedError;
+  int get gender =>
+      throw _privateConstructorUsedError; // 1 - муж, 2 - жен, 3 - другое
   @JsonKey(name: 'birth_date')
   String get birthDate => throw _privateConstructorUsedError;
 
@@ -61,6 +63,7 @@ abstract class $ProfileDtoCopyWith<$Res> {
     int age,
     double weight,
     double height,
+    int gender,
     @JsonKey(name: 'birth_date') String birthDate,
   });
 }
@@ -88,6 +91,7 @@ class _$ProfileDtoCopyWithImpl<$Res, $Val extends ProfileDto>
     Object? age = null,
     Object? weight = null,
     Object? height = null,
+    Object? gender = null,
     Object? birthDate = null,
   }) {
     return _then(
@@ -124,6 +128,10 @@ class _$ProfileDtoCopyWithImpl<$Res, $Val extends ProfileDto>
                 ? _value.height
                 : height // ignore: cast_nullable_to_non_nullable
                       as double,
+            gender: null == gender
+                ? _value.gender
+                : gender // ignore: cast_nullable_to_non_nullable
+                      as int,
             birthDate: null == birthDate
                 ? _value.birthDate
                 : birthDate // ignore: cast_nullable_to_non_nullable
@@ -152,6 +160,7 @@ abstract class _$$ProfileDtoImplCopyWith<$Res>
     int age,
     double weight,
     double height,
+    int gender,
     @JsonKey(name: 'birth_date') String birthDate,
   });
 }
@@ -178,6 +187,7 @@ class __$$ProfileDtoImplCopyWithImpl<$Res>
     Object? age = null,
     Object? weight = null,
     Object? height = null,
+    Object? gender = null,
     Object? birthDate = null,
   }) {
     return _then(
@@ -214,6 +224,10 @@ class __$$ProfileDtoImplCopyWithImpl<$Res>
             ? _value.height
             : height // ignore: cast_nullable_to_non_nullable
                   as double,
+        gender: null == gender
+            ? _value.gender
+            : gender // ignore: cast_nullable_to_non_nullable
+                  as int,
         birthDate: null == birthDate
             ? _value.birthDate
             : birthDate // ignore: cast_nullable_to_non_nullable
@@ -235,6 +249,7 @@ class _$ProfileDtoImpl extends _ProfileDto {
     required this.age,
     required this.weight,
     required this.height,
+    required this.gender,
     @JsonKey(name: 'birth_date') required this.birthDate,
   }) : super._();
 
@@ -261,12 +276,15 @@ class _$ProfileDtoImpl extends _ProfileDto {
   @override
   final double height;
   @override
+  final int gender;
+  // 1 - муж, 2 - жен, 3 - другое
+  @override
   @JsonKey(name: 'birth_date')
   final String birthDate;
 
   @override
   String toString() {
-    return 'ProfileDto(id: $id, nickName: $nickName, email: $email, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, birthDate: $birthDate)';
+    return 'ProfileDto(id: $id, nickName: $nickName, email: $email, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, gender: $gender, birthDate: $birthDate)';
   }
 
   @override
@@ -285,6 +303,7 @@ class _$ProfileDtoImpl extends _ProfileDto {
             (identical(other.age, age) || other.age == age) &&
             (identical(other.weight, weight) || other.weight == weight) &&
             (identical(other.height, height) || other.height == height) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.birthDate, birthDate) ||
                 other.birthDate == birthDate));
   }
@@ -301,6 +320,7 @@ class _$ProfileDtoImpl extends _ProfileDto {
     age,
     weight,
     height,
+    gender,
     birthDate,
   );
 
@@ -328,6 +348,7 @@ abstract class _ProfileDto extends ProfileDto {
     required final int age,
     required final double weight,
     required final double height,
+    required final int gender,
     @JsonKey(name: 'birth_date') required final String birthDate,
   }) = _$ProfileDtoImpl;
   const _ProfileDto._() : super._();
@@ -354,6 +375,8 @@ abstract class _ProfileDto extends ProfileDto {
   double get weight;
   @override
   double get height;
+  @override
+  int get gender; // 1 - муж, 2 - жен, 3 - другое
   @override
   @JsonKey(name: 'birth_date')
   String get birthDate;

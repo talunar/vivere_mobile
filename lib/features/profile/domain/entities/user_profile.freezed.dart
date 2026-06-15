@@ -40,6 +40,8 @@ mixin _$UserProfile {
   Weight get weight => throw _privateConstructorUsedError;
   @HeightConverter()
   Height get height => throw _privateConstructorUsedError;
+  @GenderConverter()
+  Gender get gender => throw _privateConstructorUsedError;
   @JsonKey(name: 'birth_date')
   @_DateTimeConverter()
   DateTime get birthDate => throw _privateConstructorUsedError;
@@ -70,6 +72,7 @@ abstract class $UserProfileCopyWith<$Res> {
     @AgeConverter() Age age,
     @WeightConverter() Weight weight,
     @HeightConverter() Height height,
+    @GenderConverter() Gender gender,
     @JsonKey(name: 'birth_date') @_DateTimeConverter() DateTime birthDate,
   });
 }
@@ -97,6 +100,7 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
     Object? age = null,
     Object? weight = null,
     Object? height = null,
+    Object? gender = null,
     Object? birthDate = null,
   }) {
     return _then(
@@ -133,6 +137,10 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
                 ? _value.height
                 : height // ignore: cast_nullable_to_non_nullable
                       as Height,
+            gender: null == gender
+                ? _value.gender
+                : gender // ignore: cast_nullable_to_non_nullable
+                      as Gender,
             birthDate: null == birthDate
                 ? _value.birthDate
                 : birthDate // ignore: cast_nullable_to_non_nullable
@@ -161,6 +169,7 @@ abstract class _$$UserProfileImplCopyWith<$Res>
     @AgeConverter() Age age,
     @WeightConverter() Weight weight,
     @HeightConverter() Height height,
+    @GenderConverter() Gender gender,
     @JsonKey(name: 'birth_date') @_DateTimeConverter() DateTime birthDate,
   });
 }
@@ -187,6 +196,7 @@ class __$$UserProfileImplCopyWithImpl<$Res>
     Object? age = null,
     Object? weight = null,
     Object? height = null,
+    Object? gender = null,
     Object? birthDate = null,
   }) {
     return _then(
@@ -223,6 +233,10 @@ class __$$UserProfileImplCopyWithImpl<$Res>
             ? _value.height
             : height // ignore: cast_nullable_to_non_nullable
                   as Height,
+        gender: null == gender
+            ? _value.gender
+            : gender // ignore: cast_nullable_to_non_nullable
+                  as Gender,
         birthDate: null == birthDate
             ? _value.birthDate
             : birthDate // ignore: cast_nullable_to_non_nullable
@@ -244,6 +258,7 @@ class _$UserProfileImpl implements _UserProfile {
     @AgeConverter() required this.age,
     @WeightConverter() required this.weight,
     @HeightConverter() required this.height,
+    @GenderConverter() required this.gender,
     @JsonKey(name: 'birth_date') @_DateTimeConverter() required this.birthDate,
   });
 
@@ -278,13 +293,16 @@ class _$UserProfileImpl implements _UserProfile {
   @HeightConverter()
   final Height height;
   @override
+  @GenderConverter()
+  final Gender gender;
+  @override
   @JsonKey(name: 'birth_date')
   @_DateTimeConverter()
   final DateTime birthDate;
 
   @override
   String toString() {
-    return 'UserProfile(id: $id, nickName: $nickName, email: $email, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, birthDate: $birthDate)';
+    return 'UserProfile(id: $id, nickName: $nickName, email: $email, firstName: $firstName, lastName: $lastName, age: $age, weight: $weight, height: $height, gender: $gender, birthDate: $birthDate)';
   }
 
   @override
@@ -303,6 +321,7 @@ class _$UserProfileImpl implements _UserProfile {
             (identical(other.age, age) || other.age == age) &&
             (identical(other.weight, weight) || other.weight == weight) &&
             (identical(other.height, height) || other.height == height) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.birthDate, birthDate) ||
                 other.birthDate == birthDate));
   }
@@ -319,6 +338,7 @@ class _$UserProfileImpl implements _UserProfile {
     age,
     weight,
     height,
+    gender,
     birthDate,
   );
 
@@ -348,6 +368,7 @@ abstract class _UserProfile implements UserProfile {
     @AgeConverter() required final Age age,
     @WeightConverter() required final Weight weight,
     @HeightConverter() required final Height height,
+    @GenderConverter() required final Gender gender,
     @JsonKey(name: 'birth_date')
     @_DateTimeConverter()
     required final DateTime birthDate,
@@ -383,6 +404,9 @@ abstract class _UserProfile implements UserProfile {
   @override
   @HeightConverter()
   Height get height;
+  @override
+  @GenderConverter()
+  Gender get gender;
   @override
   @JsonKey(name: 'birth_date')
   @_DateTimeConverter()

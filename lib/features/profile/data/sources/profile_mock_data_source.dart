@@ -11,8 +11,9 @@ class ProfileMockDataSource implements IProfileDataSource {
     firstName: 'Nova',
     lastName: 'Polaris',
     age: 30,
-    weight: 123.0,
+    weight: 70.0,
     height: 170.0,
+    gender: 2,
     birthDate: '1996-02-29',
   );
 

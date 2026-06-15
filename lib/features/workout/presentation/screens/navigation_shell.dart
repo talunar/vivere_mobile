@@ -19,6 +19,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   GlobalKey<NavigatorState> _workoutNavigatorKey = GlobalKey<NavigatorState>();
   GlobalKey<NavigatorState> _calendarNavigatorKey = GlobalKey<NavigatorState>();
   GlobalKey<NavigatorState> _myWorkoutsNavigatorKey = GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState> _profileNavigatorKey = GlobalKey<NavigatorState>();
 
   void _onItemTapped(int index) {
     final currentIndex = ref.read(navigationNotifierProvider);
@@ -40,6 +41,8 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
         _calendarNavigatorKey = GlobalKey<NavigatorState>();
       } else if (index == 2) {
         _myWorkoutsNavigatorKey = GlobalKey<NavigatorState>();
+      } else if (index == 3) {
+        _profileNavigatorKey = GlobalKey<NavigatorState>();
       }
     });
   }
@@ -76,7 +79,12 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
               builder: (context) => const MyWorkoutsScreen(),
             ),
           ),
-          const PersonPage(),
+          Navigator(
+            key: _profileNavigatorKey,
+            onGenerateRoute: (settings) => MaterialPageRoute(
+              builder: (context) => const PersonPage(),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: Container(

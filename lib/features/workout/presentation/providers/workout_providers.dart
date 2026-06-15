@@ -15,6 +15,11 @@ part 'workout_providers.g.dart';
 
 final expandedCategoryProvider = StateProvider<int?>((ref) => null);
 
+// Провайдер для хранения расписания тренировок: День недели (1-7) -> Список программ
+final workoutScheduleProvider = StateProvider<Map<int, List<WorkoutProgram>>>((ref) => {
+  1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: []
+});
+
 // Сменить на true после подключения
 const bool _useRemoteDataSource = false;
 
@@ -125,7 +130,7 @@ class PaginatedProgramsByCategory extends _$PaginatedProgramsByCategory {
   }
 }
 
-/// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
+/// UserExercises
 @riverpod
 class FavoritePrograms extends _$FavoritePrograms {
   @override
@@ -148,8 +153,6 @@ class FavoritePrograms extends _$FavoritePrograms {
     final previousState = state;
     final currentPrograms = state.value ?? [];
     final isFavorite = currentPrograms.any((p) => p.id == program.id);
-
-    // Оптимистичное обновление: меняем UI мгновенно
     if (isFavorite) {
       state = AsyncData(currentPrograms.where((p) => p.id != program.id).toList());
     } else {
@@ -164,10 +167,7 @@ class FavoritePrograms extends _$FavoritePrograms {
         final exerciseToSave = program.exercises.first.copyWith(id: program.id);
         await repository.addExercise(userId, exerciseToSave);
       }
-      // Не вызываем invalidateSelf, чтобы избежать мерцания, 
-      // так как локальное состояние уже актуально.
     } catch (e) {
-      // При ошибке откатываем UI к предыдущему состоянию
       state = previousState;
     }
   }

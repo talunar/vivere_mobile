@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'auth_repository.dart';
 import '../../domain/entities/auth_user.dart';
 import '../../../../core/domain/entities/user_id.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 
 class MockAuthRepository extends AuthRepository {
   MockAuthRepository() : super(Dio());
@@ -36,6 +37,7 @@ class MockAuthRepository extends AuthRepository {
     required int weight,
     required int height,
     required String birthDate,
+    required Gender gender,
   }) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return AuthUser(

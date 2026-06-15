@@ -3,13 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../domain/entities/workout_program.dart';
 import '../providers/workout_providers.dart';
 import '../providers/navigation_provider.dart';
 import 'programs_list_screen.dart';
 import 'dart:ui' as ui;
 
 class MyWorkoutsScreen extends ConsumerWidget {
-  const MyWorkoutsScreen({super.key});
+  final Function(WorkoutProgram)? onSelect;
+  const MyWorkoutsScreen({super.key, this.onSelect});
+
+  bool get _isSelectionMode => onSelect != null;
 
   void _navigateToCatalog(WidgetRef ref) {
     ref.read(expandedCategoryProvider.notifier).state = null;
@@ -30,7 +34,6 @@ class MyWorkoutsScreen extends ConsumerWidget {
       return const Scaffold(body: Center(child: Text('Пожалуйста, войдите в систему')));
     }
 
-    //  UserExercises
     final favoritesAsync = ref.watch(favoriteProgramsProvider(userId));
     final categoriesAsync = ref.watch(paginatedWorkoutCategoriesProvider);
 
@@ -88,17 +91,23 @@ class MyWorkoutsScreen extends ConsumerWidget {
                           title: category.name,
                           imageUrl: category.image,
                           programCount: count,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            final result = await Navigator.push<WorkoutProgram>(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ProgramsListScreen(
                                   categoryName: category.name,
                                   categoryId: category.id,
                                   programs: data['favorites'],
+                                  onSelect: _isSelectionMode ? (_) {} : null,
                                 ),
                               ),
                             );
+                            
+                            if (result != null && _isSelectionMode) {
+                              onSelect!(result);
+                              if (context.mounted) Navigator.pop(context);
+                            }
                           },
                         ),
                       );
@@ -147,13 +156,18 @@ class MyWorkoutsScreen extends ConsumerWidget {
               children: [
                 _IconBtn(
                   asset: 'assets/icons/back.svg',
-                  onTap: () => _navigateToCatalog(ref),
+                  onTap: () async {
+                    final canPop = await Navigator.of(context).maybePop();
+                    if (!canPop) {
+                      ref.read(navigationNotifierProvider.notifier).goBack();
+                    }
+                  },
                 ),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Мои тренировки',
+                    _isSelectionMode ? 'Выберите тренировку' : 'Мои тренировки',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color(0xFF141414),
                       fontWeight: FontWeight.w400,
                       fontSize: 24,

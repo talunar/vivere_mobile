@@ -22,6 +22,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
   int _remainingSeconds = 0;
   bool _isPaused = true;
   bool _isSaving = false;
+  bool _isDescriptionExpanded = false;
 
   late TextEditingController _weightController;
   late TextEditingController _valueController;
@@ -39,6 +40,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
 
   void _initExercise() {
     _timer?.cancel();
+    _isDescriptionExpanded = false;
     final exercise = _modifiedExercises[currentIndex];
     final repeat = exercise.repeats.first;
 
@@ -260,8 +262,8 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
               ),
               // Основной контент
               Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -270,36 +272,56 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                         style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Color(0xFF141414)),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        exercise.description,
-                        style: const TextStyle(fontSize: 15, color: Color(0xFF757575), height: 1.4),
+                      
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final textStyle = const TextStyle(fontSize: 15, color: Color(0xFF757575), height: 1.4);
+                          final textPainter = TextPainter(
+                            text: TextSpan(text: exercise.description, style: textStyle),
+                            maxLines: 3,
+                            textDirection: TextDirection.ltr,
+                          )..layout(maxWidth: constraints.maxWidth);
+
+                          final isLong = textPainter.didExceedMaxLines;
+
+                          return GestureDetector(
+                            onTap: isLong ? () => setState(() => _isDescriptionExpanded = true) : null,
+                            child: Text(
+                              exercise.description,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: textStyle,
+                            ),
+                          );
+                        },
                       ),
-                      const SizedBox(height: 32),
-                      if (isTimeBased)
-                        Center(
-                          child: _TimerDisplay(
-                            seconds: _remainingSeconds,
-                            totalSeconds: int.tryParse(_valueController.text) ?? repeat.seconds!,
-                            isPaused: _isPaused,
-                            onToggle: _togglePause,
-                          ),
-                        )
-                      else
-                        Center(
-                          child: Column(
-                            children: [
-                              Text(
-                                'x ${_valueController.text}',
-                                style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900)),
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                "Повторений",
-                                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16),
-                              ),
-                            ],
-                          ),
+
+                      Expanded(
+                        child: Center(
+                          child: isTimeBased
+                              ? _TimerDisplay(
+                                  seconds: _remainingSeconds,
+                                  totalSeconds: int.tryParse(_valueController.text) ?? repeat.seconds!,
+                                  isPaused: _isPaused,
+                                  onToggle: _togglePause,
+                                  currentIndex: currentIndex,
+                                )
+                              : Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'x ${_valueController.text}',
+                                      style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900)),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      "Повторений",
+                                      style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16),
+                                    ),
+                                  ],
+                                ),
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -348,6 +370,61 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
             ],
           ),
         ),
+        
+        if (_isDescriptionExpanded)
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () => setState(() => _isDescriptionExpanded = false),
+              child: Container(
+                color: Colors.black54,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _isDescriptionExpanded = false),
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  exercise.name,
+                                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () => setState(() => _isDescriptionExpanded = false),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Flexible(
+                            child: SingleChildScrollView(
+                              child: Text(
+                                exercise.description,
+                                style: const TextStyle(fontSize: 16, color: Color(0xFF141414), height: 1.5),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
         if (_isSaving)
           Container(
             color: Colors.black54,
@@ -372,35 +449,51 @@ class _TimerDisplay extends StatelessWidget {
   final int totalSeconds;
   final bool isPaused;
   final VoidCallback onToggle;
+  final int currentIndex;
 
-  const _TimerDisplay({required this.seconds, required this.totalSeconds, required this.isPaused, required this.onToggle});
+  const _TimerDisplay({
+    required this.seconds,
+    required this.totalSeconds,
+    required this.isPaused,
+    required this.onToggle,
+    required this.currentIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
     final String minutesStr = (seconds ~/ 60).toString().padLeft(2, '0');
     final String secondsStr = (seconds % 60).toString().padLeft(2, '0');
+    final double progress = totalSeconds > 0 ? seconds / totalSeconds : 0;
 
     return Stack(
       alignment: Alignment.center,
       children: [
         SizedBox(
-          width: 200,
-          height: 200,
-          child: CircularProgressIndicator(
-            value: totalSeconds > 0 ? seconds / totalSeconds : 0,
-            strokeWidth: 10,
-            backgroundColor: const Color(0xFFE2E2E2),
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFF5900)),
+          width: 220,
+          height: 220,
+          child: TweenAnimationBuilder<double>(
+            key: ValueKey('timer_progress_$currentIndex'),
+            duration: isPaused ? Duration.zero : const Duration(seconds: 1),
+            curve: Curves.linear,
+            tween: Tween<double>(end: progress),
+            builder: (context, value, _) {
+              return CircularProgressIndicator(
+                value: value,
+                strokeWidth: 12,
+                backgroundColor: const Color(0xFFE2E2E2),
+                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFF5900)),
+              );
+            },
           ),
         ),
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: Icon(isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 64, color: const Color(0xFFFF5900)),
+              icon: Icon(isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded, size: 80, color: const Color(0xFFFF5900)),
               onPressed: onToggle,
             ),
-            Text('$minutesStr:$secondsStr', style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Color(0xFFFF5900))),
+            Text('$minutesStr:$secondsStr', style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Color(0xFFFF5900))),
           ],
         ),
       ],

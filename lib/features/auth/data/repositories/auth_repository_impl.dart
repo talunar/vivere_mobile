@@ -1,4 +1,5 @@
 import '../../../../core/domain/entities/user_id.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../../domain/entities/auth_user.dart';
 import '../models/auth_dto.dart';
@@ -36,8 +37,8 @@ class AuthRepositoryImpl implements IAuthRepository {
 
   @override
   Future<void> signUp({
-    required String nickName,
-    required String password,
+    required String nickName, 
+    required String password, 
     required String confirmPassword,
   }) async {
     final dto = AuthDto(
@@ -62,6 +63,7 @@ class AuthRepositoryImpl implements IAuthRepository {
     required int weight,
     required int height,
     required String birthDate,
+    required Gender gender,
   }) async {
     final data = {
       'nick_name': nickName,
@@ -72,6 +74,7 @@ class AuthRepositoryImpl implements IAuthRepository {
       'weight': weight,
       'height': height,
       'birth_date': birthDate,
+      'gender': _genderToInt(gender),
     };
 
     final userId = await _dataSource.createProfile(data);
@@ -81,6 +84,17 @@ class AuthRepositoryImpl implements IAuthRepository {
       email: email,
       nickName: nickName,
     );
+  }
+
+  int _genderToInt(Gender gender) {
+    switch (gender) {
+      case Gender.male:
+        return 1;
+      case Gender.female:
+        return 2;
+      case Gender.other:
+        return 3;
+    }
   }
 
   @override

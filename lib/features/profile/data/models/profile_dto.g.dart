@@ -16,6 +16,7 @@ _$ProfileDtoImpl _$$ProfileDtoImplFromJson(Map<String, dynamic> json) =>
       age: (json['age'] as num).toInt(),
       weight: (json['weight'] as num).toDouble(),
       height: (json['height'] as num).toDouble(),
+      gender: (json['gender'] as num).toInt(),
       birthDate: json['birth_date'] as String,
     );
 
@@ -29,5 +30,6 @@ Map<String, dynamic> _$$ProfileDtoImplToJson(_$ProfileDtoImpl instance) =>
       'age': instance.age,
       'weight': instance.weight,
       'height': instance.height,
+      'gender': instance.gender,
       'birth_date': instance.birthDate,
     };

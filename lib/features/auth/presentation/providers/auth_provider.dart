@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 import '../state/auth_state.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/sources/i_auth_data_source.dart';
@@ -124,6 +125,7 @@ class AuthController extends _$AuthController {
             weight: weight,
             height: height,
             birthDate: birthDate,
+            gender: gender ?? Gender.other,
           );
 
           state = AuthState.authenticated(user);

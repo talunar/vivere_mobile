@@ -7,6 +7,7 @@ import 'package:vivere_mobile/core/presentation/utils/app_validators.dart';
 import 'package:vivere_mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:vivere_mobile/core/domain/value_objects/app_value_objects.dart';
 import 'package:vivere_mobile/features/profile/domain/value_objects/physical_parameters.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 import 'package:intl/intl.dart';
 import '../providers/profile_notifier.dart';
 import '../../domain/entities/user_profile.dart';
@@ -21,39 +22,37 @@ class ProfileSettingsScreen extends ConsumerWidget {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width - 48,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Выход", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
-                const Text("Вы уверены, что хотите выйти из приложения?"),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 352),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Выход", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              const Text("Вы уверены, что хотите выйти из приложения?"),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      ref.read(authControllerProvider.notifier).logout();
+                    },
+                    child: const Text(
+                      "Выйти",
+                      style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        ref.read(authControllerProvider.notifier).logout();
-                      },
-                      child: const Text(
-                        "Выйти",
-                        style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -95,11 +94,11 @@ class ProfileSettingsScreen extends ConsumerWidget {
                         colors: [
                           const Color(0xFFF6F6F6),
                           const Color(0xFFF6F6F6),
-                          const Color(0xFFF6F6F6).withOpacity(0.98),
-                          const Color(0xFFF6F6F6).withOpacity(0.78),
-                          const Color(0xFFF6F6F6).withOpacity(0.45),
-                          const Color(0xFFF6F6F6).withOpacity(0.16),
-                          const Color(0xFFF6F6F6).withOpacity(0.0),
+                          const Color(0xFFF6F6F6).withValues(alpha: 0.98),
+                          const Color(0xFFF6F6F6).withValues(alpha: 0.78),
+                          const Color(0xFFF6F6F6).withValues(alpha: 0.45),
+                          const Color(0xFFF6F6F6).withValues(alpha: 0.16),
+                          const Color(0xFFF6F6F6).withValues(alpha: 0.0),
                         ],
                         stops: const [0.0, 0.4, 0.65, 0.72, 0.80, 0.88, 0.95],
                       ),
@@ -218,6 +217,12 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     return "$age лет";
   }
 
+  String _getGenderString(Gender gender) {
+    if (gender == Gender.male) return "Мужчина";
+    if (gender == Gender.female) return "Женщина";
+    return "Другое";
+  }
+
   int _calculateAge(String dob) {
     try {
       final parts = dob.split('.');
@@ -243,44 +248,42 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width - 48,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Удаление", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
-                const Text("Вы уверены, что хотите удалить аккаунт? Это действие нельзя будет отменить."),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        Navigator.pop(context);
-                        try {
-                          await ref.read(profileNotifierProvider(widget.profile.id).notifier).deleteAccount();
-                        } catch (e) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
-                            );
-                          }
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 352),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Удаление", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              const Text("Вы уверены, что хотите удалить аккаунт? Это действие нельзя будет отменить."),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      try {
+                        await ref.read(profileNotifierProvider(widget.profile.id).notifier).deleteAccount();
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
+                          );
                         }
-                      },
-                      child: const Text("Удалить", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      }
+                    },
+                    child: const Text("Удалить", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -299,77 +302,75 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width - 48,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Смена пароля", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  _buildPasswordField(
-                    controller: oldPasswordController,
-                    hint: "Текущий пароль",
-                    validator: (v) => AppValidators.required(v, "Введите текущий пароль"),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPasswordField(
-                    controller: newPasswordController,
-                    hint: "Новый пароль",
-                    validator: AppValidators.password,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPasswordField(
-                    controller: confirmPasswordController,
-                    hint: "Повторите новый пароль",
-                    validator: (v) {
-                      if (v != newPasswordController.text) return "Пароли не совпадают";
-                      return AppValidators.password(v);
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            try {
-                              await ref.read(authControllerProvider.notifier).changePassword(
-                                    nickName: widget.profile.nickName.value,
-                                    oldPassword: oldPasswordController.text,
-                                    newPassword: newPasswordController.text,
-                                    confirmPassword: confirmPasswordController.text,
-                                  );
-                              if (mounted) {
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Пароль успешно изменен"), backgroundColor: Colors.green),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 352),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Смена пароля", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                _buildPasswordField(
+                  controller: oldPasswordController,
+                  hint: "Текущий пароль",
+                  validator: (v) => AppValidators.required(v, "Введите текущий пароль"),
+                ),
+                const SizedBox(height: 12),
+                _buildPasswordField(
+                  controller: newPasswordController,
+                  hint: "Новый пароль",
+                  validator: AppValidators.password,
+                ),
+                const SizedBox(height: 12),
+                _buildPasswordField(
+                  controller: confirmPasswordController,
+                  hint: "Повторите новый пароль",
+                  validator: (v) {
+                    if (v != newPasswordController.text) return "Пароли не совпадают";
+                    return AppValidators.password(v);
+                  },
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          try {
+                            await ref.read(authControllerProvider.notifier).changePassword(
+                                  nickName: widget.profile.nickName.value,
+                                  oldPassword: oldPasswordController.text,
+                                  newPassword: newPasswordController.text,
+                                  confirmPassword: confirmPasswordController.text,
                                 );
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Ошибка: $e"), backgroundColor: Colors.red),
-                                );
-                              }
+                            if (mounted) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Пароль успешно изменен"), backgroundColor: Colors.green),
+                              );
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Ошибка: $e"), backgroundColor: Colors.red),
+                              );
                             }
                           }
-                        },
-                        child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                        }
+                      },
+                      child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -388,54 +389,52 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width - 48,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Изменить имя и фамилию", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  _buildSimpleEditField(
-                    controller: firstNameController,
-                    hint: "Имя",
-                    validator: AppValidators.name,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildSimpleEditField(
-                    controller: lastNameController,
-                    hint: "Фамилия",
-                    validator: AppValidators.lastName,
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            _editedProfile = _editedProfile.copyWith(
-                              firstName: Name(firstNameController.text.trim()),
-                              lastName: Name(lastNameController.text.trim()),
-                            );
-                            Navigator.pop(context);
-                            setState(() {});
-                          }
-                        },
-                        child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 352),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Изменить имя и фамилию", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                _buildSimpleEditField(
+                  controller: firstNameController,
+                  hint: "Имя",
+                  validator: AppValidators.name,
+                ),
+                const SizedBox(height: 12),
+                _buildSimpleEditField(
+                  controller: lastNameController,
+                  hint: "Фамилия",
+                  validator: AppValidators.lastName,
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          _editedProfile = _editedProfile.copyWith(
+                            firstName: Name(firstNameController.text.trim()),
+                            lastName: Name(lastNameController.text.trim()),
+                          );
+                          Navigator.pop(context);
+                          setState(() {});
+                        }
+                      },
+                      child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -501,76 +500,74 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width - 48,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: controller,
-                    keyboardType: keyboardType,
-                    inputFormatters: inputFormatters,
-                    autofocus: true,
-                    validator: validator,
-                    style: const TextStyle(fontSize: 18),
-                    decoration: InputDecoration(
-                      hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                      filled: true,
-                      fillColor: const Color(0xFFE2E2E2),
-                      constraints: const BoxConstraints(minHeight: 50, maxHeight: 75),
-                      errorStyle: const TextStyle(color: Color(0xFFFF5900)),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-                      ),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 352),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: controller,
+                  keyboardType: keyboardType,
+                  inputFormatters: inputFormatters,
+                  autofocus: true,
+                  validator: validator,
+                  style: const TextStyle(fontSize: 18),
+                  decoration: InputDecoration(
+                    hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                    filled: true,
+                    fillColor: const Color(0xFFE2E2E2),
+                    constraints: const BoxConstraints(minHeight: 50, maxHeight: 75),
+                    errorStyle: const TextStyle(color: Color(0xFFFF5900)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            onConfirm(controller.text);
-                            Navigator.pop(context);
-                            setState(() {});
-                          }
-                        },
-                        child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          onConfirm(controller.text);
+                          Navigator.pop(context);
+                          setState(() {});
+                        }
+                      },
+                      child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -584,7 +581,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     final isLoading = profileState.isLoading;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(24, widget.headerHeight + 24, 24, 60),
+      padding: EdgeInsets.fromLTRB(24, widget.headerHeight + 12, 24, 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -606,7 +603,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -618,7 +615,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               ],
             ),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 16),
 
           _InfoBlock(
             label: "Имя",
@@ -678,6 +675,10 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               },
             ),
           ),
+          _InfoBlock(
+            label: "Пол",
+            value: _getGenderString(_editedProfile.gender),
+          ),
           /// Информация статичная, на бэке нет поле "Статус"
           _InfoBlock(label: "Статус", value: "Участник сообщества"),
           _InfoBlock(
@@ -696,7 +697,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
             //onTap: _showChangePasswordDialog,
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
 
           Column(
             children: [
@@ -752,7 +753,7 @@ class _InfoBlock extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         child: SizedBox(
           width: double.infinity,
           child: Column(
@@ -766,7 +767,7 @@ class _InfoBlock extends StatelessWidget {
               Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.w400,
                   color: Colors.black,
                   height: 1.1,

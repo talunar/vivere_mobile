@@ -16,6 +16,7 @@ _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
       age: const AgeConverter().fromJson((json['age'] as num).toInt()),
       weight: const WeightConverter().fromJson((json['weight'] as num).toInt()),
       height: const HeightConverter().fromJson((json['height'] as num).toInt()),
+      gender: const GenderConverter().fromJson((json['gender'] as num).toInt()),
       birthDate: const _DateTimeConverter().fromJson(
         json['birth_date'] as String,
       ),
@@ -31,5 +32,6 @@ Map<String, dynamic> _$$UserProfileImplToJson(_$UserProfileImpl instance) =>
       'age': const AgeConverter().toJson(instance.age),
       'weight': const WeightConverter().toJson(instance.weight),
       'height': const HeightConverter().toJson(instance.height),
+      'gender': const GenderConverter().toJson(instance.gender),
       'birth_date': const _DateTimeConverter().toJson(instance.birthDate),
     };

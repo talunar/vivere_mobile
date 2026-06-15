@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../../domain/repositories/i_auth_repository.dart';
 import '../../domain/entities/auth_user.dart';
 import '../../../../core/domain/entities/user_id.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 
 class AuthRepository implements IAuthRepository {
   final Dio _dio;
@@ -88,6 +89,7 @@ class AuthRepository implements IAuthRepository {
     required int weight,
     required int height,
     required String birthDate,
+    required Gender gender,
   }) async {
     try {
       final response = await _dio.post('/create-user', data: {
@@ -99,6 +101,7 @@ class AuthRepository implements IAuthRepository {
         'weight': weight,
         'height': height,
         'birth_date': birthDate,
+        'gender': _genderToInt(gender),
       });
 
       final userId = response.data['userId'];
@@ -116,6 +119,17 @@ class AuthRepository implements IAuthRepository {
       throw Exception(message);
     } catch (e) {
       throw Exception('Ошибка при создании профиля');
+    }
+  }
+
+  int _genderToInt(Gender gender) {
+    switch (gender) {
+      case Gender.male:
+        return 1;
+      case Gender.female:
+        return 2;
+      case Gender.other:
+        return 3;
     }
   }
 

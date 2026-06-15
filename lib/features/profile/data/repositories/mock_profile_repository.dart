@@ -3,6 +3,7 @@ import '../../../../core/domain/value_objects/app_value_objects.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/i_profile_repository.dart';
 import '../../domain/value_objects/physical_parameters.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 
 class MockProfileRepository implements IProfileRepository {
   @override
@@ -25,6 +26,7 @@ class MockProfileRepository implements IProfileRepository {
       birthDate: DateTime(1996, 2, 29),
       weight: const Weight(80.0),
       height: const Height(165.0),
+      gender: Gender.female,
     );
   }
 

@@ -1,5 +1,6 @@
 import '../entities/auth_user.dart';
 import '../repositories/i_auth_repository.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 
 class SignInUseCase {
   final IAuthRepository repository;
@@ -40,6 +41,7 @@ class CreateProfileUseCase {
     required int weight,
     required int height,
     required String birthDate,
+    required Gender gender,
   }) {
     return repository.createProfile(
       nickName: nickName,
@@ -50,6 +52,7 @@ class CreateProfileUseCase {
       weight: weight,
       height: height,
       birthDate: birthDate,
+      gender: gender,
     );
   }
 }

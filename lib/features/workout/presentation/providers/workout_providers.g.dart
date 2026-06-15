@@ -639,7 +639,7 @@ class _PaginatedProgramsByCategoryProviderElement
       (origin as PaginatedProgramsByCategoryProvider).categoryId;
 }
 
-String _$favoriteProgramsHash() => r'5663fd35e13fcbdfad3398e54434dd4a8a5f3667';
+String _$favoriteProgramsHash() => r'911c4e595813f2590e2841c4c3d2ff5455a5d544';
 
 abstract class _$FavoritePrograms
     extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {
@@ -648,22 +648,22 @@ abstract class _$FavoritePrograms
   FutureOr<List<WorkoutProgram>> build(int userId);
 }
 
-/// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
+/// UserExercises
 ///
 /// Copied from [FavoritePrograms].
 @ProviderFor(FavoritePrograms)
 const favoriteProgramsProvider = FavoriteProgramsFamily();
 
-/// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
+/// UserExercises
 ///
 /// Copied from [FavoritePrograms].
 class FavoriteProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
-  /// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
+  /// UserExercises
   ///
   /// Copied from [FavoritePrograms].
   const FavoriteProgramsFamily();
 
-  /// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
+  /// UserExercises
   ///
   /// Copied from [FavoritePrograms].
   FavoriteProgramsProvider call(int userId) {
@@ -692,7 +692,7 @@ class FavoriteProgramsFamily extends Family<AsyncValue<List<WorkoutProgram>>> {
   String? get name => r'favoriteProgramsProvider';
 }
 
-/// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
+/// UserExercises
 ///
 /// Copied from [FavoritePrograms].
 class FavoriteProgramsProvider
@@ -701,7 +701,7 @@ class FavoriteProgramsProvider
           FavoritePrograms,
           List<WorkoutProgram>
         > {
-  /// Избранные программы пользователя (сохраняются на бэкенде через UserExercises)
+  /// UserExercises
   ///
   /// Copied from [FavoritePrograms].
   FavoriteProgramsProvider(int userId)

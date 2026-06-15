@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
+import 'package:vivere_mobile/core/domain/entities/gender.dart';
 import '../../../../core/presentation/utils/app_validators.dart';
 import '../providers/auth_provider.dart';
 import '../state/auth_state.dart';

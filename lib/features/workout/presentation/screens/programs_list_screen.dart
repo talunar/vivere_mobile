@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import 'package:vivere_mobile/features/workout/domain/entities/workout_program.dart';
+import 'package:vivere_mobile/features/workout/presentation/providers/navigation_provider.dart';
 import 'package:vivere_mobile/features/workout/presentation/providers/workout_providers.dart';
 import 'package:vivere_mobile/features/workout/presentation/screens/program_details_screen.dart';
 
@@ -9,12 +11,14 @@ class ProgramsListScreen extends ConsumerStatefulWidget {
   final String categoryName;
   final int categoryId;
   final List<WorkoutProgram>? programs;
+  final Function(WorkoutProgram)? onSelect;
 
   const ProgramsListScreen({
     super.key,
     required this.categoryName,
     required this.categoryId,
     this.programs,
+    this.onSelect,
   });
 
   @override
@@ -37,18 +41,14 @@ class _ProgramsListScreenState extends ConsumerState<ProgramsListScreen> {
   }
 
   void _onScroll() {
-    if (widget.programs != null) return; // Не пагинируем, если передан фиксированный список
-
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+    if (widget.programs != null) return;
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
       ref.read(paginatedProgramsByCategoryProvider(widget.categoryId).notifier).fetchNextPage();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Если список программ передан явно (например, только избранные), используем его.
-    // Иначе используем пагинированный провайдер.
     final programsAsync = widget.programs != null
         ? AsyncValue.data(widget.programs!)
         : ref.watch(paginatedProgramsByCategoryProvider(widget.categoryId));
@@ -62,60 +62,90 @@ class _ProgramsListScreenState extends ConsumerState<ProgramsListScreen> {
         children: [
           Positioned.fill(
             child: programsAsync.when(
-              data: (programs) => SingleChildScrollView(
-                controller: _scrollController,
-                padding: EdgeInsets.fromLTRB(16, headerHeight + 20, 16, 100),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE2E2E2),
-                        borderRadius: BorderRadius.circular(32),
-                      ),
+              data: (programs) {
+                if (programs.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Column(
-                        children: programs.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final program = entry.value;
-                          final isLast = index == programs.length - 1;
-
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
-                            child: ProgramCard(
-                              program: program,
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProgramDetailsScreen(program: program),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'У вас пока нет избранных тренировок',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16),
+                          ),
+                          const SizedBox(height: 20),
+                          AppButton(
+                            text: 'Найти новые',
+                            onPressed: () {
+                              ref.read(expandedCategoryProvider.notifier).state = null;
+                              ref.invalidate(paginatedWorkoutCategoriesProvider);
+                              ref.read(navigationResetProvider.notifier).update((state) => state + 1);
+                              ref.read(navigationNotifierProvider.notifier).setIndex(0);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    if (programsAsync.isLoading)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Center(
-                          child: CircularProgressIndicator(color: Color(0xFFFF5900)),
+                  );
+                }
+
+                return SingleChildScrollView(
+                  controller: _scrollController,
+                  padding: EdgeInsets.fromLTRB(16, headerHeight + 20, 16, 100),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE2E2E2),
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        child: Column(
+                          children: programs.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final program = entry.value;
+                            final isLast = index == programs.length - 1;
+
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
+                              child: ProgramCard(
+                                program: program,
+                                onTap: () {
+                                  if (widget.onSelect != null) {
+                                    // Возвращаем программу назад
+                                    Navigator.pop(context, program);
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProgramDetailsScreen(program: program),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
-                  ],
-                ),
-              ),
-              loading: () => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+                      if (programsAsync.isLoading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+                        ),
+                    ],
+                  ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
               error: (err, st) => Center(child: Text('Ошибка: $err')),
             ),
           ),
-
-          // Градиент сверху
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: headerHeight + 30,
+            top: 0, left: 0, right: 0, height: headerHeight + 30,
             child: IgnorePointer(
               child: Container(
                 decoration: BoxDecoration(
@@ -138,38 +168,23 @@ class _ProgramsListScreenState extends ConsumerState<ProgramsListScreen> {
               ),
             ),
           ),
-
-          // Заголовок и кнопка назад
           Positioned(
-            top: topPadding,
-            left: 16,
-            right: 16,
-            height: 56,
+            top: topPadding, left: 16, right: 16, height: 56,
             child: Row(
               children: [
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE2E2E2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset('assets/icons/back.svg'),
-                    ),
+                    width: 44, height: 44,
+                    decoration: const BoxDecoration(color: Color(0xFFE2E2E2), shape: BoxShape.circle),
+                    child: Center(child: SvgPicture.asset('assets/icons/back.svg')),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     widget.categoryName,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0xFF141414),
-                      fontWeight: FontWeight.w400,
-                      fontSize: 24,
-                    ),
+                    style: const TextStyle(color: Color(0xFF141414), fontSize: 24, fontWeight: FontWeight.w400),
                   ),
                 ),
                 const SizedBox(width: 44),
@@ -185,7 +200,6 @@ class _ProgramsListScreenState extends ConsumerState<ProgramsListScreen> {
 class ProgramCard extends StatelessWidget {
   final WorkoutProgram program;
   final VoidCallback? onTap;
-
   const ProgramCard({super.key, required this.program, this.onTap});
 
   @override
@@ -203,12 +217,7 @@ class ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset(
-                "assets/images/programs/workout_1.png",
-                width: 160,
-                height: 160,
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset("assets/images/programs/workout_1.png", width: 160, height: 160, fit: BoxFit.cover),
             ),
             Expanded(
               child: Padding(
@@ -216,56 +225,15 @@ class ProgramCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      program.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF141414),
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Text(program.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF141414)), maxLines: 2, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
-                        const SizedBox(width: 5),
-                        Text(
-                          program.rating?.toString() ?? "4.8",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF141414),
-                          ),
-                        ),
-                      ],
-                    ),
+                    Row(children: [const Icon(Icons.star, color: Color(0xFFFFB800), size: 16), Text(" ${program.rating}")]),
                     const Spacer(),
-                    Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 12,
-                          backgroundImage:
-                              AssetImage("assets/images/programs/workout_1.png"),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            program.trainerName ?? "Super train 3000",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black.withOpacity(0.5),
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    )
+                    Row(children: [const CircleAvatar(radius: 12, backgroundImage: AssetImage("assets/images/programs/workout_1.png")), const SizedBox(width: 8), Text(program.trainerName ?? "Coach", style: const TextStyle(fontSize: 12, color: Colors.grey))]),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

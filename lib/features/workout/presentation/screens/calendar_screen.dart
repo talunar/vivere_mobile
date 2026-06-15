@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:vivere_mobile/core/presentation/widgets/dashboard_card.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../domain/entities/workout_program.dart';
 import '../providers/workout_providers.dart';
+import '../providers/navigation_provider.dart';
 import 'program_details_screen.dart';
+import 'my_workouts_screen.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
@@ -25,6 +28,152 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     initializeDateFormatting('ru_RU', null);
   }
 
+  void _showEditScheduleSheet(BuildContext context, List<WorkoutProgram> favorites) {
+    final currentSchedule = ref.read(workoutScheduleProvider);
+    final Map<int, List<WorkoutProgram>> tempSchedule = currentSchedule.map(
+          (key, value) => MapEntry(key, List<WorkoutProgram>.from(value)),
+    );
+
+    showDialog(
+      context: context,
+      useRootNavigator: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Dialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 352),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "График тренировок",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Назначьте тренировки из избранного на дни недели.",
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: List.generate(7, (index) {
+                          final weekday = index + 1;
+                          final dayNamesShort = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+                          final dayNameShort = dayNamesShort[index];
+                          final programs = tempSchedule[weekday] ?? [];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyWorkoutsScreen(
+                                      onSelect: (selectedProgram) {
+                                        if (!tempSchedule[weekday]!.any((p) => p.id == selectedProgram.id)) {
+                                          tempSchedule[weekday]!.add(selectedProgram);
+                                        }
+                                        setModalState(() {});
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(50),
+                              child: Container(
+                                height: 50,
+                                padding: const EdgeInsets.symmetric(horizontal: 24),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE2E2E2),
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(
+                                    color: programs.isNotEmpty ? const Color(0xFFFF5900) : Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 32,
+                                      child: Text(
+                                        dayNameShort,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Color(0xFF141414)
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        programs.isEmpty
+                                            ? "Нажмите, чтобы добавить"
+                                            : "Тренировок: ${programs.length}",
+                                        style: TextStyle(
+                                          color: programs.isNotEmpty ? Colors.black : const Color(0xFF9E9E9E),
+                                          fontSize: 14,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    if (programs.isNotEmpty)
+                                      GestureDetector(
+                                        onTap: () {
+                                          tempSchedule[weekday] = [];
+                                          setModalState(() {});
+                                        },
+                                        child: const Icon(Icons.delete_sweep_outlined, color: Colors.grey, size: 20),
+                                      )
+                                    else
+                                      const Icon(Icons.add_circle_outline, color: Color(0xFFFF5900), size: 20),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Отмена", style: TextStyle(color: Colors.grey, fontSize: 16)),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          ref.read(workoutScheduleProvider.notifier).state = Map<int, List<WorkoutProgram>>.from(tempSchedule);
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          "ОК",
+                          style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
@@ -36,9 +185,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       orElse: () => null,
     );
 
-    final programsAsync = userId != null
+    final favoritesAsync = userId != null
         ? ref.watch(favoriteProgramsProvider(userId))
-        : const AsyncValue.data([]);
+        : const AsyncValue.data(<WorkoutProgram>[]);
+
+    final favorites = favoritesAsync.value ?? [];
+    final schedule = ref.watch(workoutScheduleProvider);
 
     final String formattedDate = DateFormat('EEEE,\nd MMMM', 'ru_RU').format(_selectedDate);
     final String capitalizedDate = formattedDate[0].toUpperCase() + formattedDate.substring(1);
@@ -53,106 +205,41 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  programsAsync.maybeWhen(
-                    data: (programs) => _buildCalendarGrid(hasWorkouts: programs.isNotEmpty),
-                    orElse: () => _buildCalendarGrid(hasWorkouts: false),
-                  ),
-
+                  _buildCalendarGrid(schedule),
                   const SizedBox(height: 24),
-
-                  _DashboardCard(
+                  DashboardCard(
                     title: "Калории сегодня",
                     showArrow: true,
                     bottomPadding: 24,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          _CalorieItem(label: "Завтрак", value: "320 kkal"),
-                          _CalorieItem(label: "Обед", value: "220 kkal"),
-                          _CalorieItem(label: "Ужин", value: "220 kkal"),
-                        ],
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _CalorieItem(label: "Завтрак", value: "320 kkal"),
+                        _CalorieItem(label: "Обед", value: "220 kkal"),
+                        _CalorieItem(label: "Ужин", value: "220 kkal"),
+                      ],
                     ),
                   ),
-
-                  programsAsync.when(
-                    data: (programs) {
-                      if (programs.isEmpty) return const SizedBox.shrink();
-                      return Column(
-                        children: [
-                          const SizedBox(height: 16),
-                          _DashboardCard(
-                            title: "Тренировки сегодня",
-                            showAdd: true,
-                            child: Column(
-                              children: programs.asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final program = entry.value;
-                                final isLast = index == programs.length - 1;
-
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: isLast ? 0 : 10),
-                                  child: _ProgramCard(
-                                    program: program,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ProgramDetailsScreen(program: program),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                    loading: () => const Padding(
-                      padding: EdgeInsets.only(top: 16),
-                      child: _DashboardCard(
-                        title: "Тренировки сегодня",
-                        child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
-                      ),
-                    ),
-                    error: (err, _) => const SizedBox.shrink(),
-                  ),
+                  _buildDailyWorkouts(favorites, schedule),
                 ],
               ),
             ),
           ),
-
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: headerHeight + 40,
+            top: 0, left: 0, right: 0, height: headerHeight + 40,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(0xFFF6F6F6),
-                    const Color(0xFFF6F6F6),
-                    const Color(0xFFF6F6F6),
-                    const Color(0xFFF6F6F6).withOpacity(0.98),
-                    const Color(0xFFF6F6F6).withOpacity(0.78),
-                    const Color(0xFFF6F6F6).withOpacity(0.45),
-                    const Color(0xFFF6F6F6).withOpacity(0.16),
-                    const Color(0xFFF6F6F6).withOpacity(0.0),
-                  ],
-                  stops: const [0.0, 0.4, 0.65, 0.72, 0.80, 0.88, 0.95, 1.0],
+                  colors: [const Color(0xFFF6F6F6), const Color(0xFFF6F6F6), const Color(0xFFF6F6F6).withOpacity(0.0)],
+                  stops: const [0.0, 0.8, 1.0],
                 ),
               ),
             ),
           ),
-
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
+            top: 0, left: 0, right: 0,
             child: SafeArea(
               bottom: false,
               child: SizedBox(
@@ -163,21 +250,19 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     children: [
                       _IconBtn(
                         asset: 'assets/icons/back.svg',
-                        onTap: () => Navigator.maybePop(context),
+                        onTap: () => ref.read(navigationNotifierProvider.notifier).goBack(),
                       ),
                       Expanded(
                         child: Text(
                           capitalizedDate,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Color(0xFF141414),
-                            fontWeight: FontWeight.w400,
-                            fontSize: 22,
-                            height: 1.1,
-                          ),
+                          style: const TextStyle(color: Color(0xFF141414), fontWeight: FontWeight.w400, fontSize: 22, height: 1.1),
                         ),
                       ),
-                      const SizedBox(width: 44),
+                      _IconBtn(
+                        asset: 'assets/icons/settings.svg',
+                        onTap: () => _showEditScheduleSheet(context, favorites),
+                      ),
                     ],
                   ),
                 ),
@@ -189,8 +274,75 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
   }
 
-  Widget _buildCalendarGrid({required bool hasWorkouts}) {
+  Widget _buildDailyWorkouts(List<WorkoutProgram> favorites, Map<int, List<WorkoutProgram>> schedule) {
+    final int weekday = _selectedDate.weekday;
+    final List<WorkoutProgram> todayPrograms = schedule[weekday] ?? [];
+
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        DashboardCard(
+          title: "Тренировки сегодня",
+          showAdd: true,
+          onAddTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyWorkoutsScreen(
+                  onSelect: (selectedProgram) {
+                    ref.read(workoutScheduleProvider.notifier).update((state) {
+                      final newState = Map<int, List<WorkoutProgram>>.from(state);
+                      final dayPrograms = List<WorkoutProgram>.from(newState[weekday] ?? []);
+                      
+                      if (!dayPrograms.any((p) => p.id == selectedProgram.id)) {
+                        dayPrograms.add(selectedProgram);
+                        newState[weekday] = dayPrograms;
+                      }
+                      return newState;
+                    });
+                  },
+                ),
+              ),
+            );
+          },
+          child: todayPrograms.isEmpty
+              ? const Padding(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+              child: Text(
+                "На сегодня тренировок не запланировано",
+                style: TextStyle(color: Colors.grey, fontSize: 15),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          )
+              : Column(
+            children: todayPrograms.map((program) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _ProgramCard(
+                program: program,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProgramDetailsScreen(program: program),
+                    ),
+                  );
+                },
+              ),
+            )).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCalendarGrid(Map<int, List<WorkoutProgram>> schedule) {
     final days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    final firstDayOfMonth = DateTime(_selectedDate.year, _selectedDate.month, 1);
+    final int offset = firstDayOfMonth.weekday - 1;
+    final int daysInMonth = DateTime(_selectedDate.year, _selectedDate.month + 1, 0).day;
+
     return Column(
       children: [
         Row(
@@ -212,14 +364,18 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             crossAxisSpacing: 4,
             childAspectRatio: 1.1,
           ),
-          itemCount: 31,
+          itemCount: daysInMonth + offset,
           itemBuilder: (context, index) {
-            final day = index + 1;
-            final date = DateTime(2025, 3, day);
-            final isSelected = day == _selectedDate.day;
-            final isToday = day == DateTime.now().day && DateTime.now().month == 3;
+            if (index < offset) return const SizedBox.shrink();
 
-            final bool shouldUnderline = hasWorkouts && (date.weekday == DateTime.tuesday || date.weekday == DateTime.thursday);
+            final day = index - offset + 1;
+            final date = DateTime(_selectedDate.year, _selectedDate.month, day);
+            final isSelected = day == _selectedDate.day;
+            final isToday = day == DateTime.now().day &&
+                _selectedDate.month == DateTime.now().month &&
+                _selectedDate.year == DateTime.now().year;
+
+            final bool hasWorkout = (schedule[date.weekday] ?? []).isNotEmpty;
 
             return GestureDetector(
               onTap: () => setState(() => _selectedDate = date),
@@ -237,7 +393,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         "$day",
                         style: TextStyle(
                           color: isSelected ? Colors.white : (isToday ? const Color(0xFFFF5900) : const Color(0xFF141414)),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
+                          fontWeight: isToday ? FontWeight.bold : FontWeight.w400,
                           fontSize: 18,
                         ),
                       ),
@@ -247,7 +403,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   Container(
                     width: 16,
                     height: 2,
-                    color: shouldUnderline ? const Color(0xFFFF5900) : Colors.transparent,
+                    color: hasWorkout ? const Color(0xFFFF5900) : Colors.transparent,
                   ),
                 ],
               ),
@@ -273,55 +429,7 @@ class _IconBtn extends StatelessWidget {
         height: 44,
         decoration: const BoxDecoration(color: Color(0xFFE2E2E2), shape: BoxShape.circle),
         child: Center(
-          child: SvgPicture.asset(
-            asset,
-            width: 44,
-            height: 44,
-            fit: BoxFit.contain,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DashboardCard extends StatelessWidget {
-  final String title;
-  final Widget child;
-  final bool showAdd;
-  final bool showArrow;
-  final double? bottomPadding;
-
-  const _DashboardCard({
-    required this.title,
-    required this.child,
-    this.showAdd = false,
-    this.showArrow = false,
-    this.bottomPadding,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(left: 10, right: 10, top: 16, bottom: bottomPadding ?? 14),
-      decoration: BoxDecoration(color: const Color(0xFFE2E2E2), borderRadius: BorderRadius.circular(32)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
-                if (showAdd) const Icon(Icons.add_circle, size: 36, color: Colors.black),
-                if (showArrow) const Icon(Icons.arrow_circle_right, size: 36, color: Colors.black),
-              ],
-            ),
-            const SizedBox(height: 16),
-            child,
-          ],
+          child: SvgPicture.asset(asset, width: 44, height: 44, fit: BoxFit.contain),
         ),
       ),
     );
@@ -366,12 +474,7 @@ class _ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset(
-                "assets/images/programs/workout_1.png",
-                width: 160,
-                height: 160,
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset("assets/images/programs/workout_1.png", width: 160, height: 160, fit: BoxFit.cover),
             ),
             Expanded(
               child: Padding(
@@ -379,49 +482,21 @@ class _ProgramCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      program.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF141414),
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Text(program.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF141414)), maxLines: 2, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 10),
                     Row(
                       children: [
                         const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
                         const SizedBox(width: 5),
-                        Text(
-                          program.rating?.toString() ?? "4.8",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF141414),
-                          ),
-                        ),
+                        Text(program.rating?.toString() ?? "4.8", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF141414))),
                       ],
                     ),
                     const Spacer(),
                     Row(
                       children: [
-                        const CircleAvatar(
-                          radius: 12,
-                          backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
-                        ),
+                        const CircleAvatar(radius: 12, backgroundImage: AssetImage("assets/images/programs/workout_1.png")),
                         const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            program.trainerName ?? "Super train 3000",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black.withOpacity(0.5),
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                        Expanded(child: Text(program.trainerName ?? "Super train 3000", style: TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.5)), overflow: TextOverflow.ellipsis)),
                       ],
                     )
                   ],

@@ -19,8 +19,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$Repeated {
   int get id => throw _privateConstructorUsedError;
   int get weight => throw _privateConstructorUsedError;
-  int? get reps => throw _privateConstructorUsedError;
-  int? get seconds => throw _privateConstructorUsedError;
+  int get reps => throw _privateConstructorUsedError;
+  int get seconds => throw _privateConstructorUsedError;
 
   /// Create a copy of Repeated
   /// with the given fields replaced by the non-null parameter values.
@@ -34,7 +34,7 @@ abstract class $RepeatedCopyWith<$Res> {
   factory $RepeatedCopyWith(Repeated value, $Res Function(Repeated) then) =
       _$RepeatedCopyWithImpl<$Res, Repeated>;
   @useResult
-  $Res call({int id, int weight, int? reps, int? seconds});
+  $Res call({int id, int weight, int reps, int seconds});
 }
 
 /// @nodoc
@@ -54,8 +54,8 @@ class _$RepeatedCopyWithImpl<$Res, $Val extends Repeated>
   $Res call({
     Object? id = null,
     Object? weight = null,
-    Object? reps = freezed,
-    Object? seconds = freezed,
+    Object? reps = null,
+    Object? seconds = null,
   }) {
     return _then(
       _value.copyWith(
@@ -67,14 +67,14 @@ class _$RepeatedCopyWithImpl<$Res, $Val extends Repeated>
                 ? _value.weight
                 : weight // ignore: cast_nullable_to_non_nullable
                       as int,
-            reps: freezed == reps
+            reps: null == reps
                 ? _value.reps
                 : reps // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            seconds: freezed == seconds
+                      as int,
+            seconds: null == seconds
                 ? _value.seconds
                 : seconds // ignore: cast_nullable_to_non_nullable
-                      as int?,
+                      as int,
           )
           as $Val,
     );
@@ -90,7 +90,7 @@ abstract class _$$RepeatedImplCopyWith<$Res>
   ) = __$$RepeatedImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, int weight, int? reps, int? seconds});
+  $Res call({int id, int weight, int reps, int seconds});
 }
 
 /// @nodoc
@@ -109,8 +109,8 @@ class __$$RepeatedImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? weight = null,
-    Object? reps = freezed,
-    Object? seconds = freezed,
+    Object? reps = null,
+    Object? seconds = null,
   }) {
     return _then(
       _$RepeatedImpl(
@@ -122,14 +122,14 @@ class __$$RepeatedImplCopyWithImpl<$Res>
             ? _value.weight
             : weight // ignore: cast_nullable_to_non_nullable
                   as int,
-        reps: freezed == reps
+        reps: null == reps
             ? _value.reps
             : reps // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        seconds: freezed == seconds
+                  as int,
+        seconds: null == seconds
             ? _value.seconds
             : seconds // ignore: cast_nullable_to_non_nullable
-                  as int?,
+                  as int,
       ),
     );
   }
@@ -137,22 +137,24 @@ class __$$RepeatedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$RepeatedImpl implements _Repeated {
+class _$RepeatedImpl extends _Repeated {
   const _$RepeatedImpl({
     required this.id,
     required this.weight,
-    this.reps,
-    this.seconds,
-  });
+    this.reps = 20,
+    this.seconds = 60,
+  }) : super._();
 
   @override
   final int id;
   @override
   final int weight;
   @override
-  final int? reps;
+  @JsonKey()
+  final int reps;
   @override
-  final int? seconds;
+  @JsonKey()
+  final int seconds;
 
   @override
   String toString() {
@@ -182,22 +184,23 @@ class _$RepeatedImpl implements _Repeated {
       __$$RepeatedImplCopyWithImpl<_$RepeatedImpl>(this, _$identity);
 }
 
-abstract class _Repeated implements Repeated {
+abstract class _Repeated extends Repeated {
   const factory _Repeated({
     required final int id,
     required final int weight,
-    final int? reps,
-    final int? seconds,
+    final int reps,
+    final int seconds,
   }) = _$RepeatedImpl;
+  const _Repeated._() : super._();
 
   @override
   int get id;
   @override
   int get weight;
   @override
-  int? get reps;
+  int get reps;
   @override
-  int? get seconds;
+  int get seconds;
 
   /// Create a copy of Repeated
   /// with the given fields replaced by the non-null parameter values.

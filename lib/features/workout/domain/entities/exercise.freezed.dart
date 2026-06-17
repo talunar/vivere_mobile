@@ -160,14 +160,15 @@ class __$$ExerciserImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ExerciserImpl implements _Exerciser {
+class _$ExerciserImpl extends _Exerciser {
   const _$ExerciserImpl({
     required this.id,
     required this.name,
     required this.description,
     required this.image,
     required final List<Repeated> repeats,
-  }) : _repeats = repeats;
+  }) : _repeats = repeats,
+       super._();
 
   @override
   final int id;
@@ -222,7 +223,7 @@ class _$ExerciserImpl implements _Exerciser {
       __$$ExerciserImplCopyWithImpl<_$ExerciserImpl>(this, _$identity);
 }
 
-abstract class _Exerciser implements Exerciser {
+abstract class _Exerciser extends Exerciser {
   const factory _Exerciser({
     required final int id,
     required final String name,
@@ -230,6 +231,7 @@ abstract class _Exerciser implements Exerciser {
     required final String image,
     required final List<Repeated> repeats,
   }) = _$ExerciserImpl;
+  const _Exerciser._() : super._();
 
   @override
   int get id;

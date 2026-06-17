@@ -4,10 +4,6 @@ import '../../domain/entities/workout_program.dart';
 import '../../domain/repositories/i_workout_repository.dart';
 
 class MockWorkoutRepository implements IWorkoutRepository {
-  final String _programImagePath = 'assets/design/workout_1.png';
-  final String _exerciseImagePath = 'assets/design/workout_1.png';
-  final String _categoryImagePath = 'assets/design/workout_1.png';
-  final String _trainerImagePath = 'assets/design/workout_1.png';
 
   @override
   Future<List<WorkoutCategory>> getCategories({int limit = 10, int offset = 0}) async {
@@ -24,7 +20,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
     final allCategories = List.generate(categoryNames.length, (index) => WorkoutCategory(
       id: index + 1, 
       name: categoryNames[index], 
-      image: _categoryImagePath, 
+      image: 'assets/images/categories/workout_1.png', 
       programs: _generateProgramsList(index + 1, limit: 5, offset: 0)
     ));
 
@@ -75,24 +71,27 @@ class MockWorkoutRepository implements IWorkoutRepository {
       title: 'Программа тренировки #$id',
       rating: 4.8,
       trainerName: 'Vivere Pro Trainer',
-      trainerImage: _trainerImagePath,
-      image: _programImagePath,
+      trainerImage: 'assets/images/avatar/workout_6.png',
+      image: 'assets/images/programs/workout_1.png',
       description: 'Эффективная программа для достижения ваших целей в кратчайшие сроки.',
       level: 'Продвинутый',
       equipment: 'Гантели, коврик',
       durationMinutes: 40,
-      exercises: List.generate(5, (i) => ExerciserInProgram(
-        id: i + (id * 100),
-        name: i % 2 == 0 ? 'Упражнение ${i + 1}' : 'Приседания',
-        description: 'Выполняйте упражнение плавно, следя за техникой и дыханием. Это очень длинное описание, которое точно не влезет в три строки. Мы добавили этот текст специально для того, чтобы протестировать функцию сворачивания и разворачивания текста. В развернутом состоянии пользователь сможет прочитать все подробности выполнения данного упражнения, включая советы по постановке ног, положению спины и правильному распределению нагрузки.',
-        image: _exerciseImagePath,
-        repeats: [
-          if (i % 2 == 0)
-            Repeated(id: 1, weight: 20, seconds: 30)
-          else
-            Repeated(id: 1, weight: 15, reps: 12),
-        ],
-      )),
+      exercises: List.generate(8, (i) {
+        final imageNumber = (i % 4) + 1;
+        return ExerciserInProgram(
+          id: i + (id * 100),
+          name: i % 2 == 0 ? 'Упражнение ${i + 1}' : 'Приседания',
+          description: 'Выполняйте упражнение плавно, следя за техникой и дыханием. Это очень длинное описание, которое точно не влезет в три строки. Мы добавили этот текст специально для того, чтобы протестировать функцию сворачивания и разворачивания текста.',
+          image: 'assets/images/exercises/workout_$imageNumber.png',
+          repeats: [
+            if (i % 2 == 0)
+              Repeated(id: 1, weight: 20, seconds: 30)
+            else
+              Repeated(id: 1, weight: 15, reps: 12),
+          ],
+        );
+      }),
     );
   }
 }

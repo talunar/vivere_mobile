@@ -13,6 +13,7 @@ import 'package:vivere_mobile/core/network/network_config.dart';
 
 part 'auth_provider.g.dart';
 
+/// После подключения к бэку сменить на true
 const bool _useRemoteDataSource = false;
 
 @Riverpod(keepAlive: true)

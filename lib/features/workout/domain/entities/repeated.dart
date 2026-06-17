@@ -7,7 +7,11 @@ class Repeated with _$Repeated {
   const factory Repeated({
     required int id,
     required int weight,
-    int? reps,
-    int? seconds,
+    @Default(20) int reps,
+    @Default(60) int seconds,
   }) = _Repeated;
+
+  const Repeated._();
+
+  bool get isTimeBased => seconds > 0;
 }

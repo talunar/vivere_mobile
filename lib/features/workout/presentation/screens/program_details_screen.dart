@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import '../../domain/entities/workout_program.dart';
+import '../../domain/entities/repeated.dart';
 import '../providers/workout_providers.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import 'workout_execution_screen.dart';
@@ -51,7 +52,7 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
                     child: Image.asset(
-                      "assets/images/programs/workout_1.png",
+                      widget.program.image ?? "assets/images/programs/workout_1.png",
                       fit: BoxFit.cover,
                       alignment: Alignment.bottomCenter,
                     ),
@@ -162,9 +163,13 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 24,
-                        backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
+                        backgroundColor: const Color(0xFFE2E2E2),
+                        backgroundImage: const AssetImage("assets/images/avatar/trainer_1.png"),
+                        foregroundImage: (widget.program.trainerImage != null && widget.program.trainerImage!.isNotEmpty)
+                            ? AssetImage(widget.program.trainerImage!)
+                            : null,
                       ),
                       const SizedBox(width: 12),
                       Column(
@@ -261,8 +266,8 @@ class _ExerciseTile extends StatelessWidget {
   const _ExerciseTile({required this.exercise});
   @override
   Widget build(BuildContext context) {
-    final repeat = exercise.repeats.first;
-    final String subtitle = repeat.seconds != null ? '${repeat.seconds} секунд' : '${repeat.reps} повторений';
+    final repeat = exercise.repeats.isNotEmpty ? exercise.repeats.first : const Repeated(id: 0, weight: 0);
+    final String subtitle = repeat.seconds > 0 ? '${repeat.seconds} секунд' : '${repeat.reps} повторений';
 
     return Container(
       width: double.infinity,
@@ -283,7 +288,7 @@ class _ExerciseTile extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: Image.asset(
-              "assets/images/exercises/workout_3.png",
+              exercise.image,
               width: 100,
               height: 100,
               fit: BoxFit.cover,

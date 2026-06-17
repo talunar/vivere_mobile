@@ -42,16 +42,18 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     _timer?.cancel();
     _isDescriptionExpanded = false;
     final exercise = _modifiedExercises[currentIndex];
-    final repeat = exercise.repeats.first;
+    final repeat = exercise.repeats.isNotEmpty 
+        ? exercise.repeats.first 
+        : const Repeated(id: 0, weight: 0, reps: 10, seconds: 0);
 
     _weightController.text = repeat.weight.toString();
-    if (repeat.seconds != null) {
-      _remainingSeconds = repeat.seconds!;
+    if (repeat.seconds > 0) {
+      _remainingSeconds = repeat.seconds;
       _valueController.text = _remainingSeconds.toString();
       _isPaused = true;
       _startTimer();
     } else {
-      _valueController.text = repeat.reps?.toString() ?? '0';
+      _valueController.text = repeat.reps.toString();
     }
   }
 
@@ -78,12 +80,14 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     final value = int.tryParse(_valueController.text) ?? 0;
 
     final currentExercise = _modifiedExercises[currentIndex];
-    final currentRepeat = currentExercise.repeats.first;
+    final currentRepeat = currentExercise.repeats.isNotEmpty 
+        ? currentExercise.repeats.first 
+        : const Repeated(id: 0, weight: 0);
 
     final updatedRepeat = currentRepeat.copyWith(
       weight: weight,
-      reps: currentRepeat.seconds == null ? value : null,
-      seconds: currentRepeat.seconds != null ? value : null,
+      reps: currentRepeat.seconds == 0 ? value : currentRepeat.reps,
+      seconds: currentRepeat.seconds > 0 ? value : 0,
     );
 
     _modifiedExercises[currentIndex] = currentExercise.copyWith(
@@ -169,8 +173,10 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
     final exercise = _modifiedExercises[currentIndex];
-    final repeat = exercise.repeats.first;
-    final isTimeBased = repeat.seconds != null;
+    final repeat = exercise.repeats.isNotEmpty 
+        ? exercise.repeats.first 
+        : const Repeated(id: 0, weight: 0);
+    final isTimeBased = repeat.seconds > 0;
 
     return Stack(
       children: [
@@ -186,7 +192,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                     child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
                       child: Image.asset(
-                        "assets/images/exercises/workout_3.png",
+                        exercise.image,
                         width: double.infinity,
                         height: imageHeight,
                         fit: BoxFit.cover,
@@ -301,7 +307,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                           child: isTimeBased
                               ? _TimerDisplay(
                                   seconds: _remainingSeconds,
-                                  totalSeconds: int.tryParse(_valueController.text) ?? repeat.seconds!,
+                                  totalSeconds: repeat.seconds,
                                   isPaused: _isPaused,
                                   onToggle: _togglePause,
                                   currentIndex: currentIndex,
@@ -310,7 +316,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      'x ${_valueController.text}',
+                                      'x ${repeat.reps}',
                                       style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900)),
                                     ),
                                     const SizedBox(height: 8),
@@ -463,7 +469,7 @@ class _TimerDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final String minutesStr = (seconds ~/ 60).toString().padLeft(2, '0');
     final String secondsStr = (seconds % 60).toString().padLeft(2, '0');
-    final double progress = totalSeconds > 0 ? seconds / totalSeconds : 0;
+    final double progress = totalSeconds > 0 ? (seconds / totalSeconds) : 0;
 
     return Stack(
       alignment: Alignment.center,

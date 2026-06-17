@@ -29,4 +29,8 @@ class ExerciserInProgram with _$ExerciserInProgram {
     required String image,
     required List<Repeated> repeats,
   }) = _ExerciserInProgram;
+
+  const ExerciserInProgram._();
+
+  bool get isNetworkImage => image.startsWith('http');
 }

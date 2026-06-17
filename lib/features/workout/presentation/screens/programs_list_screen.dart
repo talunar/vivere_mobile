@@ -115,7 +115,6 @@ class _ProgramsListScreenState extends ConsumerState<ProgramsListScreen> {
                                 program: program,
                                 onTap: () {
                                   if (widget.onSelect != null) {
-                                    // Возвращаем программу назад
                                     Navigator.pop(context, program);
                                   } else {
                                     Navigator.push(
@@ -229,7 +228,7 @@ class ProgramCard extends StatelessWidget {
                     const SizedBox(height: 10),
                     Row(children: [const Icon(Icons.star, color: Color(0xFFFFB800), size: 16), Text(" ${program.rating}")]),
                     const Spacer(),
-                    Row(children: [const CircleAvatar(radius: 12, backgroundImage: AssetImage("assets/images/programs/workout_1.png")), const SizedBox(width: 8), Text(program.trainerName ?? "Coach", style: const TextStyle(fontSize: 12, color: Colors.grey))]),
+                    Row(children: [const CircleAvatar(radius: 12, backgroundImage: AssetImage("assets/images/programs/workout_2.png")), const SizedBox(width: 8), Text(program.trainerName ?? "Coach", style: const TextStyle(fontSize: 12, color: Colors.grey))]),
                   ],
                 ),
               ),

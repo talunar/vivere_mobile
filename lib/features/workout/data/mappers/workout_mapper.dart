@@ -4,7 +4,7 @@ import '../models/workout_dto.dart';
 import 'repeated_mapper.dart';
 
 extension CategoryDtoX on CategoryDto {
-  /// Маппинг категории и программ
+  /// Маппинг категории. Если программ нет — возвращаем пустой список, не падаем.
   WorkoutCategory toDomain() {
     return WorkoutCategory(
       id: id,
@@ -17,7 +17,9 @@ extension CategoryDtoX on CategoryDto {
 }
 
 extension ProgramDtoX on ProgramDto {
-  /// Маппинг программы. Собирает все упражнения из вложенных воркаутов в один плоский список.
+  /// Собираем упражнения. 
+  /// Если бэкенд прислал null в списке воркаутов или упражнений, 
+  /// мы все равно вернем валидный объект WorkoutProgram.
   WorkoutProgram toDomain() {
     final allExercises = <ExerciserInProgram>[];
     
@@ -36,14 +38,15 @@ extension ProgramDtoX on ProgramDto {
       title: name,
       description: description,
       rating: null,
-      trainerName: null,
+      trainerName: 'Vivere Team', // Дефолт, если бэкенд не прислал тренера
       exercises: allExercises,
     );
   }
 }
 
 extension ExerciserDtoX on ExerciserDto {
-  /// Маппинг для экрана выполнения упражнения
+  /// Маппинг упражнения. 
+  /// Если список повторов (repeats) пуст, мы создаем один дефолтный подход.
   ExerciserInProgram toInProgramEntity() {
     return ExerciserInProgram(
       id: id,

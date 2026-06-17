@@ -6,8 +6,8 @@ extension RepeatedDtoX on RepeatedDto {
     return Repeated(
       id: id,
       weight: weight,
-      reps: reps,
-      seconds: seconds,
+      reps: reps ?? 20,
+      seconds: seconds ?? 60,
     );
   }
 }

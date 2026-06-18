@@ -232,7 +232,7 @@ class _FavoriteCategoryCard extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Image.asset(
-                  "assets/images/categories/workout_1.png",
+                  imageUrl, // Исправлено: используем imageUrl вместо хардкода
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
                 ),
@@ -252,7 +252,7 @@ class _FavoriteCategoryCard extends StatelessWidget {
                   child: ImageFiltered(
                     imageFilter: ui.ImageFilter.blur(sigmaX: 25, sigmaY: 25),
                     child: Image.asset(
-                      "assets/images/categories/workout_1.png",
+                      imageUrl, // Исправлено: используем imageUrl для блюра
                       fit: BoxFit.cover,
                       alignment: Alignment.topCenter,
                     ),

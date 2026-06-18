@@ -395,6 +395,7 @@ mixin _$ExerciserInProgram {
   String get description => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
   List<Repeated> get repeats => throw _privateConstructorUsedError;
+  String? get categoryImage => throw _privateConstructorUsedError;
 
   /// Create a copy of ExerciserInProgram
   /// with the given fields replaced by the non-null parameter values.
@@ -416,6 +417,7 @@ abstract class $ExerciserInProgramCopyWith<$Res> {
     String description,
     String image,
     List<Repeated> repeats,
+    String? categoryImage,
   });
 }
 
@@ -439,6 +441,7 @@ class _$ExerciserInProgramCopyWithImpl<$Res, $Val extends ExerciserInProgram>
     Object? description = null,
     Object? image = null,
     Object? repeats = null,
+    Object? categoryImage = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -462,6 +465,10 @@ class _$ExerciserInProgramCopyWithImpl<$Res, $Val extends ExerciserInProgram>
                 ? _value.repeats
                 : repeats // ignore: cast_nullable_to_non_nullable
                       as List<Repeated>,
+            categoryImage: freezed == categoryImage
+                ? _value.categoryImage
+                : categoryImage // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -483,6 +490,7 @@ abstract class _$$ExerciserInProgramImplCopyWith<$Res>
     String description,
     String image,
     List<Repeated> repeats,
+    String? categoryImage,
   });
 }
 
@@ -505,6 +513,7 @@ class __$$ExerciserInProgramImplCopyWithImpl<$Res>
     Object? description = null,
     Object? image = null,
     Object? repeats = null,
+    Object? categoryImage = freezed,
   }) {
     return _then(
       _$ExerciserInProgramImpl(
@@ -528,6 +537,10 @@ class __$$ExerciserInProgramImplCopyWithImpl<$Res>
             ? _value._repeats
             : repeats // ignore: cast_nullable_to_non_nullable
                   as List<Repeated>,
+        categoryImage: freezed == categoryImage
+            ? _value.categoryImage
+            : categoryImage // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -542,6 +555,7 @@ class _$ExerciserInProgramImpl extends _ExerciserInProgram {
     required this.description,
     required this.image,
     required final List<Repeated> repeats,
+    this.categoryImage,
   }) : _repeats = repeats,
        super._();
 
@@ -562,8 +576,11 @@ class _$ExerciserInProgramImpl extends _ExerciserInProgram {
   }
 
   @override
+  final String? categoryImage;
+
+  @override
   String toString() {
-    return 'ExerciserInProgram(id: $id, name: $name, description: $description, image: $image, repeats: $repeats)';
+    return 'ExerciserInProgram(id: $id, name: $name, description: $description, image: $image, repeats: $repeats, categoryImage: $categoryImage)';
   }
 
   @override
@@ -576,7 +593,9 @@ class _$ExerciserInProgramImpl extends _ExerciserInProgram {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.image, image) || other.image == image) &&
-            const DeepCollectionEquality().equals(other._repeats, _repeats));
+            const DeepCollectionEquality().equals(other._repeats, _repeats) &&
+            (identical(other.categoryImage, categoryImage) ||
+                other.categoryImage == categoryImage));
   }
 
   @override
@@ -587,6 +606,7 @@ class _$ExerciserInProgramImpl extends _ExerciserInProgram {
     description,
     image,
     const DeepCollectionEquality().hash(_repeats),
+    categoryImage,
   );
 
   /// Create a copy of ExerciserInProgram
@@ -608,6 +628,7 @@ abstract class _ExerciserInProgram extends ExerciserInProgram {
     required final String description,
     required final String image,
     required final List<Repeated> repeats,
+    final String? categoryImage,
   }) = _$ExerciserInProgramImpl;
   const _ExerciserInProgram._() : super._();
 
@@ -621,6 +642,8 @@ abstract class _ExerciserInProgram extends ExerciserInProgram {
   String get image;
   @override
   List<Repeated> get repeats;
+  @override
+  String? get categoryImage;
 
   /// Create a copy of ExerciserInProgram
   /// with the given fields replaced by the non-null parameter values.

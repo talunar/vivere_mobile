@@ -581,7 +581,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     final isLoading = profileState.isLoading;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(24, widget.headerHeight + 12, 24, 40),
+      padding: EdgeInsets.fromLTRB(24, widget.headerHeight + 10, 24, 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -590,7 +590,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               alignment: Alignment.bottomCenter,
               children: [
                 const CircleAvatar(
-                  radius: 54,
+                  radius: 50,
                   backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
                 ),
                 Transform.translate(
@@ -615,7 +615,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           _InfoBlock(
             label: "Имя",
@@ -697,7 +697,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
             //onTap: _showChangePasswordDialog,
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           Column(
             children: [
@@ -725,7 +725,7 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                 },
                 variant: AppButtonVariant.primary,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               TextButton(
                 onPressed: isLoading ? null : _showDeleteConfirmationDialog,
                 child: const Text(

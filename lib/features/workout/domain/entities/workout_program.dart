@@ -28,6 +28,7 @@ class ExerciserInProgram with _$ExerciserInProgram {
     required String description,
     required String image,
     required List<Repeated> repeats,
+    String? categoryImage,
   }) = _ExerciserInProgram;
 
   const ExerciserInProgram._();

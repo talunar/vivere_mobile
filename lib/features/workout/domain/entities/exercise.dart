@@ -11,6 +11,7 @@ class Exerciser with _$Exerciser {
     required String description,
     required String image,
     required List<Repeated> repeats,
+    String? categoryImage,
   }) = _Exerciser;
 
   const Exerciser._();

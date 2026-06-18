@@ -22,6 +22,7 @@ mixin _$Exerciser {
   String get description => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
   List<Repeated> get repeats => throw _privateConstructorUsedError;
+  String? get categoryImage => throw _privateConstructorUsedError;
 
   /// Create a copy of Exerciser
   /// with the given fields replaced by the non-null parameter values.
@@ -41,6 +42,7 @@ abstract class $ExerciserCopyWith<$Res> {
     String description,
     String image,
     List<Repeated> repeats,
+    String? categoryImage,
   });
 }
 
@@ -64,6 +66,7 @@ class _$ExerciserCopyWithImpl<$Res, $Val extends Exerciser>
     Object? description = null,
     Object? image = null,
     Object? repeats = null,
+    Object? categoryImage = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -87,6 +90,10 @@ class _$ExerciserCopyWithImpl<$Res, $Val extends Exerciser>
                 ? _value.repeats
                 : repeats // ignore: cast_nullable_to_non_nullable
                       as List<Repeated>,
+            categoryImage: freezed == categoryImage
+                ? _value.categoryImage
+                : categoryImage // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -108,6 +115,7 @@ abstract class _$$ExerciserImplCopyWith<$Res>
     String description,
     String image,
     List<Repeated> repeats,
+    String? categoryImage,
   });
 }
 
@@ -130,6 +138,7 @@ class __$$ExerciserImplCopyWithImpl<$Res>
     Object? description = null,
     Object? image = null,
     Object? repeats = null,
+    Object? categoryImage = freezed,
   }) {
     return _then(
       _$ExerciserImpl(
@@ -153,6 +162,10 @@ class __$$ExerciserImplCopyWithImpl<$Res>
             ? _value._repeats
             : repeats // ignore: cast_nullable_to_non_nullable
                   as List<Repeated>,
+        categoryImage: freezed == categoryImage
+            ? _value.categoryImage
+            : categoryImage // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -167,6 +180,7 @@ class _$ExerciserImpl extends _Exerciser {
     required this.description,
     required this.image,
     required final List<Repeated> repeats,
+    this.categoryImage,
   }) : _repeats = repeats,
        super._();
 
@@ -187,8 +201,11 @@ class _$ExerciserImpl extends _Exerciser {
   }
 
   @override
+  final String? categoryImage;
+
+  @override
   String toString() {
-    return 'Exerciser(id: $id, name: $name, description: $description, image: $image, repeats: $repeats)';
+    return 'Exerciser(id: $id, name: $name, description: $description, image: $image, repeats: $repeats, categoryImage: $categoryImage)';
   }
 
   @override
@@ -201,7 +218,9 @@ class _$ExerciserImpl extends _Exerciser {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.image, image) || other.image == image) &&
-            const DeepCollectionEquality().equals(other._repeats, _repeats));
+            const DeepCollectionEquality().equals(other._repeats, _repeats) &&
+            (identical(other.categoryImage, categoryImage) ||
+                other.categoryImage == categoryImage));
   }
 
   @override
@@ -212,6 +231,7 @@ class _$ExerciserImpl extends _Exerciser {
     description,
     image,
     const DeepCollectionEquality().hash(_repeats),
+    categoryImage,
   );
 
   /// Create a copy of Exerciser
@@ -230,6 +250,7 @@ abstract class _Exerciser extends Exerciser {
     required final String description,
     required final String image,
     required final List<Repeated> repeats,
+    final String? categoryImage,
   }) = _$ExerciserImpl;
   const _Exerciser._() : super._();
 
@@ -243,6 +264,8 @@ abstract class _Exerciser extends Exerciser {
   String get image;
   @override
   List<Repeated> get repeats;
+  @override
+  String? get categoryImage;
 
   /// Create a copy of Exerciser
   /// with the given fields replaced by the non-null parameter values.

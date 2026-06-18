@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart';
 import 'package:vivere_mobile/features/workout/domain/entities/workout_program.dart';
 import 'package:vivere_mobile/features/workout/presentation/providers/navigation_provider.dart';
 import 'package:vivere_mobile/features/workout/presentation/providers/workout_providers.dart';
@@ -115,6 +115,7 @@ class _ProgramsListScreenState extends ConsumerState<ProgramsListScreen> {
                                 program: program,
                                 onTap: () {
                                   if (widget.onSelect != null) {
+                                    widget.onSelect!(program);
                                     Navigator.pop(context, program);
                                   } else {
                                     Navigator.push(
@@ -171,13 +172,9 @@ class _ProgramsListScreenState extends ConsumerState<ProgramsListScreen> {
             top: topPadding, left: 16, right: 16, height: 56,
             child: Row(
               children: [
-                GestureDetector(
+                AppCircleButton(
+                  assetPath: 'assets/icons/back.svg',
                   onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 44, height: 44,
-                    decoration: const BoxDecoration(color: Color(0xFFE2E2E2), shape: BoxShape.circle),
-                    child: Center(child: SvgPicture.asset('assets/icons/back.svg')),
-                  ),
                 ),
                 Expanded(
                   child: Text(
@@ -226,7 +223,7 @@ class ProgramCard extends StatelessWidget {
                   children: [
                     Text(program.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF141414)), maxLines: 2, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 10),
-                    Row(children: [const Icon(Icons.star, color: Color(0xFFFFB800), size: 16), Text(" ${program.rating}")]),
+                    Row(children: [const Icon(Icons.star, color: Color(0xFFFFB800), size: 16), Text(" ${program.rating ?? '5.0'}")]),
                     const Spacer(),
                     Row(children: [const CircleAvatar(radius: 12, backgroundImage: AssetImage("assets/images/avatar/trainer_1.png")), const SizedBox(width: 8), Text(program.trainerName ?? "Coach", style: const TextStyle(fontSize: 12, color: Colors.grey))]),
                   ],

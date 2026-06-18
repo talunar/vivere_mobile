@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:vivere_mobile/core/presentation/widgets/dashboard_card.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../workout/domain/entities/workout_program.dart';
 import '../../../workout/presentation/screens/program_details_screen.dart';
@@ -73,14 +74,20 @@ class PersonPage extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
                           children: [
-                            _IconBtn(
-                              asset: hasNotifications ? 'assets/icons/notify_on.svg' : 'assets/icons/notify.svg',
+                            AppCircleButton(
+                              assetPath: hasNotifications ? 'assets/icons/notify_on.svg' : 'assets/icons/notify.svg',
+                              onTap: () {
+                              },
                             ),
                             const SizedBox(width: 8),
-                            const _IconBtn(asset: 'assets/icons/chat.svg'),
+                            AppCircleButton(
+                              assetPath: 'assets/icons/chat.svg',
+                              onTap: () {
+                              },
+                            ),
                             const Spacer(),
-                            _IconBtn(
-                              asset: 'assets/icons/settings.svg',
+                            AppCircleButton(
+                              assetPath: 'assets/icons/settings.svg',
                               onTap: () => context.push('/profile_settings'),
                             ),
                           ],
@@ -119,7 +126,7 @@ class _ProfileDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final favoritesAsync = ref.watch(favoriteProgramsProvider(profile.id.value));
     final schedule = ref.watch(workoutScheduleProvider);
-    
+
     final todayWeekday = DateTime.now().weekday;
     final todayWorkouts = schedule[todayWeekday] ?? [];
 
@@ -250,7 +257,7 @@ class _ProfileDashboard extends ConsumerWidget {
                       ref.read(workoutScheduleProvider.notifier).update((state) {
                         final newState = Map<int, List<WorkoutProgram>>.from(state);
                         final dayPrograms = List<WorkoutProgram>.from(newState[todayWeekday] ?? []);
-                        
+
                         if (!dayPrograms.any((p) => p.id == selectedProgram.id)) {
                           dayPrograms.add(selectedProgram);
                           newState[todayWeekday] = dayPrograms;
@@ -263,32 +270,32 @@ class _ProfileDashboard extends ConsumerWidget {
               );
             },
             child: todayWorkouts.isEmpty
-              ? const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
-                  child: Center(
-                    child: Text(
-                      "На сегодня тренировок не запланировано",
-                      style: TextStyle(color: Colors.grey, fontSize: 15),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
-              : Column(
-                  children: todayWorkouts.map((program) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: _ProgramCard(
-                      program: program,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProgramDetailsScreen(program: program),
-                          ),
-                        );
-                      },
-                    ),
-                  )).toList(),
+                ? const Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Center(
+                child: Text(
+                  "На сегодня тренировок не запланировано",
+                  style: TextStyle(color: Colors.grey, fontSize: 15),
+                  textAlign: TextAlign.center,
                 ),
+              ),
+            )
+                : Column(
+              children: todayWorkouts.map((program) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _ProgramCard(
+                  program: program,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProgramDetailsScreen(program: program),
+                      ),
+                    );
+                  },
+                ),
+              )).toList(),
+            ),
           ),
         ],
       ),
@@ -350,12 +357,19 @@ class _IconBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
+      customBorder: const CircleBorder(),
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       child: Container(
         width: 44,
         height: 44,
-        decoration: const BoxDecoration(color: Color(0xFFE2E2E2), shape: BoxShape.circle),
+        decoration: const BoxDecoration(
+          color: Color(0xFFE2E2E2),
+          shape: BoxShape.circle,
+        ),
         child: Center(
           child: SvgPicture.asset(
             asset,

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_dialog.dart';
+import 'package:vivere_mobile/core/presentation/widgets/edit_field.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart';
 import 'package:vivere_mobile/core/presentation/utils/app_validators.dart';
 import 'package:vivere_mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:vivere_mobile/core/domain/value_objects/app_value_objects.dart';
@@ -18,43 +20,14 @@ class ProfileSettingsScreen extends ConsumerWidget {
   void _showLogoutConfirmationDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 352),
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Выход", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              const Text("Вы уверены, что хотите выйти из приложения?"),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      ref.read(authControllerProvider.notifier).logout();
-                    },
-                    child: const Text(
-                      "Выйти",
-                      style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+      builder: (context) => AppDialog(
+        title: "Выход",
+        message: "Вы уверены, что хотите выйти из приложения?",
+        confirmText: "Выйти",
+        onConfirm: () {
+          ref.read(authControllerProvider.notifier).logout();
+          Navigator.pop(context);
+        },
       ),
     );
   }
@@ -107,66 +80,42 @@ class ProfileSettingsScreen extends ConsumerWidget {
                 ),
 
                 Positioned(
-                  top: 0,
+                  top: statusBarHeight,
                   left: 0,
                   right: 0,
-                  child: SafeArea(
-                    bottom: false,
-                    child: SizedBox(
-                      height: 56,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFE2E2E2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/icons/back.svg',
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Expanded(
-                              child: Center(
-                                child: Text(
-                                  "Настройки",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 24,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => _showLogoutConfirmationDialog(context, ref),
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFE2E2E2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/icons/next.svg',
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                  height: 56,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: Navigator.canPop(context)
+                              ? AppCircleButton(
+                            assetPath: 'assets/icons/back.svg',
+                            onTap: () => Navigator.pop(context),
+                          )
+                              : const SizedBox.shrink(),
                         ),
-                      ),
+                        const Text(
+                          "Настройки",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 24,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: AppCircleButton(
+                            assetPath: 'assets/icons/exit.svg',
+                            onTap: () => _showLogoutConfirmationDialog(context, ref),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -244,48 +193,25 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
   void _showDeleteConfirmationDialog() {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 352),
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Удаление", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              const Text("Вы уверены, что хотите удалить аккаунт? Это действие нельзя будет отменить."),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      try {
-                        await ref.read(profileNotifierProvider(widget.profile.id).notifier).deleteAccount();
-                      } catch (e) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Ошибка: $e'), backgroundColor: Colors.red),
-                          );
-                        }
-                      }
-                    },
-                    child: const Text("Удалить", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+      builder: (context) => AppDialog(
+        title: "Удаление",
+        message: "Вы уверены, что хотите удалить аккаунт? Это действие нельзя будет отменить.",
+        confirmText: "Удалить",
+        onConfirm: () async {
+          Navigator.pop(context);
+          try {
+            await ref.read(profileNotifierProvider(widget.profile.id).notifier).deleteAccount();
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Ошибка: $e'),
+                  backgroundColor: const Color(0xFFFF5900),
+                ),
+              );
+            }
+          }
+        },
       ),
     );
   }
@@ -298,82 +224,60 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 352),
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Смена пароля", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
-                _buildPasswordField(
-                  controller: oldPasswordController,
-                  hint: "Текущий пароль",
-                  validator: (v) => AppValidators.required(v, "Введите текущий пароль"),
-                ),
-                const SizedBox(height: 12),
-                _buildPasswordField(
-                  controller: newPasswordController,
-                  hint: "Новый пароль",
-                  validator: AppValidators.password,
-                ),
-                const SizedBox(height: 12),
-                _buildPasswordField(
-                  controller: confirmPasswordController,
-                  hint: "Повторите новый пароль",
-                  validator: (v) {
-                    if (v != newPasswordController.text) return "Пароли не совпадают";
-                    return AppValidators.password(v);
-                  },
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          try {
-                            await ref.read(authControllerProvider.notifier).changePassword(
-                                  nickName: widget.profile.nickName.value,
-                                  oldPassword: oldPasswordController.text,
-                                  newPassword: newPasswordController.text,
-                                  confirmPassword: confirmPasswordController.text,
-                                );
-                            if (mounted) {
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Пароль успешно изменен"), backgroundColor: Colors.green),
-                              );
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Ошибка: $e"), backgroundColor: Colors.red),
-                              );
-                            }
-                          }
-                        }
-                      },
-                      child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+      builder: (context) => AppDialog(
+        title: "Смена пароля",
+        confirmText: "ОК",
+        content: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              EditField(
+                controller: oldPasswordController,
+                hint: "Текущий пароль",
+                validator: (v) => AppValidators.required(v, "Введите текущий пароль"),
+              ),
+              const SizedBox(height: 12),
+              EditField(
+                controller: newPasswordController,
+                hint: "Новый пароль",
+                validator: AppValidators.password,
+              ),
+              const SizedBox(height: 12),
+              EditField(
+                controller: confirmPasswordController,
+                hint: "Повторите новый пароль",
+                validator: (v) {
+                  if (v != newPasswordController.text) return "Пароли не совпадают";
+                  return AppValidators.password(v);
+                },
+              ),
+            ],
           ),
         ),
+        onConfirm: () async {
+          if (formKey.currentState!.validate()) {
+            try {
+              await ref.read(authControllerProvider.notifier).changePassword(
+                nickName: widget.profile.nickName.value,
+                oldPassword: oldPasswordController.text,
+                newPassword: newPasswordController.text,
+                confirmPassword: confirmPasswordController.text,
+              );
+              if (mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Пароль успешно изменен"), backgroundColor: Colors.green),
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Ошибка: $e"), backgroundColor: Colors.red),
+                );
+              }
+            }
+          }
+        },
       ),
     );
   }
@@ -385,59 +289,29 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 352),
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Изменить имя и фамилию", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
-                _buildSimpleEditField(
-                  controller: firstNameController,
-                  hint: "Имя",
-                  validator: AppValidators.name,
-                ),
-                const SizedBox(height: 12),
-                _buildSimpleEditField(
-                  controller: lastNameController,
-                  hint: "Фамилия",
-                  validator: AppValidators.lastName,
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          _editedProfile = _editedProfile.copyWith(
-                            firstName: Name(firstNameController.text.trim()),
-                            lastName: Name(lastNameController.text.trim()),
-                          );
-                          Navigator.pop(context);
-                          setState(() {});
-                        }
-                      },
-                      child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+      builder: (context) => AppDialog(
+        title: "Изменить имя",
+        confirmText: "ОК",
+        content: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              EditField(controller: firstNameController, hint: "Имя", validator: AppValidators.name),
+              const SizedBox(height: 12),
+              EditField(controller: lastNameController, hint: "Фамилия", validator: AppValidators.lastName),
+            ],
           ),
         ),
+        onConfirm: () {
+          if (formKey.currentState!.validate()) {
+            _editedProfile = _editedProfile.copyWith(
+              firstName: Name(firstNameController.text.trim()),
+              lastName: Name(lastNameController.text.trim()),
+            );
+            Navigator.pop(context);
+            setState(() {});
+          }
+        },
       ),
     );
   }
@@ -491,86 +365,30 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     TextInputType keyboardType = TextInputType.text,
     List<TextInputFormatter>? inputFormatters,
   }) {
-    final formKey = GlobalKey<FormState>();
     final controller = TextEditingController(text: initialValue);
-
+    final formKey = GlobalKey<FormState>();
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 352),
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: controller,
-                  keyboardType: keyboardType,
-                  inputFormatters: inputFormatters,
-                  autofocus: true,
-                  validator: validator,
-                  style: const TextStyle(fontSize: 18),
-                  decoration: InputDecoration(
-                    hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                    filled: true,
-                    fillColor: const Color(0xFFE2E2E2),
-                    constraints: const BoxConstraints(minHeight: 50, maxHeight: 75),
-                    errorStyle: const TextStyle(color: Color(0xFFFF5900)),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Отмена", style: TextStyle(color: Colors.grey)),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          onConfirm(controller.text);
-                          Navigator.pop(context);
-                          setState(() {});
-                        }
-                      },
-                      child: const Text("ОК", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+      builder: (context) => AppDialog(
+        title: title,
+        confirmText: "ОК",
+        content: Form(
+          key: formKey,
+          child: EditField(
+            controller: controller,
+            hint: "",
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            validator: validator,
           ),
         ),
+        onConfirm: () {
+          if (formKey.currentState!.validate()) {
+            onConfirm(controller.text);
+            Navigator.pop(context);
+            setState(() {});
+          }
+        },
       ),
     );
   }
@@ -730,7 +548,10 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
                 onPressed: isLoading ? null : _showDeleteConfirmationDialog,
                 child: const Text(
                   'Удалить профиль',
-                  style: TextStyle(color: Colors.redAccent, fontSize: 16),
+                  style: TextStyle(
+                    color: Color(0xFFFF5900),
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],
@@ -752,8 +573,11 @@ class _InfoBlock extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: SizedBox(
           width: double.infinity,
           child: Column(

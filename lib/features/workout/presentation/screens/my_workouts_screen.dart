@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../domain/entities/workout_program.dart';
 import '../providers/workout_providers.dart';
@@ -99,11 +99,11 @@ class MyWorkoutsScreen extends ConsumerWidget {
                                   categoryName: category.name,
                                   categoryId: category.id,
                                   programs: data['favorites'],
-                                  onSelect: _isSelectionMode ? (_) {} : null,
+                                  onSelect: _isSelectionMode ? (p) => onSelect!(p) : null, // Исправлено проброс выбранной программы
                                 ),
                               ),
                             );
-                            
+
                             if (result != null && _isSelectionMode) {
                               onSelect!(result);
                               if (context.mounted) Navigator.pop(context);
@@ -154,8 +154,8 @@ class MyWorkoutsScreen extends ConsumerWidget {
             height: 56,
             child: Row(
               children: [
-                _IconBtn(
-                  asset: 'assets/icons/back.svg',
+                AppCircleButton(
+                  assetPath: 'assets/icons/back.svg',
                   onTap: () async {
                     final canPop = await Navigator.of(context).maybePop();
                     if (!canPop) {
@@ -232,7 +232,7 @@ class _FavoriteCategoryCard extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Image.asset(
-                  imageUrl, // Исправлено: используем imageUrl вместо хардкода
+                  imageUrl,
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
                 ),
@@ -252,7 +252,7 @@ class _FavoriteCategoryCard extends StatelessWidget {
                   child: ImageFiltered(
                     imageFilter: ui.ImageFilter.blur(sigmaX: 25, sigmaY: 25),
                     child: Image.asset(
-                      imageUrl, // Исправлено: используем imageUrl для блюра
+                      imageUrl,
                       fit: BoxFit.cover,
                       alignment: Alignment.topCenter,
                     ),
@@ -317,31 +317,5 @@ class _FavoriteCategoryCard extends StatelessWidget {
     } else {
       return 'программ';
     }
-  }
-}
-
-class _IconBtn extends StatelessWidget {
-  final String asset;
-  final VoidCallback? onTap;
-  const _IconBtn({required this.asset, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: const BoxDecoration(color: Color(0xFFE2E2E2), shape: BoxShape.circle),
-        child: Center(
-          child: SvgPicture.asset(
-            asset,
-            width: 44,
-            height: 44,
-            fit: BoxFit.contain,
-          ),
-        ),
-      ),
-    );
   }
 }

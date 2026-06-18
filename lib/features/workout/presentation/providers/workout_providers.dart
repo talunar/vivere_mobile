@@ -138,15 +138,18 @@ class FavoritePrograms extends _$FavoritePrograms {
     final repository = ref.watch(userExercisesRepositoryProvider);
     final exercises = await repository.getUserExercises(userId);
 
-    return exercises.map((e) => WorkoutProgram(
-      id: e.id, 
-      title: e.name,
-      description: e.description,
-      exercises: [e],
-      durationMinutes: 15,
-      rating: 5.0,
-      image: e.image,
-    )).toList();
+    return exercises.map((e) {
+      return WorkoutProgram(
+        id: e.id, 
+        title: e.name,
+        description: e.description,
+        exercises: [e],
+        durationMinutes: 15,
+        rating: 5.0,
+        // Теперь просто берем картинку, которую упражнение сохранило из категории
+        image: e.categoryImage ?? 'assets/images/categories/workout_1.png',
+      );
+    }).toList();
   }
 
   Future<void> toggleFavorite(WorkoutProgram program) async {
@@ -164,7 +167,11 @@ class FavoritePrograms extends _$FavoritePrograms {
       if (isFavorite) {
         await repository.deleteExercise(program.id);
       } else {
-        final exerciseToSave = program.exercises.first.copyWith(id: program.id);
+        // Сохраняем программу вместе с её картинкой категории
+        final exerciseToSave = program.exercises.first.copyWith(
+          id: program.id,
+          categoryImage: program.image, // Передаем путь к обложке
+        );
         await repository.addExercise(userId, exerciseToSave);
       }
     } catch (e) {
@@ -180,15 +187,17 @@ class FavoritePrograms extends _$FavoritePrograms {
         await repository.updateExercise(exercise);
       }
       final updatedExercises = await repository.getUserExercises(userId);
-      return updatedExercises.map((e) => WorkoutProgram(
-        id: e.id,
-        title: e.name,
-        description: e.description,
-        exercises: [e],
-        durationMinutes: 15,
-        rating: 5.0,
-        image: e.image,
-      )).toList();
+      return updatedExercises.map((e) {
+        return WorkoutProgram(
+          id: e.id,
+          title: e.name,
+          description: e.description,
+          exercises: [e],
+          durationMinutes: 15,
+          rating: 5.0,
+          image: e.categoryImage ?? 'assets/images/categories/workout_1.png',
+        );
+      }).toList();
     });
   }
 }

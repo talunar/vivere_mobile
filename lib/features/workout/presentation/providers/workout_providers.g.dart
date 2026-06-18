@@ -639,7 +639,7 @@ class _PaginatedProgramsByCategoryProviderElement
       (origin as PaginatedProgramsByCategoryProvider).categoryId;
 }
 
-String _$favoriteProgramsHash() => r'911c4e595813f2590e2841c4c3d2ff5455a5d544';
+String _$favoriteProgramsHash() => r'dd196c9d1d5f47f81f2dbb08e3bc2bca7061133a';
 
 abstract class _$FavoritePrograms
     extends BuildlessAutoDisposeAsyncNotifier<List<WorkoutProgram>> {

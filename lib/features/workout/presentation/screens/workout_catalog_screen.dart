@@ -1,10 +1,10 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/workout_providers.dart';
 import '../../domain/entities/workout_program.dart';
+import '../providers/workout_providers.dart';
 import 'programs_list_screen.dart';
 import 'program_details_screen.dart';
-import 'dart:ui' as ui;
 
 class WorkoutCatalogScreen extends ConsumerStatefulWidget {
   const WorkoutCatalogScreen({super.key});
@@ -14,7 +14,6 @@ class WorkoutCatalogScreen extends ConsumerStatefulWidget {
 }
 
 class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
-  int? expandedCategoryId;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -39,7 +38,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
     final categoriesAsync = ref.watch(paginatedWorkoutCategoriesProvider);
     final expandedCategoryId = ref.watch(expandedCategoryProvider);
     final double statusBarHeight = MediaQuery.of(context).padding.top;
-    final double headerHeight = statusBarHeight + 24;
+    final double headerHeight = statusBarHeight + 14;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
@@ -98,7 +97,7 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
             top: 0,
             left: 0,
             right: 0,
-            height: headerHeight + 28,
+            height: headerHeight + 16,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -156,7 +155,7 @@ class _CategoryHeader extends StatelessWidget {
               if (!isExpanded)
                 Positioned.fill(
                   child: Image.asset(
-                    "assets/images/categories/workout_1.png",
+                    imageUrl,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
                   ),
@@ -177,7 +176,7 @@ class _CategoryHeader extends StatelessWidget {
                     child: ImageFiltered(
                       imageFilter: ui.ImageFilter.blur(sigmaX: 25, sigmaY: 25),
                       child: Image.asset(
-                        "assets/images/categories/workout_1.png",
+                        imageUrl,
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
                       ),

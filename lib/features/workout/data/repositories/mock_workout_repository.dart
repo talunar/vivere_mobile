@@ -11,18 +11,21 @@ class MockWorkoutRepository implements IWorkoutRepository {
 
     final List<String> categoryNames = [
       'Силовые', 'Кардио', 'Разминка', 'Похудение', 'Йога', 
-      'Пилатес', 'Кроссфит', 'Растяжка', 'Бокс', 'Танцы',
-      'Плавание', 'Велосипед', 'Бег', 'Медитация', 'Гибкость',
-      'Осанка', 'Пресс', 'Спина', 'Ноги', 'Руки',
-      'Грудь', 'Плечи', 'Функционал', 'HIIT', 'Табата'
+      'Пилатес', 'Кроссфит', 'Бокс', 'HIIT', 'Пресс', 'Бег',
+      'Медитация', 'Гибкость', 'Осанка', 'Спина', 'Ноги', 'Руки',
+      'Грудь', 'Плечи', 'Функционал', 'Табата'
     ];
 
-    final allCategories = List.generate(categoryNames.length, (index) => WorkoutCategory(
-      id: index + 1, 
-      name: categoryNames[index], 
-      image: 'assets/images/categories/workout_1.png', 
-      programs: _generateProgramsList(index + 1, limit: 5, offset: 0)
-    ));
+    final allCategories = List.generate(categoryNames.length, (index) {
+      final imageNumber = (index % 9) + 1;
+      
+      return WorkoutCategory(
+        id: index + 1, 
+        name: categoryNames[index], 
+        image: 'assets/images/categories/workout_$imageNumber.png',
+        programs: _generateProgramsList(index + 1, limit: 5, offset: 0)
+      );
+    });
 
     if (offset >= allCategories.length) return [];
     
@@ -71,7 +74,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
       title: 'Программа тренировки #$id',
       rating: 4.8,
       trainerName: 'Vivere Pro Trainer',
-      trainerImage: 'assets/images/avatar/workout_6.png',
+      trainerImage: 'assets/images/avatar/trainer_1.png',
       image: 'assets/images/programs/workout_1.png',
       description: 'Эффективная программа для достижения ваших целей в кратчайшие сроки.',
       level: 'Продвинутый',
@@ -82,7 +85,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
         return ExerciserInProgram(
           id: i + (id * 100),
           name: i % 2 == 0 ? 'Упражнение ${i + 1}' : 'Приседания',
-          description: 'Выполняйте упражнение плавно, следя за техникой и дыханием. Это очень длинное описание, которое точно не влезет в три строки. Мы добавили этот текст специально для того, чтобы протестировать функцию сворачивания и разворачивания текста.',
+          description: 'Выполняйте упражнение плавно, следя за техникой и дыханием.',
           image: 'assets/images/exercises/workout_$imageNumber.png',
           repeats: [
             if (i % 2 == 0)

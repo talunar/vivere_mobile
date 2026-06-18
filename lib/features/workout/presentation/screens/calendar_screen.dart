@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:vivere_mobile/core/presentation/widgets/dashboard_card.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart'; // 1. ДОБАВИЛИ ИМПОРТ
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../domain/entities/workout_program.dart';
 import '../providers/workout_providers.dart';
@@ -248,8 +248,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      _IconBtn(
-                        asset: 'assets/icons/back.svg',
+                      // 2. ЗАМЕНИЛИ НА AppCircleButton С СОХРАНЕНИЕМ ОРИГИНАЛЬНОГО ТЕКСТА ПО ЦЕНТРУ
+                      AppCircleButton(
+                        assetPath: 'assets/icons/back.svg',
                         onTap: () => ref.read(navigationNotifierProvider.notifier).goBack(),
                       ),
                       Expanded(
@@ -259,8 +260,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           style: const TextStyle(color: Color(0xFF141414), fontWeight: FontWeight.w400, fontSize: 22, height: 1.1),
                         ),
                       ),
-                      _IconBtn(
-                        asset: 'assets/icons/settings.svg',
+                      AppCircleButton(
+                        assetPath: 'assets/icons/settings.svg',
                         onTap: () => _showEditScheduleSheet(context, favorites),
                       ),
                     ],
@@ -293,7 +294,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     ref.read(workoutScheduleProvider.notifier).update((state) {
                       final newState = Map<int, List<WorkoutProgram>>.from(state);
                       final dayPrograms = List<WorkoutProgram>.from(newState[weekday] ?? []);
-                      
+
                       if (!dayPrograms.any((p) => p.id == selectedProgram.id)) {
                         dayPrograms.add(selectedProgram);
                         newState[weekday] = dayPrograms;
@@ -411,27 +412,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           },
         ),
       ],
-    );
-  }
-}
-
-class _IconBtn extends StatelessWidget {
-  final String asset;
-  final VoidCallback? onTap;
-  const _IconBtn({required this.asset, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: const BoxDecoration(color: Color(0xFFE2E2E2), shape: BoxShape.circle),
-        child: Center(
-          child: SvgPicture.asset(asset, width: 44, height: 44, fit: BoxFit.contain),
-        ),
-      ),
     );
   }
 }

@@ -74,7 +74,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
       title: 'Программа тренировки #$id',
       rating: 4.8,
       trainerName: 'Vivere Pro Trainer',
-      trainerImage: 'assets/images/avatar/trainer_1.png',
+      trainerImage: 'assets/images/avatar/trainer_5.png',
       image: 'assets/images/programs/workout_1.png',
       description: 'Эффективная программа для достижения ваших целей в кратчайшие сроки.',
       level: 'Продвинутый',
@@ -85,7 +85,7 @@ class MockWorkoutRepository implements IWorkoutRepository {
         return ExerciserInProgram(
           id: i + (id * 100),
           name: i % 2 == 0 ? 'Упражнение ${i + 1}' : 'Приседания',
-          description: 'Выполняйте упражнение плавно, следя за техникой и дыханием.',
+          description: 'Выполняйте упражнение плавно, следя за техникой и дыханием. Не забывайте делать глоток воды между подходами, но не более. Дышите через нос и выдыхайте через рот. Эта часть для очень длинного текста для тестирования всплывающего окна при нажатие. Хорошей вам тренировки!',
           image: 'assets/images/exercises/workout_$imageNumber.png',
           repeats: [
             if (i % 2 == 0)

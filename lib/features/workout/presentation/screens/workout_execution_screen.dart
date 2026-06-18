@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_dialog.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../domain/entities/workout_program.dart';
 import '../../domain/entities/repeated.dart';
@@ -22,11 +24,9 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
   int _remainingSeconds = 0;
   bool _isPaused = true;
   bool _isSaving = false;
-  bool _isDescriptionExpanded = false;
 
   late TextEditingController _weightController;
   late TextEditingController _valueController;
-
   late List<ExerciserInProgram> _modifiedExercises;
 
   @override
@@ -40,10 +40,9 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
 
   void _initExercise() {
     _timer?.cancel();
-    _isDescriptionExpanded = false;
     final exercise = _modifiedExercises[currentIndex];
-    final repeat = exercise.repeats.isNotEmpty 
-        ? exercise.repeats.first 
+    final repeat = exercise.repeats.isNotEmpty
+        ? exercise.repeats.first
         : const Repeated(id: 0, weight: 0, reps: 10, seconds: 0);
 
     _weightController.text = repeat.weight.toString();
@@ -80,8 +79,8 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     final value = int.tryParse(_valueController.text) ?? 0;
 
     final currentExercise = _modifiedExercises[currentIndex];
-    final currentRepeat = currentExercise.repeats.isNotEmpty 
-        ? currentExercise.repeats.first 
+    final currentRepeat = currentExercise.repeats.isNotEmpty
+        ? currentExercise.repeats.first
         : const Repeated(id: 0, weight: 0);
 
     final updatedRepeat = currentRepeat.copyWith(
@@ -95,45 +94,66 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     );
   }
 
-  Future<void> _finishWorkout() async {
-    final bool? confirm = await showDialog<bool>(
+  void _finishWorkout() {
+    showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text("Завершить тренировку?", style: TextStyle(fontWeight: FontWeight.bold)),
-        content: const Text("Все результаты будут сохранены в ваш профиль."),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Еще нет", style: TextStyle(color: Colors.grey))),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Завершить", style: TextStyle(color: Color(0xFFFF5900), fontWeight: FontWeight.bold)),
-          ),
-        ],
+      builder: (dialogContext) => AppDialog(
+        title: "Завершить тренировку?",
+        message: "Все результаты будут сохранены в ваш профиль.",
+        confirmText: "Завершить",
+        onConfirm: () async {
+          Navigator.pop(dialogContext);
+
+          setState(() => _isSaving = true);
+          _saveCurrentInput();
+
+          final authState = ref.read(authControllerProvider);
+          final userId = authState.maybeWhen(
+            authenticated: (user) => user.id.value,
+            orElse: () => null,
+          );
+
+          if (userId != null) {
+            try {
+              await ref.read(favoriteProgramsProvider(userId).notifier).saveAllProgress(_modifiedExercises);
+            } catch (e) {
+            }
+          }
+
+          if (mounted) {
+            setState(() => _isSaving = false);
+            Navigator.pop(context);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Тренировка завершена! Прогресс сохранен.'),
+                backgroundColor: Color(0xFFFF5900),
+              ),
+            );
+          }
+        },
       ),
     );
+  }
 
-    if (confirm != true) return;
-
-    setState(() => _isSaving = true);
-    _saveCurrentInput();
-
-    final authState = ref.read(authControllerProvider);
-    final userId = authState.maybeWhen(
-      authenticated: (user) => user.id.value,
-      orElse: () => null,
+  void _showDescriptionDialog(ExerciserInProgram exercise) {
+    showDialog(
+      context: context,
+      builder: (context) => AppDialog(
+        title: exercise.name,
+        confirmText: "Понятно",
+        content: Container(
+          constraints: const BoxConstraints(maxHeight: 200),
+          child: SingleChildScrollView(
+            child: Text(
+              exercise.description,
+              style: const TextStyle(fontSize: 16, color: Color(0xFF141414), height: 1.5),
+            ),
+          ),
+        ),
+        onConfirm: () => Navigator.pop(context),
+      ),
     );
-
-    if (userId != null) {
-      await ref.read(favoriteProgramsProvider(userId).notifier).saveAllProgress(_modifiedExercises);
-    }
-
-    if (mounted) {
-      setState(() => _isSaving = false);
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Тренировка завершена! Прогресс сохранен.'), backgroundColor: Color(0xFFFF5900)),
-      );
-    }
   }
 
   void _next() {
@@ -173,8 +193,8 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
     final exercise = _modifiedExercises[currentIndex];
-    final repeat = exercise.repeats.isNotEmpty 
-        ? exercise.repeats.first 
+    final repeat = exercise.repeats.isNotEmpty
+        ? exercise.repeats.first
         : const Repeated(id: 0, weight: 0);
     final isTimeBased = repeat.seconds > 0;
 
@@ -233,7 +253,6 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                       ),
                     ),
                   ),
-                  // Индикатор упражнений
                   Positioned(
                     bottom: 20,
                     left: 20,
@@ -266,7 +285,6 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                   ),
                 ],
               ),
-              // Основной контент
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
@@ -278,7 +296,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                         style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Color(0xFF141414)),
                       ),
                       const SizedBox(height: 8),
-                      
+
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final textStyle = const TextStyle(fontSize: 15, color: Color(0xFF757575), height: 1.4);
@@ -291,7 +309,7 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                           final isLong = textPainter.didExceedMaxLines;
 
                           return GestureDetector(
-                            onTap: isLong ? () => setState(() => _isDescriptionExpanded = true) : null,
+                            onTap: isLong ? () => _showDescriptionDialog(exercise) : null,
                             child: Text(
                               exercise.description,
                               maxLines: 3,
@@ -306,33 +324,32 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                         child: Center(
                           child: isTimeBased
                               ? _TimerDisplay(
-                                  seconds: _remainingSeconds,
-                                  totalSeconds: repeat.seconds,
-                                  isPaused: _isPaused,
-                                  onToggle: _togglePause,
-                                  currentIndex: currentIndex,
-                                )
+                            seconds: _remainingSeconds,
+                            totalSeconds: repeat.seconds,
+                            isPaused: _isPaused,
+                            onToggle: _togglePause,
+                            currentIndex: currentIndex,
+                          )
                               : Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'x ${repeat.reps}',
-                                      style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900)),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      "Повторений",
-                                      style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16),
-                                    ),
-                                  ],
-                                ),
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'x ${repeat.reps}',
+                                style: const TextStyle(fontSize: 64, fontWeight: FontWeight.bold, color: Color(0xFFFF5900)),
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                "Повторений",
+                                style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 16),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              // Кнопки управления
               SafeArea(
                 top: false,
                 child: Padding(
@@ -340,33 +357,18 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                   child: Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
+                        child: AppButton(
+                          text: 'Назад',
                           onPressed: currentIndex > 0 ? _prev : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE2E2E2),
-                            foregroundColor: const Color(0xFF141414),
-                            minimumSize: const Size(0, 50),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                          ),
-                          child: const Text('Назад', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          variant: AppButtonVariant.secondary,
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: ElevatedButton(
+                        child: AppButton(
+                          text: currentIndex == _modifiedExercises.length - 1 ? 'Завершить' : 'Вперед',
                           onPressed: _next,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF5900),
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(0, 50),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                          ),
-                          child: Text(
-                            currentIndex == _modifiedExercises.length - 1 ? 'Завершить' : 'Вперед',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
+                          variant: AppButtonVariant.primary,
                         ),
                       ),
                     ],
@@ -376,60 +378,6 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
             ],
           ),
         ),
-        
-        if (_isDescriptionExpanded)
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: () => setState(() => _isDescriptionExpanded = false),
-              child: Container(
-                color: Colors.black54,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
-                child: Center(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _isDescriptionExpanded = false),
-                    child: Container(
-                      constraints: const BoxConstraints(maxWidth: 400),
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  exercise.name,
-                                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () => setState(() => _isDescriptionExpanded = false),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Flexible(
-                            child: SingleChildScrollView(
-                              child: Text(
-                                exercise.description,
-                                style: const TextStyle(fontSize: 16, color: Color(0xFF141414), height: 1.5),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
 
         if (_isSaving)
           Container(

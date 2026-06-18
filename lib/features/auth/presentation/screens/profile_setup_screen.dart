@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import 'package:vivere_mobile/core/domain/entities/gender.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_text_field.dart'; // Импортируйте ваш новый виджет
 import '../../../../core/presentation/utils/app_validators.dart';
 import '../providers/auth_provider.dart';
 import '../state/auth_state.dart';
@@ -124,25 +125,21 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                               ],
                             ),
                             const SizedBox(height: 32),
-                            _CustomTextField(
+                            AppTextField(
                               controller: dobController,
                               hintText: 'Возраст',
                               keyboardType: TextInputType.number,
                               validator: AppValidators.date,
-                              inputFormatters: [
-                                _DateInputFormatter(),
-                                LengthLimitingTextInputFormatter(10),
-                              ],
                             ),
                             const SizedBox(height: 16),
-                            _CustomTextField(
+                            AppTextField(
                               controller: weightController,
                               hintText: 'Вес',
                               keyboardType: const TextInputType.numberWithOptions(decimal: true),
                               validator: (v) => AppValidators.number(v, min: 20, max: 255),
                             ),
                             const SizedBox(height: 16),
-                            _CustomTextField(
+                            AppTextField(
                               controller: heightController,
                               hintText: 'Рост',
                               keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -209,83 +206,6 @@ class _GenderButton extends StatelessWidget {
             ),
         ],
       ),
-    );
-  }
-}
-
-class _CustomTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hintText;
-  final TextInputType? keyboardType;
-  final String? Function(String?)? validator;
-  final List<TextInputFormatter>? inputFormatters;
-
-  const _CustomTextField({
-    required this.controller,
-    required this.hintText,
-    this.keyboardType,
-    this.validator,
-    this.inputFormatters,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      validator: validator,
-      inputFormatters: inputFormatters,
-      style: const TextStyle(fontSize: 18, color: Color(0xFF141414)),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-        filled: true,
-        fillColor: const Color(0xFFE2E2E2),
-        constraints: const BoxConstraints(minHeight: 50, maxHeight: 75),
-        errorStyle: const TextStyle(color: Color(0xFFFF5900), height: 0.8),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50),
-          borderSide: const BorderSide(color: Color(0xFFFF5900), width: 1),
-        ),
-      ),
-    );
-  }
-}
-
-class _DateInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    final text = newValue.text;
-    if (text.length < oldValue.text.length) return newValue;
-    final digits = text.replaceAll(RegExp(r'[^\d]'), '');
-    final buffer = StringBuffer();
-    for (int i = 0; i < digits.length; i++) {
-      buffer.write(digits[i]);
-      if (i == 1 || i == 3) {
-         if (i < digits.length) buffer.write('.');
-      }
-    }
-    final formatted = buffer.toString();
-    return TextEditingValue(
-      text: formatted.length > 10 ? formatted.substring(0, 10) : formatted,
-      selection: TextSelection.collapsed(offset: formatted.length > 10 ? 10 : formatted.length),
     );
   }
 }

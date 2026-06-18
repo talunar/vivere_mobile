@@ -41,7 +41,7 @@ class WorkoutMockDataSource implements IWorkoutDataSource {
     return ProgramDto(
       id: id,
       name: 'Программа #$id',
-      description: 'Детальное описание программы тренировок с упражнениями.',
+      description: 'Детальное описание программы тренировок с упражнениями. ',
       workouts: [
         const WorkoutDto(
           id: 1,

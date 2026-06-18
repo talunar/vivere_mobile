@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
+import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart'; // Добавлен импорт
 import '../../domain/entities/workout_program.dart';
 import '../../domain/entities/repeated.dart';
 import '../providers/workout_providers.dart';
@@ -89,16 +90,10 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            GestureDetector(
+                            // Заменено на AppCircleButton для кнопки Назад
+                            AppCircleButton(
+                              assetPath: 'assets/icons/back.svg',
                               onTap: () => Navigator.pop(context),
-                              child: SizedBox(
-                                width: 44,
-                                height: 44,
-                                child: SvgPicture.asset(
-                                  'assets/icons/back.svg',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
                             ),
                             GestureDetector(
                               onTap: () async {

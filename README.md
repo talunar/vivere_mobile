@@ -83,4 +83,56 @@ flutter run
 - Расширение модели Go полями rating, level и equipment. 
 
 ---
+
+### 🏄 Демонстрация:
+
+Авторизация и Регистрация:
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/96da4f5c-7c3c-4207-aeda-835c01772fb4" width="300" controls>
+    Ваш браузер не поддерживает встроенные видео.
+  </video>
+</p>
+
+Каталог категорий тренировок:
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/15f9bb33-b396-4cd8-aa46-000ee3dc8b1a" width="300" controls>
+    Ваш браузер не поддерживает встроенные видео.
+  </video>
+</p>
+
+Тренировка:
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/7e5ade7e-7230-473c-9608-7a2692c6dd18" width="300" controls>
+    Ваш браузер не поддерживает встроенные видео.
+  </video>
+</p>
+
+Календарь и Планирование тренировок:
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/53eb24ea-b6d6-452b-bdc4-1ddac6a0d290" width="300" controls>
+    Ваш браузер не поддерживает встроенные видео.
+  </video>
+</p>
+
+Избранное. Мои тренировки:
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/826a81ff-60c4-410b-9045-eb81c2259ec1" width="300" controls>
+    Ваш браузер не поддерживает встроенные видео.
+  </video>
+</p>
+
+Профиль:
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/6f3c69c5-6249-45a0-a5b6-716b13662a66" width="300" controls>
+    Ваш браузер не поддерживает встроенные видео.
+  </video>
+</p>
+
+Настройки профиля:
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/473b7154-5c45-4ff7-b282-ea495de1690b" width="300" controls>
+    Ваш браузер не поддерживает встроенные видео.
+  </video>
+</p>
+
 ### Спасибо! 🌻 ❤️

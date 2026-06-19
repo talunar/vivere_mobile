@@ -62,6 +62,7 @@ class CategoryDto with _$CategoryDto {
     required int id,
     required String name,
     required String image,
+    @JsonKey(name: 'is_main_screen') bool? isMainScreen, // Поле из Python
     @JsonKey(name: 'exercises') List<ProgramDto>? programs,
   }) = _CategoryDto;
 

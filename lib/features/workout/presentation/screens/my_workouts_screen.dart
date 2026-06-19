@@ -89,7 +89,7 @@ class MyWorkoutsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _FavoriteCategoryCard(
                           title: category.name,
-                          imageUrl: category.image,
+                          imageUrl: category.displayImage, // Используем умный геттер
                           programCount: count,
                           onTap: () async {
                             final result = await Navigator.push<WorkoutProgram>(
@@ -99,7 +99,7 @@ class MyWorkoutsScreen extends ConsumerWidget {
                                   categoryName: category.name,
                                   categoryId: category.id,
                                   programs: data['favorites'],
-                                  onSelect: _isSelectionMode ? (p) => onSelect!(p) : null, // Исправлено проброс выбранной программы
+                                  onSelect: _isSelectionMode ? (p) => onSelect!(p) : null,
                                 ),
                               ),
                             );
@@ -216,6 +216,18 @@ class _FavoriteCategoryCard extends StatelessWidget {
     required this.onTap,
   });
 
+  Widget _smartImage(String path, {BoxFit fit = BoxFit.cover, Alignment alignment = Alignment.center}) {
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        fit: fit,
+        alignment: alignment,
+        errorBuilder: (_, __, ___) => Image.asset('assets/images/programs/workout_1.png', fit: fit),
+      );
+    }
+    return Image.asset(path, fit: fit, alignment: alignment);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -231,7 +243,7 @@ class _FavoriteCategoryCard extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(
-                child: Image.asset(
+                child: _smartImage(
                   imageUrl,
                   fit: BoxFit.cover,
                   alignment: Alignment.topCenter,
@@ -251,7 +263,7 @@ class _FavoriteCategoryCard extends StatelessWidget {
                   blendMode: BlendMode.dstIn,
                   child: ImageFiltered(
                     imageFilter: ui.ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Image.asset(
+                    child: _smartImage(
                       imageUrl,
                       fit: BoxFit.cover,
                       alignment: Alignment.topCenter,

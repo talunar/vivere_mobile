@@ -21,6 +21,7 @@ mixin _$WorkoutCategory {
   String get name => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  bool get isMainScreen => throw _privateConstructorUsedError;
   List<WorkoutProgram> get programs => throw _privateConstructorUsedError;
 
   /// Create a copy of WorkoutCategory
@@ -42,6 +43,7 @@ abstract class $WorkoutCategoryCopyWith<$Res> {
     String name,
     String image,
     String? description,
+    bool isMainScreen,
     List<WorkoutProgram> programs,
   });
 }
@@ -65,6 +67,7 @@ class _$WorkoutCategoryCopyWithImpl<$Res, $Val extends WorkoutCategory>
     Object? name = null,
     Object? image = null,
     Object? description = freezed,
+    Object? isMainScreen = null,
     Object? programs = null,
   }) {
     return _then(
@@ -85,6 +88,10 @@ class _$WorkoutCategoryCopyWithImpl<$Res, $Val extends WorkoutCategory>
                 ? _value.description
                 : description // ignore: cast_nullable_to_non_nullable
                       as String?,
+            isMainScreen: null == isMainScreen
+                ? _value.isMainScreen
+                : isMainScreen // ignore: cast_nullable_to_non_nullable
+                      as bool,
             programs: null == programs
                 ? _value.programs
                 : programs // ignore: cast_nullable_to_non_nullable
@@ -109,6 +116,7 @@ abstract class _$$WorkoutCategoryImplCopyWith<$Res>
     String name,
     String image,
     String? description,
+    bool isMainScreen,
     List<WorkoutProgram> programs,
   });
 }
@@ -131,6 +139,7 @@ class __$$WorkoutCategoryImplCopyWithImpl<$Res>
     Object? name = null,
     Object? image = null,
     Object? description = freezed,
+    Object? isMainScreen = null,
     Object? programs = null,
   }) {
     return _then(
@@ -151,6 +160,10 @@ class __$$WorkoutCategoryImplCopyWithImpl<$Res>
             ? _value.description
             : description // ignore: cast_nullable_to_non_nullable
                   as String?,
+        isMainScreen: null == isMainScreen
+            ? _value.isMainScreen
+            : isMainScreen // ignore: cast_nullable_to_non_nullable
+                  as bool,
         programs: null == programs
             ? _value._programs
             : programs // ignore: cast_nullable_to_non_nullable
@@ -162,14 +175,16 @@ class __$$WorkoutCategoryImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WorkoutCategoryImpl implements _WorkoutCategory {
+class _$WorkoutCategoryImpl extends _WorkoutCategory {
   const _$WorkoutCategoryImpl({
     required this.id,
     required this.name,
     required this.image,
     this.description,
+    this.isMainScreen = false,
     required final List<WorkoutProgram> programs,
-  }) : _programs = programs;
+  }) : _programs = programs,
+       super._();
 
   @override
   final int id;
@@ -179,6 +194,9 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
   final String image;
   @override
   final String? description;
+  @override
+  @JsonKey()
+  final bool isMainScreen;
   final List<WorkoutProgram> _programs;
   @override
   List<WorkoutProgram> get programs {
@@ -189,7 +207,7 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
 
   @override
   String toString() {
-    return 'WorkoutCategory(id: $id, name: $name, image: $image, description: $description, programs: $programs)';
+    return 'WorkoutCategory(id: $id, name: $name, image: $image, description: $description, isMainScreen: $isMainScreen, programs: $programs)';
   }
 
   @override
@@ -202,6 +220,8 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
             (identical(other.image, image) || other.image == image) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.isMainScreen, isMainScreen) ||
+                other.isMainScreen == isMainScreen) &&
             const DeepCollectionEquality().equals(other._programs, _programs));
   }
 
@@ -212,6 +232,7 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
     name,
     image,
     description,
+    isMainScreen,
     const DeepCollectionEquality().hash(_programs),
   );
 
@@ -227,14 +248,16 @@ class _$WorkoutCategoryImpl implements _WorkoutCategory {
       );
 }
 
-abstract class _WorkoutCategory implements WorkoutCategory {
+abstract class _WorkoutCategory extends WorkoutCategory {
   const factory _WorkoutCategory({
     required final int id,
     required final String name,
     required final String image,
     final String? description,
+    final bool isMainScreen,
     required final List<WorkoutProgram> programs,
   }) = _$WorkoutCategoryImpl;
+  const _WorkoutCategory._() : super._();
 
   @override
   int get id;
@@ -244,6 +267,8 @@ abstract class _WorkoutCategory implements WorkoutCategory {
   String get image;
   @override
   String? get description;
+  @override
+  bool get isMainScreen;
   @override
   List<WorkoutProgram> get programs;
 

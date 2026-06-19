@@ -198,6 +198,43 @@ class ProgramCard extends StatelessWidget {
   final VoidCallback? onTap;
   const ProgramCard({super.key, required this.program, this.onTap});
 
+  Widget _smartImage(String path, {double? width, double? height, BoxFit fit = BoxFit.cover}) {
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (_, __, ___) => Image.asset(
+          'assets/images/programs/workout_1.png',
+          width: width,
+          height: height,
+          fit: fit,
+        ),
+      );
+    }
+    return Image.asset(
+      path, 
+      width: width, 
+      height: height, 
+      fit: fit,
+      errorBuilder: (_, __, ___) => Image.asset(
+        'assets/images/programs/workout_1.png',
+        width: width,
+        height: height,
+        fit: fit,
+      ),
+    );
+  }
+
+  ImageProvider _smartImageProvider(String path) {
+    if (path.isEmpty) return const AssetImage('assets/images/avatar/trainer_1.png');
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    }
+    return AssetImage(path);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -213,7 +250,7 @@ class ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset("assets/images/programs/workout_1.png", width: 160, height: 160, fit: BoxFit.cover),
+              child: _smartImage(program.displayImage, width: 160, height: 160),
             ),
             Expanded(
               child: Padding(
@@ -221,11 +258,35 @@ class ProgramCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(program.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF141414)), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text(
+                      program.title,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF141414)),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 10),
-                    Row(children: [const Icon(Icons.star, color: Color(0xFFFFB800), size: 16), Text(" ${program.rating ?? '5.0'}")]),
+                    Row(
+                      children: [
+                        const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
+                        Text(" ${program.rating ?? '5.0'}"),
+                      ],
+                    ),
                     const Spacer(),
-                    Row(children: [const CircleAvatar(radius: 12, backgroundImage: AssetImage("assets/images/avatar/trainer_1.png")), const SizedBox(width: 8), Text(program.trainerName ?? "Coach", style: const TextStyle(fontSize: 12, color: Colors.grey))]),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundColor: const Color(0xFFE2E2E2),
+                          backgroundImage: const AssetImage('assets/images/avatar/trainer_1.png'),
+                          foregroundImage: _smartImageProvider(program.displayTrainerImage),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          program.trainerName ?? "Coach",
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

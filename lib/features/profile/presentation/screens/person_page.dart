@@ -143,7 +143,8 @@ class _ProfileDashboard extends ConsumerWidget {
         children: [
           const CircleAvatar(
             radius: 64,
-            backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
+            backgroundColor: Color(0xFFE2E2E2),
+            backgroundImage: AssetImage("assets/images/avatar/workout_1.png"),
           ),
           const SizedBox(height: 12),
 
@@ -482,28 +483,50 @@ class _GoalItemState extends State<_GoalItem> {
   }
 }
 
-class _CalorieItem extends StatelessWidget {
-  final String label;
-  final String value;
-  const _CalorieItem({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(value, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-        Text(label, style: const TextStyle(color: Colors.black54, fontSize: 14)),
-      ],
-    );
-  }
-}
-
 class _ProgramCard extends StatelessWidget {
   final WorkoutProgram program;
   final VoidCallback? onTap;
 
   const _ProgramCard({required this.program, this.onTap});
+
+  Widget _smartImage(String path, {double? width, double? height, BoxFit fit = BoxFit.cover}) {
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (_, __, ___) => Image.asset(
+          'assets/images/programs/workout_1.png',
+          width: width,
+          height: height,
+          fit: fit,
+        ),
+      );
+    }
+    return Image.asset(
+      path, 
+      width: width, 
+      height: height, 
+      fit: fit,
+      errorBuilder: (_, __, ___) => Image.asset(
+        'assets/images/programs/workout_1.png',
+        width: width,
+        height: height,
+        fit: fit,
+      ),
+    );
+  }
+
+  ImageProvider _smartImageProvider(String path) {
+    if (path.isEmpty || path.contains('workout_1.png')) {
+      return const AssetImage('assets/images/avatar/workout_1.png');
+    }
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    }
+    return AssetImage(path);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -520,12 +543,7 @@ class _ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset(
-                "assets/images/programs/workout_1.png",
-                width: 160,
-                height: 160,
-                fit: BoxFit.cover,
-              ),
+              child: _smartImage(program.displayImage, width: 160, height: 160),
             ),
             Expanded(
               child: Padding(
@@ -561,14 +579,16 @@ class _ProgramCard extends StatelessWidget {
                     const Spacer(),
                     Row(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 12,
-                          backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
+                          backgroundColor: const Color(0xFFE2E2E2),
+                          backgroundImage: const AssetImage("assets/images/avatar/workout_1.png"),
+                          foregroundImage: _smartImageProvider(program.displayTrainerImage),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            program.trainerName ?? "Super train 3000",
+                            program.trainerName ?? "Coach",
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.black.withOpacity(0.5),

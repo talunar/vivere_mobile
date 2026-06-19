@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
 import 'package:vivere_mobile/core/domain/entities/gender.dart';
-import 'package:vivere_mobile/core/presentation/widgets/app_text_field.dart'; // Импортируйте ваш новый виджет
+import 'package:vivere_mobile/core/presentation/widgets/app_text_field.dart';
 import '../../../../core/presentation/utils/app_validators.dart';
+import '../../../../core/presentation/utils/date_input_formatter.dart';
 import '../providers/auth_provider.dart';
 import '../state/auth_state.dart';
 
@@ -127,8 +128,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             const SizedBox(height: 32),
                             AppTextField(
                               controller: dobController,
-                              hintText: 'Возраст',
+                              hintText: 'Дата рождения',
                               keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                DateInputFormatter(),
+                                LengthLimitingTextInputFormatter(10),
+                              ],
                               validator: AppValidators.date,
                             ),
                             const SizedBox(height: 16),

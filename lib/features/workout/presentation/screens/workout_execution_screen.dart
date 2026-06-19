@@ -186,6 +186,20 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
     super.dispose();
   }
 
+  Widget _smartImage(String path, {double? width, double? height, BoxFit fit = BoxFit.cover, Alignment alignment = Alignment.center}) {
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
+        errorBuilder: (_, __, ___) => Image.asset('assets/images/programs/workout_1.png', width: width, height: height, fit: fit),
+      );
+    }
+    return Image.asset(path, width: width, height: height, fit: fit, alignment: alignment);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -211,8 +225,8 @@ class _WorkoutExecutionScreenState extends ConsumerState<WorkoutExecutionScreen>
                     height: imageHeight,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
-                      child: Image.asset(
-                        exercise.image,
+                      child: _smartImage(
+                        exercise.displayImage,
                         width: double.infinity,
                         height: imageHeight,
                         fit: BoxFit.cover,
@@ -427,7 +441,7 @@ class _TimerDisplay extends StatelessWidget {
           height: 220,
           child: TweenAnimationBuilder<double>(
             key: ValueKey('timer_progress_$currentIndex'),
-            duration: isPaused ? Duration.zero : const Duration(seconds: 1),
+            duration: isPaused ? Duration.zero : const Duration(milliseconds: 150),
             curve: Curves.linear,
             tween: Tween<double>(end: progress),
             builder: (context, value, _) {

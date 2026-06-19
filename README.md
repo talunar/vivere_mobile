@@ -1,44 +1,86 @@
-# Vivere 🏃‍♀️
+# Vivere Mobile (MVP) 🏃‍♀️
 
-**Vivere** is a modern fitness application built with `Flutter`, designed to track workouts and manage physical activity.
+Мобильное фитнес приложение Vivere, построенное на **Flutter**. Проект спроектирован для бесшовной интеграции с двумя микросервисами: **Go** (основная бизнес-логика, программы и тренировки) и **Python** (администрирование, управление контентом и профили).
 
-## Tech Stack
+## 👉 Технологический стек & Архитектура
 
-*   **State Management**: `flutter_riverpod` + `riverpod_generator` for declarative state handling.
-*   **Navigation**: `go_router` for powerful, URL-based declarative routing.
-*   **Networking**: `dio` as the primary HTTP client for API communication.
-*   **Serialization**: `freezed` and `json_serializable` for type-safe data models and DTOs.
-*   **UI/Design**:
-    *   **Typography**: `Golos Text` (Regular, Medium, Bold).
-    *   **Graphics**: Scalable vector graphics via `flutter_svg`.
+Приложение построено по канонам **Clean Architecture** (Data, Domain, Presentation) с жестким разделением ответственности слоев:
+- **State Management:** `flutter_riverpod` + `riverpod_generator` (с кодогенерацией).
+- **Models & Mapping:** `freezed` + `json_serializable` (неизменяемые модели + JSON-маппинг).
+- **Navigation:** `go_router` (декларативный URL-ориентированный роутинг).
+- **Networking:** `dio` + `CookieManager` (поддержка Authorization-XXX).
+- **UI & Typography:** Шрифт `Golos Text`, векторная графика через `flutter_svg`.
 
-## Getting Started
+---
 
-### Prerequisites
-*   **Flutter SDK**: `^3.11.3` (as defined in `pubspec.yaml`)[cite: 4].
-*   **Dart SDK**: Compatible version included with Flutter.
-*   **CocoaPods**: Required for iOS builds.
+## 🫡 Реализованный функционал (контур MVP)
 
-### Dependency Installation
+Приложение полностью автономно, протестировано и работает в режиме **Mock-First** (на изолированном слое данных, полностью имитирующем ответы бэкенда):
 
-Clone the repository and run the following command in the root directory to fetch all packages:
+### 1. Авторизация и Онбординг
+- **Умный вход.** Приложение проверяет наличие аккаунта через `/login`. Если пользователь новый -> автоматически запускается процесс пошаговой регистрации (Имя, Email, Физические параметры).
+- **Безопасность.** Валидация на стороне фронтенда полностью соответствует правилам бэка.
+- **Управление профилем.** Реализована возможность пользователю полностью удалить свой профиль.
+
+### 2. Каталог тренировок и Категории
+- **Динамический контент.** Реализована фильтрация главной страницы по флагу `is_main_screen` (управление выдачей категорий из Python-админки).
+- **Пагинация.** Архитектурно заложена поддержка `limit/offset` для бесконечных списков программ.
+- **Умные медиа-ресурсы.** Поле `image` в JSON может содержать как полный URL (`http://...`), так и просто имя локального файла (`workout_1.png`). Фронтенд сам определит источник, подставит нужный путь к ассетам или скачает изображение из сети.
+
+### 3. Плеер тренировок и Календарь
+- **Интерактивный таймер.** Упражнения со счетчиком повторов или таймером времени выполнения.
+- **Личный график.** Возможность назначать тренировки из "Избранного" на конкретные дни недели.
+- **Трекер тренировок на сегодня.** Визуализация дневной активности (долг: реализовать на бэке подсчет каллорий и категории активностей).
+- **Кастомный UX.** Самостоятельно исправлены и доработаны логические пустоты исходного UI/UX макета.
+
+---
+
+## 🧠 Техническая готовность (инструкция для Backend)
+
+Код подготовлен так, чтобы интеграция прошла комфортно:
+
+1. **Cookie Auth.** Система использует куку с именем `Authorization-XXX`. Реализован интерцептор для автоматического обновления токена через `/refresh-token`. Подробнее в [network_config.dart](lib/core/network/network_config.dart). 
+2. **Устойчивость к данным Go.** Фронтенд понимает вложенность `Category -> Program -> Workout -> Exercise -> Repeats`. Если в массиве `Repeated` отсутствуют или прилетают поврежденными поля `reps` или `seconds`, приложение автоматически подставляет безопасные дефолтные значения.
+3. **Синхронизация с Python.** Модель профиля полностью синхронизирована по названиям полей (`snake_case`).
+
+## 🖖 Тестирование и надежность
+В проекте реализовано юнит-тестирование ключевых компонентов:
+- **Validation Logic.** Тесты на AppValidators и ValueObjects гарантируют, что данные (Email, Password, NickName) соответствуют требованиям бэкенда.
+- **Data Mapping.** Проверена корректность трансформации JSON от бэкенда в доменные сущности (включая обработку null-полей).
+- **Business Logic.** Покрыты тестами основные сценарии авторизации и навигации.
+
+- Команда для запуска: 
+```bash
+flutter test
+```
+---
+
+## 🐌 Быстрый старт & Сборка проекта
+
+### Требования к окружению
+- **Flutter SDK:** `^3.11.3`
+- **CocoaPods:** Требуется для сборки под iOS.
+
+### Как переключиться на реальный бэкенд
+1. Смени baseUrl в lib/core/network/network_config.dart на свой IP. 
+2. Переключи _useRemoteDataSource = true в провайдерах. 
+3. Готово!
+
+### Установка зависимостей
+Склонируй репозиторий и выполни команду в корневой директории для загрузки пакетов:
+
 ```bash
 flutter pub get
-```
-
-### Code Generation
-This project heavily relies on build_runner to generate navigation logic (.g.dart), type-safe models (.freezed.dart), and providers. The project will not compile without this step.
-```bash
 flutter pub run build_runner build --delete-conflicting-outputs
-```
-
-### Running the App:
-```Bash
 flutter run
 ```
 
-## Project Resources
+---
 
-* Icons: All vector icons are located in ```assets/icons/```.
+### ✨ Что в планах ✨
+- Вынос Избранного (Favorites) на сторону бэкенда.
+- Реализация постоянного хранилища кук (PersistCookieJar).
+- Расширение модели Go полями rating, level и equipment. 
 
-* Images & Mocks: UI design assets and placeholders are stored in ```assets/design/```.
+---
+### Спасибо! 🌻 ❤️

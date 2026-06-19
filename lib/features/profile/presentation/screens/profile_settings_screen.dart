@@ -190,6 +190,14 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
     }
   }
 
+  ImageProvider _smartImageProvider(String path) {
+    if (path.isEmpty) return const AssetImage('assets/images/avatar/workout_1.png');
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    }
+    return AssetImage(path);
+  }
+
   void _showDeleteConfirmationDialog() {
     showDialog(
       context: context,
@@ -407,9 +415,11 @@ class _SettingsContentState extends ConsumerState<_SettingsContent> {
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 50,
-                  backgroundImage: AssetImage("assets/images/programs/workout_1.png"),
+                  backgroundColor: const Color(0xFFE2E2E2),
+                  backgroundImage: const AssetImage("assets/images/avatar/trainer_1.png"),
+                  foregroundImage: _smartImageProvider(""), // Сюда можно будет передать путь из профиля, когда он появится
                 ),
                 Transform.translate(
                   offset: const Offset(0, 10),

@@ -45,50 +45,58 @@ class _WorkoutCatalogScreenState extends ConsumerState<WorkoutCatalogScreen> {
       body: Stack(
         children: [
           categoriesAsync.when(
-            data: (categories) => ListView.builder(
-              controller: _scrollController,
-              padding: EdgeInsets.fromLTRB(16, headerHeight + 20, 16, 100),
-              itemCount: categories.length + (categoriesAsync.isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == categories.length) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
-                  );
-                }
+            data: (allCategories) {
+              final categories = allCategories.where((c) => c.isMainScreen).toList();
 
-                final category = categories[index];
-                final isExpanded = expandedCategoryId == category.id;
+              if (categories.isEmpty && !categoriesAsync.isLoading) {
+                return const Center(child: Text('Нет категорий для отображения'));
+              }
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      _CategoryHeader(
-                        title: category.name,
-                        imageUrl: category.image,
-                        isExpanded: isExpanded,
-                        onTap: () {
-                          final current = ref.read(expandedCategoryProvider);
-                          ref.read(expandedCategoryProvider.notifier).state =
-                          current == category.id ? null : category.id;
-                        },
-                      ),
-                      if (isExpanded)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 50),
-                          child: _ProgramsExpandedList(
-                            programs: category.programs,
-                            categoryName: category.name,
-                            categoryId: category.id,
-                          ),
+              return ListView.builder(
+                controller: _scrollController,
+                padding: EdgeInsets.fromLTRB(16, headerHeight + 20, 16, 100),
+                itemCount: categories.length + (categoriesAsync.isLoading ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == categories.length) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
+                    );
+                  }
+
+                  final category = categories[index];
+                  final isExpanded = expandedCategoryId == category.id;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        _CategoryHeader(
+                          title: category.name,
+                          imageUrl: category.image,
+                          isExpanded: isExpanded,
+                          onTap: () {
+                            final current = ref.read(expandedCategoryProvider);
+                            ref.read(expandedCategoryProvider.notifier).state =
+                            current == category.id ? null : category.id;
+                          },
                         ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                        if (isExpanded)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 50),
+                            child: _ProgramsExpandedList(
+                              programs: category.programs,
+                              categoryName: category.name,
+                              categoryId: category.id,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
             loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFFFF5900))),
             error: (err, _) => Center(child: Text('Ошибка: $err')),
           ),

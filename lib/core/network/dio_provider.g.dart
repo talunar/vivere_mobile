@@ -6,11 +6,11 @@ part of 'dio_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$cookieJarHash() => r'1217e729c462db2ff475b348a8c4165a712c47cb';
+String _$cookieJarHash() => r'2c0d2591ffa345269f495d38b7e7bfd08edcc6cf';
 
 /// See also [cookieJar].
 @ProviderFor(cookieJar)
-final cookieJarProvider = FutureProvider<CookieJar>.internal(
+final cookieJarProvider = Provider<CookieJar>.internal(
   cookieJar,
   name: r'cookieJarProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,12 +22,12 @@ final cookieJarProvider = FutureProvider<CookieJar>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CookieJarRef = FutureProviderRef<CookieJar>;
-String _$dioHash() => r'46da454fe2c5d5aa502abf3c459a44f96b305c9c';
+typedef CookieJarRef = ProviderRef<CookieJar>;
+String _$dioHash() => r'32bac6c5a7ecec956573c3177f0af0d3f8dcb167';
 
 /// See also [dio].
 @ProviderFor(dio)
-final dioProvider = AutoDisposeProvider<Dio>.internal(
+final dioProvider = Provider<Dio>.internal(
   dio,
   name: r'dioProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -39,6 +39,6 @@ final dioProvider = AutoDisposeProvider<Dio>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef DioRef = AutoDisposeProviderRef<Dio>;
+typedef DioRef = ProviderRef<Dio>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

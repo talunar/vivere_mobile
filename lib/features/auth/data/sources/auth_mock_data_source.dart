@@ -12,14 +12,17 @@ class AuthMockDataSource implements IAuthDataSource {
   @override
   Future<String> login(String username, String password) async {
     await _delay();
-    if (username == 'error') throw Exception('Некорректный логин или пароль');
+    // Теперь, если логин НЕ 'admin', будет запускаться регистрация
+    if (username != 'admin') {
+      throw Exception('User not found');
+    }
     return 'mock_token_123';
   }
 
   @override
   Future<String> register(AuthDto authData) async {
     await _delay();
-    return 'mock_token_new_user';
+    return 'ok';
   }
 
   @override

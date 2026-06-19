@@ -83,6 +83,7 @@ _$CategoryDtoImpl _$$CategoryDtoImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       image: json['image'] as String,
+      isMainScreen: json['is_main_screen'] as bool?,
       programs: (json['exercises'] as List<dynamic>?)
           ?.map((e) => ProgramDto.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -93,5 +94,6 @@ Map<String, dynamic> _$$CategoryDtoImplToJson(_$CategoryDtoImpl instance) =>
       'id': instance.id,
       'name': instance.name,
       'image': instance.image,
+      'is_main_screen': instance.isMainScreen,
       'exercises': instance.programs?.map((e) => e.toJson()).toList(),
     };

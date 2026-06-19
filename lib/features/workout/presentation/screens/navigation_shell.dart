@@ -121,7 +121,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
             ),
             elevation: 0,
             items: [
-              _buildMenuItem('assets/icons/category.svg', 'Главная', 0, selectedIndex),
+              _buildMenuItem('assets/icons/category.svg', 'Каталог', 0, selectedIndex),
               _buildMenuItem('assets/icons/calendar.svg', 'Календарь', 1, selectedIndex),
               _buildMenuItem('assets/icons/favorites.svg', 'Тренировки', 2, selectedIndex),
               _buildMenuItem('assets/icons/profile.svg', 'Профиль', 3, selectedIndex),

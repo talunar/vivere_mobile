@@ -240,7 +240,7 @@ class __$$WorkoutProgramImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$WorkoutProgramImpl implements _WorkoutProgram {
+class _$WorkoutProgramImpl extends _WorkoutProgram {
   const _$WorkoutProgramImpl({
     required this.id,
     required this.title,
@@ -253,7 +253,8 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
     this.equipment,
     this.durationMinutes,
     required final List<ExerciserInProgram> exercises,
-  }) : _exercises = exercises;
+  }) : _exercises = exercises,
+       super._();
 
   @override
   final int id;
@@ -342,7 +343,7 @@ class _$WorkoutProgramImpl implements _WorkoutProgram {
       );
 }
 
-abstract class _WorkoutProgram implements WorkoutProgram {
+abstract class _WorkoutProgram extends WorkoutProgram {
   const factory _WorkoutProgram({
     required final int id,
     required final String title,
@@ -356,6 +357,7 @@ abstract class _WorkoutProgram implements WorkoutProgram {
     final int? durationMinutes,
     required final List<ExerciserInProgram> exercises,
   }) = _$WorkoutProgramImpl;
+  const _WorkoutProgram._() : super._();
 
   @override
   int get id;

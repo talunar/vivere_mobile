@@ -43,7 +43,7 @@ class AuthController extends _$AuthController {
     state = const AuthState.loading();
     
     try {
-      final jar = await ref.read(cookieJarProvider.future);
+      final jar = ref.read(cookieJarProvider);
       final uri = Uri.parse(NetworkConfig.baseUrl);
       final cookies = await jar.loadForRequest(uri);
       final hasSession = cookies.any((c) => c.name == 'Authorization-XXX');
@@ -65,12 +65,22 @@ class AuthController extends _$AuthController {
   /// Вход
   Future<void> continueToNextStep(String nick, String pass) async {
     state = const AuthState.loading();
-    
+
     try {
       final repository = ref.read(authRepositoryProvider);
-      final user = await repository.signIn(nick, pass);
-      state = AuthState.authenticated(user);
+      try {
+        // Пытаемся войти
+        final user = await repository.signIn(nick, pass);
+        state = AuthState.authenticated(user);
+      } catch (e) {
+        // Если вход не удался (пользователь не найден) — идем на РЕГИСТРАЦИЮ
+        state = AuthState.registrationStepName(
+          nickName: nick,
+          password: pass,
+        );
+      }
     } catch (e) {
+      state = AuthState.error('Ошибка: $e');
       state = const AuthState.unauthenticated();
     }
   }
@@ -164,7 +174,7 @@ class AuthController extends _$AuthController {
     try {
       final repository = ref.read(authRepositoryProvider);
       await repository.signOut();
-      final jar = await ref.read(cookieJarProvider.future);
+      final jar = ref.read(cookieJarProvider);
       await jar.deleteAll();
     } finally {
       state = const AuthState.unauthenticated();

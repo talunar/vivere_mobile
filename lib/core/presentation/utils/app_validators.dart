@@ -51,8 +51,6 @@ class AppValidators {
     if (!dateRegex.hasMatch(value)) return 'Формат: дд.мм.гггг';
     
     final parts = value.split('.');
-    if (parts.length != 3) return 'Формат: дд.мм.гггг';
-
     final day = int.tryParse(parts[0]);
     final month = int.tryParse(parts[1]);
     final year = int.tryParse(parts[2]);
@@ -60,12 +58,15 @@ class AppValidators {
     if (day == null || month == null || year == null) return 'Некорректная дата';
     if (month < 1 || month > 12) return 'Некорректный месяц';
     if (day < 1 || day > 31) return 'Некорректный день';
-    
-    final now = DateTime.now();
-    if (year < 1900 || year > now.year) return 'Некорректный год';
+    if (year < 1900) return 'Некорректный год';
     
     try {
       final date = DateTime(year, month, day);
+      if (date.year != year || date.month != month || date.day != day) {
+        return 'Некорректная дата';
+      }
+      
+      final now = DateTime.now();
       if (date.isAfter(now)) return 'Дата в будущем';
     } catch (_) {
       return 'Некорректная дата';

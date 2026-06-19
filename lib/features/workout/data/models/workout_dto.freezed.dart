@@ -981,6 +981,8 @@ mixin _$CategoryDto {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_main_screen')
+  bool? get isMainScreen => throw _privateConstructorUsedError; // Поле из Python
   @JsonKey(name: 'exercises')
   List<ProgramDto>? get programs => throw _privateConstructorUsedError;
 
@@ -1005,6 +1007,7 @@ abstract class $CategoryDtoCopyWith<$Res> {
     int id,
     String name,
     String image,
+    @JsonKey(name: 'is_main_screen') bool? isMainScreen,
     @JsonKey(name: 'exercises') List<ProgramDto>? programs,
   });
 }
@@ -1027,6 +1030,7 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
     Object? id = null,
     Object? name = null,
     Object? image = null,
+    Object? isMainScreen = freezed,
     Object? programs = freezed,
   }) {
     return _then(
@@ -1043,6 +1047,10 @@ class _$CategoryDtoCopyWithImpl<$Res, $Val extends CategoryDto>
                 ? _value.image
                 : image // ignore: cast_nullable_to_non_nullable
                       as String,
+            isMainScreen: freezed == isMainScreen
+                ? _value.isMainScreen
+                : isMainScreen // ignore: cast_nullable_to_non_nullable
+                      as bool?,
             programs: freezed == programs
                 ? _value.programs
                 : programs // ignore: cast_nullable_to_non_nullable
@@ -1066,6 +1074,7 @@ abstract class _$$CategoryDtoImplCopyWith<$Res>
     int id,
     String name,
     String image,
+    @JsonKey(name: 'is_main_screen') bool? isMainScreen,
     @JsonKey(name: 'exercises') List<ProgramDto>? programs,
   });
 }
@@ -1087,6 +1096,7 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? image = null,
+    Object? isMainScreen = freezed,
     Object? programs = freezed,
   }) {
     return _then(
@@ -1103,6 +1113,10 @@ class __$$CategoryDtoImplCopyWithImpl<$Res>
             ? _value.image
             : image // ignore: cast_nullable_to_non_nullable
                   as String,
+        isMainScreen: freezed == isMainScreen
+            ? _value.isMainScreen
+            : isMainScreen // ignore: cast_nullable_to_non_nullable
+                  as bool?,
         programs: freezed == programs
             ? _value._programs
             : programs // ignore: cast_nullable_to_non_nullable
@@ -1120,6 +1134,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
     required this.id,
     required this.name,
     required this.image,
+    @JsonKey(name: 'is_main_screen') this.isMainScreen,
     @JsonKey(name: 'exercises') final List<ProgramDto>? programs,
   }) : _programs = programs;
 
@@ -1132,7 +1147,12 @@ class _$CategoryDtoImpl implements _CategoryDto {
   final String name;
   @override
   final String image;
+  @override
+  @JsonKey(name: 'is_main_screen')
+  final bool? isMainScreen;
+  // Поле из Python
   final List<ProgramDto>? _programs;
+  // Поле из Python
   @override
   @JsonKey(name: 'exercises')
   List<ProgramDto>? get programs {
@@ -1145,7 +1165,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
 
   @override
   String toString() {
-    return 'CategoryDto(id: $id, name: $name, image: $image, programs: $programs)';
+    return 'CategoryDto(id: $id, name: $name, image: $image, isMainScreen: $isMainScreen, programs: $programs)';
   }
 
   @override
@@ -1156,6 +1176,8 @@ class _$CategoryDtoImpl implements _CategoryDto {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.image, image) || other.image == image) &&
+            (identical(other.isMainScreen, isMainScreen) ||
+                other.isMainScreen == isMainScreen) &&
             const DeepCollectionEquality().equals(other._programs, _programs));
   }
 
@@ -1166,6 +1188,7 @@ class _$CategoryDtoImpl implements _CategoryDto {
     id,
     name,
     image,
+    isMainScreen,
     const DeepCollectionEquality().hash(_programs),
   );
 
@@ -1188,6 +1211,7 @@ abstract class _CategoryDto implements CategoryDto {
     required final int id,
     required final String name,
     required final String image,
+    @JsonKey(name: 'is_main_screen') final bool? isMainScreen,
     @JsonKey(name: 'exercises') final List<ProgramDto>? programs,
   }) = _$CategoryDtoImpl;
 
@@ -1200,6 +1224,9 @@ abstract class _CategoryDto implements CategoryDto {
   String get name;
   @override
   String get image;
+  @override
+  @JsonKey(name: 'is_main_screen')
+  bool? get isMainScreen; // Поле из Python
   @override
   @JsonKey(name: 'exercises')
   List<ProgramDto>? get programs;

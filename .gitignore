@@ -24,6 +24,7 @@ migrate_working_dir/
 .DS_Store
 .AppleDouble
 .LSOverride
+test
 
 /linux/
 /macos/

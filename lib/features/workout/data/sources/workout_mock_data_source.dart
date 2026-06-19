@@ -2,36 +2,38 @@ import '../models/workout_dto.dart';
 import 'i_workout_data_source.dart';
 
 class WorkoutMockDataSource implements IWorkoutDataSource {
+  final String _exerciseImagePath = 'assets/images/exercises/workout_1.png';
+
   Future<void> _delay() => Future.delayed(const Duration(milliseconds: 700));
 
   @override
   Future<List<CategoryDto>> getCategories({int limit = 10, int offset = 0}) async {
     await _delay();
-    return [
-      const CategoryDto(
-        id: 1,
-        name: 'Силовые',
-        image: 'assets/images/exercises/workout_1.png',
-        programs: [
-          ProgramDto(id: 101, name: 'Мощный старт', description: 'Базовая силовая программа'),
-          ProgramDto(id: 102, name: 'Жим лежа+', description: 'Фокус на грудные мышцы'),
-        ],
-      ),
-      const CategoryDto(
-        id: 2,
-        name: 'Кардио',
-        image: 'assets/images/exercises/workout_2.png',
-        programs: [
-          ProgramDto(id: 201, name: 'Бег в гору', description: 'Выносливость и жиросжигание'),
-        ],
-      ),
+    final List<String> categoryNames = [
+      'Силовые', 'Кардио', 'Разминка', 'Похудение', 'Йога',
+      'Пилатес', 'Кроссфит', 'Растяжка', 'Бокс', 'Танцы'
     ];
+    final all = List.generate(categoryNames.length, (index) => CategoryDto(
+    id: index + 1,
+    name: categoryNames[index],
+    image: 'assets/images/exercises/workout_${(index % 9) + 1}.png',
+    programs: _generatePrograms(index + 1),
+    ));
+    if (offset >= all.length) return [];
+    return all.sublist(offset, (offset + limit).clamp(0, all.length));
+  }
+
+  List<ProgramDto> _generatePrograms(int catId) {
+    return List.generate(5, (index) => ProgramDto(
+      id: catId * 100 + index,
+      name: 'Программа ${index + 1}',
+      description: 'Эффективная тренировка для вашего прогресса.',
+    ));
   }
 
   @override
   Future<CategoryDto> getCategory(int id) async {
-    await _delay();
-    final all = await getCategories();
+    final all = await getCategories(limit: 100);
     return all.firstWhere((c) => c.id == id);
   }
 
@@ -41,28 +43,24 @@ class WorkoutMockDataSource implements IWorkoutDataSource {
     return ProgramDto(
       id: id,
       name: 'Программа #$id',
-      description: 'Детальное описание программы тренировок с упражнениями. ',
+      description: 'Выполняйте упражнения последовательно, соблюдая технику.',
       workouts: [
-        const WorkoutDto(
+        WorkoutDto(
           id: 1,
-          name: 'Основная часть',
-          description: 'Упражнения на сегодня',
-          exercises: [
-            ExerciserDto(
-              id: 501,
-              name: 'Приседания',
-              description: 'Классические приседания со штангой',
-              image: 'assets/images/exercises/workout_1.png',
-              repeats: [RepeatedDto(id: 1, weight: 60), RepeatedDto(id: 2, weight: 60)],
-            ),
-            ExerciserDto(
-              id: 502,
-              name: 'Отжимания',
-              description: 'Широким хватом',
-              image: 'assets/images/exercises/workout_3.png',
-              repeats: [RepeatedDto(id: 3, weight: 0)],
-            ),
-          ],
+          name: 'Основной блок',
+          description: 'Чередование нагрузки',
+          exercises: List.generate(6, (i) => ExerciserDto(
+            id: id * 1000 + i,
+            name: 'Упражнение ${i + 1}',
+            description: 'Следите за дыханием и выполняйте движения плавно.',
+            image: _exerciseImagePath,
+            repeats: [
+              if (i % 2 == 0)
+                RepeatedDto(id: i, weight: 0, seconds: 30, reps: 0)
+              else
+                RepeatedDto(id: i, weight: 0, reps: 20, seconds: 0),
+            ],
+          )),
         ),
       ],
     );

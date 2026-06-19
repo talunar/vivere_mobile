@@ -18,6 +18,23 @@ class WorkoutProgram with _$WorkoutProgram {
     int? durationMinutes,
     required List<ExerciserInProgram> exercises,
   }) = _WorkoutProgram;
+
+  const WorkoutProgram._();
+
+  String get displayImage {
+    final img = image ?? '';
+    if (img.isEmpty) return 'assets/images/programs/workout_1.png';
+    if (img.startsWith('http') || img.startsWith('assets/')) return img;
+    return 'assets/images/programs/$img';
+  }
+
+  String get displayTrainerImage {
+    final img = trainerImage ?? '';
+    // По умолчанию теперь используем workout_1.png как аватар
+    if (img.isEmpty || img.contains('trainer_1.png')) return 'assets/images/avatar/workout_1.png';
+    if (img.startsWith('http') || img.startsWith('assets/')) return img;
+    return 'assets/images/avatar/$img';
+  }
 }
 
 @freezed
@@ -34,4 +51,9 @@ class ExerciserInProgram with _$ExerciserInProgram {
   const ExerciserInProgram._();
 
   bool get isNetworkImage => image.startsWith('http');
+
+  String get displayImage {
+    if (image.startsWith('http') || image.startsWith('assets/')) return image;
+    return 'assets/images/exercises/$image';
+  }
 }

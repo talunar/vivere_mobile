@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vivere_mobile/core/presentation/widgets/app_button.dart';
-import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart'; // Добавлен импорт
+import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart';
 import '../../domain/entities/workout_program.dart';
 import '../../domain/entities/repeated.dart';
 import '../providers/workout_providers.dart';
@@ -19,6 +19,35 @@ class ProgramDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
+  Widget _smartImage(String path, {double? width, double? height, BoxFit fit = BoxFit.cover, Alignment alignment = Alignment.center}) {
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
+        errorBuilder: (_, __, ___) => Image.asset('assets/images/programs/workout_1.png', width: width, height: height, fit: fit),
+      );
+    }
+    return Image.asset(
+      path, 
+      width: width, 
+      height: height, 
+      fit: fit, 
+      alignment: alignment,
+      errorBuilder: (_, __, ___) => Image.asset('assets/images/programs/workout_1.png', width: width, height: height, fit: fit),
+    );
+  }
+
+  ImageProvider _smartImageProvider(String path) {
+    if (path.isEmpty) return const AssetImage('assets/images/avatar/trainer_1.png');
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    }
+    return AssetImage(path);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -52,8 +81,8 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                   height: imageHeight,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
-                    child: Image.asset(
-                      widget.program.image ?? "assets/images/programs/workout_1.png",
+                    child: _smartImage(
+                      widget.program.displayImage,
                       fit: BoxFit.cover,
                       alignment: Alignment.bottomCenter,
                     ),
@@ -90,7 +119,6 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Заменено на AppCircleButton для кнопки Назад
                             AppCircleButton(
                               assetPath: 'assets/icons/back.svg',
                               onTap: () => Navigator.pop(context),
@@ -161,10 +189,8 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                       CircleAvatar(
                         radius: 24,
                         backgroundColor: const Color(0xFFE2E2E2),
-                        backgroundImage: const AssetImage("assets/images/avatar/trainer_1.png"),
-                        foregroundImage: (widget.program.trainerImage != null && widget.program.trainerImage!.isNotEmpty)
-                            ? AssetImage(widget.program.trainerImage!)
-                            : null,
+                        backgroundImage: const AssetImage('assets/images/avatar/trainer_1.png'),
+                        foregroundImage: _smartImageProvider(widget.program.displayTrainerImage),
                       ),
                       const SizedBox(width: 12),
                       Column(
@@ -177,7 +203,7 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                           const Row(
                             children: [
                               Icon(Icons.star, color: Color(0xFFFFB800), size: 14),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Text('4,9', style: TextStyle(fontSize: 12, color: Color(0xFF757575))),
                             ],
                           ),
@@ -186,8 +212,6 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 32),
-
-                  // Список упражнений
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                     decoration: BoxDecoration(
@@ -207,9 +231,7 @@ class _ProgramDetailsScreenState extends ConsumerState<ProgramDetailsScreen> {
                       }).toList(),
                     ),
                   ),
-
                   const SizedBox(height: 32),
-
                   Center(
                     child: AppButton(
                       text: 'Начать тренировку',
@@ -259,6 +281,26 @@ class _InfoRow extends StatelessWidget {
 class _ExerciseTile extends StatelessWidget {
   final ExerciserInProgram exercise;
   const _ExerciseTile({required this.exercise});
+
+  Widget _smartImage(String path, {double? width, double? height, BoxFit fit = BoxFit.cover}) {
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (_, __, ___) => Image.asset('assets/images/programs/workout_1.png', width: width, height: height, fit: fit),
+      );
+    }
+    return Image.asset(
+      path, 
+      width: width, 
+      height: height, 
+      fit: fit,
+      errorBuilder: (_, __, ___) => Image.asset('assets/images/programs/workout_1.png', width: width, height: height, fit: fit),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final repeat = exercise.repeats.isNotEmpty ? exercise.repeats.first : const Repeated(id: 0, weight: 0);
@@ -282,8 +324,8 @@ class _ExerciseTile extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
-            child: Image.asset(
-              exercise.image,
+            child: _smartImage(
+              exercise.displayImage,
               width: 100,
               height: 100,
               fit: BoxFit.cover,

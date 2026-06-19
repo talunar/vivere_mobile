@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:vivere_mobile/core/presentation/widgets/dashboard_card.dart';
-import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart'; // 1. ДОБАВИЛИ ИМПОРТ
+import 'package:vivere_mobile/core/presentation/widgets/app_circle_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../domain/entities/workout_program.dart';
 import '../providers/workout_providers.dart';
@@ -248,7 +248,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      // 2. ЗАМЕНИЛИ НА AppCircleButton С СОХРАНЕНИЕМ ОРИГИНАЛЬНОГО ТЕКСТА ПО ЦЕНТРУ
                       AppCircleButton(
                         assetPath: 'assets/icons/back.svg',
                         onTap: () => ref.read(navigationNotifierProvider.notifier).goBack(),
@@ -439,6 +438,45 @@ class _ProgramCard extends StatelessWidget {
 
   const _ProgramCard({required this.program, this.onTap});
 
+  Widget _smartImage(String path, {double? width, double? height, BoxFit fit = BoxFit.cover}) {
+    if (path.startsWith('http')) {
+      return Image.network(
+        path,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (_, __, ___) => Image.asset(
+          'assets/images/programs/workout_1.png',
+          width: width,
+          height: height,
+          fit: fit,
+        ),
+      );
+    }
+    return Image.asset(
+      path, 
+      width: width, 
+      height: height, 
+      fit: fit,
+      errorBuilder: (_, __, ___) => Image.asset(
+        'assets/images/programs/workout_1.png',
+        width: width,
+        height: height,
+        fit: fit,
+      ),
+    );
+  }
+
+  ImageProvider _smartImageProvider(String path) {
+    if (path.isEmpty || path.contains('trainer_1.png')) {
+      return const AssetImage('assets/images/avatar/trainer_1.png');
+    }
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    }
+    return AssetImage(path);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -454,7 +492,7 @@ class _ProgramCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset("assets/images/programs/workout_1.png", width: 160, height: 160, fit: BoxFit.cover),
+              child: _smartImage(program.displayImage, width: 160, height: 160),
             ),
             Expanded(
               child: Padding(
@@ -462,21 +500,40 @@ class _ProgramCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(program.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF141414)), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text(
+                      program.title,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF141414)),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 10),
                     Row(
                       children: [
                         const Icon(Icons.star, color: Color(0xFFFFB800), size: 16),
                         const SizedBox(width: 5),
-                        Text(program.rating?.toString() ?? "4.8", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF141414))),
+                        Text(
+                          program.rating?.toString() ?? "5.0",
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF141414)),
+                        ),
                       ],
                     ),
                     const Spacer(),
                     Row(
                       children: [
-                        const CircleAvatar(radius: 12, backgroundImage: AssetImage("assets/images/programs/workout_1.png")),
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundColor: const Color(0xFFE2E2E2),
+                          backgroundImage: const AssetImage("assets/images/avatar/workout_1.png"),
+                          foregroundImage: _smartImageProvider(program.displayTrainerImage),
+                        ),
                         const SizedBox(width: 8),
-                        Expanded(child: Text(program.trainerName ?? "Super train 3000", style: TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.5)), overflow: TextOverflow.ellipsis)),
+                        Expanded(
+                          child: Text(
+                            program.trainerName ?? "Coach",
+                            style: TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.5)),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ],
                     )
                   ],

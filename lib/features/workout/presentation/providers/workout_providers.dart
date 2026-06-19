@@ -15,7 +15,6 @@ part 'workout_providers.g.dart';
 
 final expandedCategoryProvider = StateProvider<int?>((ref) => null);
 
-// Провайдер для хранения расписания тренировок: День недели (1-7) -> Список программ
 final workoutScheduleProvider = StateProvider<Map<int, List<WorkoutProgram>>>((ref) => {
   1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: []
 });
@@ -146,7 +145,6 @@ class FavoritePrograms extends _$FavoritePrograms {
         exercises: [e],
         durationMinutes: 15,
         rating: 5.0,
-        // Теперь просто берем картинку, которую упражнение сохранило из категории
         image: e.categoryImage ?? 'assets/images/categories/workout_1.png',
       );
     }).toList();
@@ -167,10 +165,10 @@ class FavoritePrograms extends _$FavoritePrograms {
       if (isFavorite) {
         await repository.deleteExercise(program.id);
       } else {
-        // Сохраняем программу вместе с её картинкой категории
+        // Только для реализации на моках динамичгых изображений
         final exerciseToSave = program.exercises.first.copyWith(
           id: program.id,
-          categoryImage: program.image, // Передаем путь к обложке
+          categoryImage: program.image,
         );
         await repository.addExercise(userId, exerciseToSave);
       }

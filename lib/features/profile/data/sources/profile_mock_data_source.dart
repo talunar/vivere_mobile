@@ -7,7 +7,7 @@ class ProfileMockDataSource implements IProfileDataSource {
   final ProfileDto _mockProfile = const ProfileDto(
     id: 1,
     nickName: 'zero_latency',
-    email: 'berserk_mode45@vivere.com',
+    email: 'berserk_mode@mail.com',
     firstName: 'Nova',
     lastName: 'Polaris',
     age: 30,

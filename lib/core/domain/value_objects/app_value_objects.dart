@@ -12,14 +12,18 @@ extension type const Email(String value) {
 }
 
 /// Валидация логина
-extension type const NickName(String value) {
+extension type const NickName(String value) {  void validate() {
+  final trimmed = value.trim();
+  if (trimmed.length < 3) throw const ValidationFailure('Слишком короткий ник');
+  if (trimmed.length >= 25) throw const ValidationFailure('Ник должен быть короче 25 символов');
+  if (trimmed.contains(' ')) throw const ValidationFailure('Без пробелов');
+ }
+}
+
+extension type const Password(String value) {
   void validate() {
-    final trimmed = value.trim();
-    if (trimmed.length < 3) {
-      throw const ValidationFailure('Никнейм слишком короткий (минимум 3 символа)');
-    }
-    if (trimmed.contains(' ')) {
-      throw const ValidationFailure('Никнейм не должен содержать пробелы');
+    if (value.length < 8 || value.length > 32) {
+      throw const ValidationFailure('Пароль должен быть от 8 до 32 символов');
     }
   }
 }
